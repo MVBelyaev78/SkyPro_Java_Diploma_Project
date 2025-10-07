@@ -1,22 +1,23 @@
 package ru.skypro.homework.controller;
 
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import ru.skypro.homework.dto.Login;
-import ru.skypro.homework.service.impl.UserService;
+import ru.skypro.homework.dto.NewPassword;
+import ru.skypro.homework.dto.UpdateUser;
+import ru.skypro.homework.dto.User;
+import ru.skypro.homework.service.ImageService;
+import ru.skypro.homework.service.UserService;
+
+import java.io.IOException;
 
 /**
- * Контроллер для управления пользователями.
+ * Контроллер для управления информацией о пользователях.
  * Предоставляет API для обновления пароля, получения информации об авторизованном пользователе,
  * обновления информации об авторизованном пользователе и обновления аватара авторизованного пользователя.
  */
@@ -28,48 +29,117 @@ import ru.skypro.homework.service.impl.UserService;
 @RequestMapping("/users")
 public class UserController {
 
-    @Autowired
     private final UserService userService;
+    private final ImageService imageService;
 
+    /**
+     * Обновляет пароль текущего авторизованного пользователя.
+     *
+     * @param newPassword DTO объект содержащий текущий и новый пароли
+     * @param authentication объект аутентификации Spring Security
+     * @return ResponseEntity со статусом Ok при успешном обновлении,
+     *          FORBIDDEN при неверном текущем пароле или INTERNAL_SERVER_ERROR при ошибке
+     */
     @PostMapping("/setPassword")
-    public ResponseEntity<String> updatePassword(@RequestBody Login newLogin) {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        String currentUsername = auth.getName();
+    public ResponseEntity<?> setPassword(@RequestBody NewPassword newPassword,
+                                         Authentication authentication) {
+        try {
+            String userName = authentication.getName();
+            boolean success = userService.changePassword(
+                    userName,
+                    newPassword.getCurrentPassword(),
+                    newPassword.getNewPassword()
+            );
 
-        userService.changePassword(currentUsername, newLogin.getPassword());
-
-        return ResponseEntity.ok("Пароль успешно обновлен");
+            if (success) {
+                return ResponseEntity.ok().build();
+            } else {
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+            }
+        } catch (Exception e) {
+            log.error("Ошибка смены пароля", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
     }
 
+    /**
+     * Получает информацию о текущем авторизованном пользователе.
+     *
+     * @param authentication объект аутентификации Spring Security
+     * @return ResponseEntity с данными пользователя или статусом NOT_FOUND/INTERNAL_SERVER_ERROR
+     */
     @GetMapping("/me")
-    public ResponseEntity<Login> getCurrentUser() {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        String username = auth.getName();
+    public ResponseEntity<User> getCurrentUser(Authentication authentication) {
+        try {
+            String userName = authentication.getName();
+            User user = userService.getUserByUserName(userName);
 
-        Login userLogin = new Login();
-        userLogin.setUsername(username);
-        userLogin.setPassword("***");
-
-        return ResponseEntity.ok(userLogin);
+            if (user != null) {
+                return ResponseEntity.ok(user);
+            } else {
+                return ResponseEntity.notFound().build();
+            }
+        } catch (Exception e) {
+            log.error("Ошибка вывода авторизованного пользователя", e);
+            return ResponseEntity.internalServerError().build();
+        }
     }
 
-    @PostMapping("/update")
-    public ResponseEntity<String> updateUser(@RequestBody Login updatedLogin) {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        String currentUsername = auth.getName();
+    /**
+     * Обновляет информацию о текущем авторизованном пользователе.
+     *
+     * @param updateUser DTO объект с обновляемыми полями пользователя
+     * @param authentication объект аутентификации Spring Security
+     * @return ResponseEntity с обновленными данными пользователя или статусом NOT_FOUND/INTERNAL_SERVER_ERROR
+     */
+    @PatchMapping("/me")
+    public ResponseEntity<UpdateUser> updateCurrentUser(@RequestBody UpdateUser updateUser,
+                                                        Authentication authentication) {
+        try {
+            String userName = authentication.getName();
+            UpdateUser updatedUser = userService.updateUser(userName, updateUser);
 
-        userService.updateUserInfo(currentUsername, updatedLogin);
-
-        return ResponseEntity.ok("Информация пользователя обновлена");
+            if (updatedUser != null) {
+                return ResponseEntity.ok(updatedUser);
+            } else {
+                return ResponseEntity.notFound().build();
+            }
+        } catch (Exception e) {
+            log.error("Ошибка обновления информации о пользователе", e);
+            return ResponseEntity.internalServerError().build();
+        }
     }
 
+    /**
+     * Обновляет аватар текущего авторизованного пользователя.
+     *
+     * @param image файл изображения для установки в качестве аватара
+     * @param authentication объект аутентификации Spring Security
+     * @return ResponseEntity с путем к сохраненному изображению или статусом ошибки
+     */
     @PatchMapping(value = "/me/image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<String> updateUserAvatar(@RequestParam("image") MultipartFile image) {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        String username = auth.getName();
+    public ResponseEntity<String> updateUserAvatar(@RequestParam("image") MultipartFile image,
+                                                   Authentication authentication) {
+        try {
+            String userName = authentication.getName();
 
-        userService.updateUserAvatar(username, image);
+            if (image.isEmpty()) {
+                return ResponseEntity.badRequest().body("Изображение не предоставлено");
+            }
 
-        return ResponseEntity.ok("Аватар успешно обновлен");
+            if (!image.getContentType().startsWith("image/")) {
+                return ResponseEntity.badRequest().body("Файл должен быть изображением");
+            }
+
+            String imagePath = userService.updateUserAvatar(userName, image);
+            return ResponseEntity.ok(imagePath);
+
+        } catch (IOException e) {
+            log.error("Ошибка загрузки аватара пользователя", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Ошибка загрузки изображения");
+        } catch (Exception e) {
+            log.error("Ошибка изменения аватара пользователя", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
     }
 }
