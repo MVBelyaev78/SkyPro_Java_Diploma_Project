@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import ru.skypro.homework.dto.Ads;
 import ru.skypro.homework.dto.ExtendedAd;
 import ru.skypro.homework.service.AdvertisementService;
 
@@ -18,5 +19,10 @@ public class AdvertisementController {
     @GetMapping("/{id}")
     public ResponseEntity<ExtendedAd> getAdvertisementInfo(@PathVariable Long id) {
         return ResponseEntity.ok(advertisementService.getAdvertisementInfo(id));
+    }
+
+    @GetMapping("")
+    public ResponseEntity<Ads> getAllAdvertisements() {
+        return ResponseEntity.ok(advertisementService.getAllAdvertisements());
     }
 }
