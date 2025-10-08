@@ -25,4 +25,9 @@ public class AdvertisementController {
     public ResponseEntity<Ads> getAllAdvertisements() {
         return ResponseEntity.ok(advertisementService.getAllAdvertisements());
     }
+
+    @GetMapping("/me")
+    public ResponseEntity<Ads> getAdvertisementsOfAuthorizedUser() {
+        return ResponseEntity.ok(advertisementService.getAdvertisementsOfAuthorizedUser());
+    }
 }

@@ -7,4 +7,6 @@ public interface AdvertisementService {
     ExtendedAd getAdvertisementInfo(Long id);
 
     Ads getAllAdvertisements();
+
+    Ads getAdvertisementsOfAuthorizedUser();
 }
