@@ -22,4 +22,9 @@ public class AdvertisementServiceImpl implements AdvertisementService {
     public Ads getAdvertisementsOfAuthorizedUser() {
         return new Ads(1, new Ad(0L, "string", "string", 0, "string"));
     }
+
+    @Override
+    public Boolean deleteAdvertisement(Long id) {
+        return true;
+    }
 }

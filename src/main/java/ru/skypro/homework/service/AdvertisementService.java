@@ -9,4 +9,6 @@ public interface AdvertisementService {
     Ads getAllAdvertisements();
 
     Ads getAdvertisementsOfAuthorizedUser();
+
+    Boolean deleteAdvertisement(Long id);
 }
