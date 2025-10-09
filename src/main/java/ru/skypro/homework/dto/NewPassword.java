@@ -1,5 +1,6 @@
 package ru.skypro.homework.dto;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
 /**
@@ -7,7 +8,11 @@ import lombok.Data;
  * Содержит текущий и новый пароль.
  */
 @Data
+@Schema(description = "Данные для смены пароля пользователя")
 public class NewPassword {
+    @Schema(description = "Текущий пароль пользователя", example = "oldPassword123")
     private String currentPassword;
+
+    @Schema(description = "Новый пароль пользователя", example = "newPassword456")
     private String newPassword;
 }

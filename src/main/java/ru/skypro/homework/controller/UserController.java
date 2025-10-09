@@ -1,5 +1,11 @@
 package ru.skypro.homework.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -27,6 +33,7 @@ import java.io.IOException;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/users")
+@Tag(name = "Пользователи", description = "API для управления информацией о пользователях")
 public class UserController {
 
     private final UserService userService;
@@ -40,6 +47,15 @@ public class UserController {
      * @return ResponseEntity со статусом Ok при успешном обновлении,
      *          FORBIDDEN при неверном текущем пароле или INTERNAL_SERVER_ERROR при ошибке
      */
+    @Operation(
+            summary = "Обновление пароля",
+            description = "Позволяет текущему авторизованному пользователю изменить свой пароль"
+    )
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Пароль успешно обновлен"),
+            @ApiResponse(responseCode = "403", description = "Текущий пароль указан не верно"),
+            @ApiResponse(responseCode = "500", description = "Внутренняя ошибка сервера"),
+    })
     @PostMapping("/setPassword")
     public ResponseEntity<?> setPassword(@RequestBody NewPassword newPassword,
                                          Authentication authentication) {
@@ -68,6 +84,19 @@ public class UserController {
      * @param authentication объект аутентификации Spring Security
      * @return ResponseEntity с данными пользователя или статусом NOT_FOUND/INTERNAL_SERVER_ERROR
      */
+    @Operation(
+            summary = "Получение информации о текущем пользователе",
+            description = "Возвращает полную информацию об авторизованном пользователе"
+    )
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Информация о пользователе получена",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = User.class))
+            ),
+            @ApiResponse(responseCode = "404", description = "Пользователь не найден"),
+            @ApiResponse(responseCode = "500", description = "Внутренняя ошибка сервера"),
+    })
     @GetMapping("/me")
     public ResponseEntity<User> getCurrentUser(Authentication authentication) {
         try {
@@ -92,6 +121,19 @@ public class UserController {
      * @param authentication объект аутентификации Spring Security
      * @return ResponseEntity с обновленными данными пользователя или статусом NOT_FOUND/INTERNAL_SERVER_ERROR
      */
+    @Operation(
+            summary = "Обновление информации о пользователе",
+            description = "Позволяет обновить информацию о текущем авторизованном пользователе"
+    )
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Информация о пользователе обновлена",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = UpdateUser.class))
+            ),
+            @ApiResponse(responseCode = "404", description = "Пользователь не найден"),
+            @ApiResponse(responseCode = "500", description = "Внутренняя ошибка сервера")
+    })
     @PatchMapping("/me")
     public ResponseEntity<UpdateUser> updateCurrentUser(@RequestBody UpdateUser updateUser,
                                                         Authentication authentication) {
@@ -117,6 +159,19 @@ public class UserController {
      * @param authentication объект аутентификации Spring Security
      * @return ResponseEntity с путем к сохраненному изображению или статусом ошибки
      */
+    @Operation(
+            summary = "Обновление аватара пользователя",
+            description = "Позволяет обновить аватар текущего авторизованного пользователя"
+    )
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Аватар успешно обновлен",
+                    content = @Content(mediaType = "text/plain", schema = @Schema(implementation = String.class))
+            ),
+            @ApiResponse(responseCode = "400", description = "Неверный формат файла или файл не предоставлен"),
+            @ApiResponse(responseCode = "500", description = "Внутренняя ошибка сервера")
+    })
     @PatchMapping(value = "/me/image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<String> updateUserAvatar(@RequestParam("image") MultipartFile image,
                                                    Authentication authentication) {
