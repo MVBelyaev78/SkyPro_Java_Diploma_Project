@@ -79,7 +79,22 @@ public class AdvertisementController {
         return ResponseEntity.ok(advertisementService.getAdvertisementsOfAuthorizedUser());
     }
 
+    /**
+     * Удаление объявления
+     *
+     * @param id Идентификатор объявления
+     * @return ResponseEntity с кодом HTTP-ответа
+     */
     @DeleteMapping("/{id}")
+    @Operation(summary = "Удаление объявления",
+            description = "Удаление объявления")
+    @ApiResponses({
+            @ApiResponse(responseCode = "204", description = "Удаление выполнено успешно",
+                    content = @Content(schema = @Schema(implementation = AdvertisementService.class))),
+            @ApiResponse(responseCode = "401", description = "Пользователь не зарегистрирован в системе"),
+            @ApiResponse(responseCode = "403", description = "Пользователь не имеет доступа к контенту"),
+            @ApiResponse(responseCode = "404", description = "Объявление не найдено")
+    })
     public ResponseEntity<Void> deleteAdvertisement(Long id) {
         if (advertisementService.deleteAdvertisement(id)) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
