@@ -6,6 +6,8 @@ import ru.skypro.homework.dto.Ads;
 import ru.skypro.homework.dto.ExtendedAd;
 import ru.skypro.homework.service.AdvertisementService;
 
+import java.util.List;
+
 @Service
 public class AdvertisementServiceImpl implements AdvertisementService {
     @Override
@@ -15,12 +17,12 @@ public class AdvertisementServiceImpl implements AdvertisementService {
 
     @Override
     public Ads getAllAdvertisements() {
-        return new Ads(1, new Ad(0L, "string", "string", 0, "string"));
+        return new Ads(1, List.of(new Ad(0L, "string", "string", 0, "string")));
     }
 
     @Override
     public Ads getAdvertisementsOfAuthorizedUser() {
-        return new Ads(1, new Ad(0L, "string", "string", 0, "string"));
+        return new Ads(1, List.of(new Ad(0L, "string", "string", 0, "string")));
     }
 
     @Override
