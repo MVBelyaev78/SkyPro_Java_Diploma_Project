@@ -1,5 +1,11 @@
 package ru.skypro.homework.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -14,6 +20,7 @@ import ru.skypro.homework.service.AdvertisementService;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/ads")
+@Tag(name = "Advertisement Controller", description = "API для управления объявлениями")
 public class AdvertisementController {
     private final AdvertisementService advertisementService;
 
@@ -23,11 +30,24 @@ public class AdvertisementController {
     }
 
     @GetMapping("")
+    @Operation(summary = "Получение всех объявлений",
+            description = "Получение краткой информации о каждом из всех объявлений в системе")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "OK",
+                    content = @Content(schema = @Schema(implementation = AdvertisementService.class)))
+    })
     public ResponseEntity<Ads> getAllAdvertisements() {
         return ResponseEntity.ok(advertisementService.getAllAdvertisements());
     }
 
     @GetMapping("/me")
+    @Operation(summary = "Получение объявлений авторизованного пользователя",
+            description = "Получение краткой информации о каждом объявлении авторизованного пользователя")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "OK",
+                    content = @Content(schema = @Schema(implementation = AdvertisementService.class))),
+            @ApiResponse(responseCode = "401", description = "Пользователь не зарегистрирован в системе")
+    })
     public ResponseEntity<Ads> getAdvertisementsOfAuthorizedUser() {
         return ResponseEntity.ok(advertisementService.getAdvertisementsOfAuthorizedUser());
     }
