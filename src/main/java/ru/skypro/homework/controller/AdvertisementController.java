@@ -46,6 +46,11 @@ public class AdvertisementController {
         return ResponseEntity.ok(advertisementService.getAdvertisementInfo(id));
     }
 
+    /**
+     * Получение всех объявлений
+     *
+     * @return Набор краткой информации об объявлениях
+     */
     @GetMapping("")
     @Operation(summary = "Получение всех объявлений",
             description = "Получение краткой информации о каждом из всех объявлений в системе")
@@ -57,6 +62,11 @@ public class AdvertisementController {
         return ResponseEntity.ok(advertisementService.getAllAdvertisements());
     }
 
+    /**
+     * Получение объявлений авторизованного пользователя
+     *
+     * @return Набор краткой информации об объявлениях
+     */
     @GetMapping("/me")
     @Operation(summary = "Получение объявлений авторизованного пользователя",
             description = "Получение краткой информации о каждом объявлении авторизованного пользователя")
