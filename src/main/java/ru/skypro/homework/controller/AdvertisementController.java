@@ -15,6 +15,9 @@ import ru.skypro.homework.dto.Ads;
 import ru.skypro.homework.dto.ExtendedAd;
 import ru.skypro.homework.service.AdvertisementService;
 
+/**
+ * API для управления объявлениями
+ */
 @Slf4j
 @CrossOrigin(value = "http://localhost:3000")
 @RestController
@@ -24,6 +27,20 @@ import ru.skypro.homework.service.AdvertisementService;
 public class AdvertisementController {
     private final AdvertisementService advertisementService;
 
+    /**
+     * Получение информации об объявлении
+     *
+     * @param id Идентификатор объявления
+     * @return Расширенная информация об объявлении
+     */
+    @Operation(summary = "Получение информации об объявлении",
+            description = "Получение подробной информации об объявлении")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "OK",
+                    content = @Content(schema = @Schema(implementation = AdvertisementService.class))),
+            @ApiResponse(responseCode = "401", description = "Пользователь не зарегистрирован в системе"),
+            @ApiResponse(responseCode = "404", description = "Объявление не найдено")
+    })
     @GetMapping("/{id}")
     public ResponseEntity<ExtendedAd> getAdvertisementInfo(@PathVariable Long id) {
         return ResponseEntity.ok(advertisementService.getAdvertisementInfo(id));
