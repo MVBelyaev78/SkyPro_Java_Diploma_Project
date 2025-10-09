@@ -1,6 +1,7 @@
 package ru.skypro.homework.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
 /**
@@ -8,6 +9,7 @@ import lombok.Data;
  * Содержит полную информацию о пользователе.
  */
 @Data
+@AllArgsConstructor
 @Schema(description = "Полная информация о пользователе")
 public class User {
     @Schema(description = "ID пользователя", example = "1")
