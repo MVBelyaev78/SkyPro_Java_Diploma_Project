@@ -4,7 +4,6 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import ru.skypro.homework.entity.CommentEntity;
 
 
 /**
@@ -55,25 +54,6 @@ public class Comment {
     @Schema(description = "текст комментария")
     private String text;
 
-
-    /**
-     * mapper для преобразования сащности {@link CommentEntity} в DTO {@link Comment}
-     *
-     * @param comment сущность из базы данных
-     * @return {@link Comment} с данными из сущности {@link CommentEntity}
-     */
-    public static Comment fromEntity(CommentEntity comment) {
-        if (comment == null) return null;
-
-        return new Comment(
-                comment.getAuthor(),
-                comment.getAuthorImage(),
-                comment.getAuthorFirstName(),
-                comment.getCreateAt(),
-                comment.getPk(),
-                comment.getText()
-        );
-    }
 }
 
 
