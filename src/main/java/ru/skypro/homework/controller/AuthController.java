@@ -32,7 +32,8 @@ public class AuthController {
      * @param login объект, содержащий имя пользователя и пароль
      * @return ResponseEntity с кодом состояния 200 (OK) при успешной аутентификации или 401 (Unauthorized) при неудаче
      */
-    @Operation(summary = "Аутентификация пользователя", description = "Метод для аутентификации пользователя по имени и паролю.")
+    @Operation(summary = "Аутентификация пользователя",
+            description = "Метод для аутентификации пользователя по имени и паролю.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Успешная аутентификация"),
             @ApiResponse(responseCode = "401", description = "Неудачная аутентификация")
@@ -52,7 +53,8 @@ public class AuthController {
      * @param register объект, содержащий данные для регистрации пользователя
      * @return ResponseEntity с кодом состояния 201 (Created) при успешной регистрации или 400 (Bad Request) при ошибке
      */
-    @Operation(summary = "Регистрация пользователя", description = "Метод для регистрации нового пользователя.")
+    @Operation(summary = "Регистрация пользователя",
+            description = "Метод для регистрации нового пользователя.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Пользователь успешно зарегистрирован"),
             @ApiResponse(responseCode = "400", description = "Ошибка регистрации")
