@@ -1,5 +1,6 @@
 package ru.skypro.homework.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -25,4 +26,14 @@ public class AdvertisementEntity {
 
     @Column(name = "nn_price")
     private Integer price;
+
+    @ManyToOne
+    @JoinColumn(name = "id_user")
+    @JsonIgnore
+    private UserEntity user;
+
+    @ManyToOne
+    @JoinColumn(name = "id_image")
+    @JsonIgnore
+    private ImageEntity image;
 }
