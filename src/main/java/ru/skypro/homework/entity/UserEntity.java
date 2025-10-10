@@ -1,5 +1,6 @@
 package ru.skypro.homework.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -32,6 +33,8 @@ public class UserEntity {
     @Column(name = "nm_role", nullable = false, length = 10)
     private String role;
 
-    @Column(name = "id_image")
-    private Long imageId;
+    @ManyToOne
+    @JoinColumn(name = "id_image")
+    @JsonIgnore
+    private ImageEntity image;
 }
