@@ -11,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import ru.skypro.homework.dto.Ad;
 import ru.skypro.homework.dto.Ads;
 import ru.skypro.homework.dto.CreateOrUpdateAd;
@@ -107,10 +108,11 @@ public class AdvertisementController {
 
     /**
      * Обновление информации об объявлении
-     * @param id Идентификатор объявления
+     *
+     * @param id               Идентификатор объявления
      * @param createOrUpdateAd Обновляемые поля объявления
      * @return информация об объявлении
-    */
+     */
     @PatchMapping("/{id}")
     @Operation(summary = "Обновление информации об объявлении",
             description = "Обновление информации об объявлении")
@@ -124,5 +126,32 @@ public class AdvertisementController {
     public ResponseEntity<Ad> updateAdvertisementInfo(@PathVariable("id") Long id,
                                                       @RequestBody CreateOrUpdateAd createOrUpdateAd) {
         return ResponseEntity.ok(advertisementService.updateAdvertisementInfo(id, createOrUpdateAd));
+    }
+
+    /**
+     * Обновление картинки объявления
+     *
+     * @param id    Идентификатор объявления
+     * @param image Картинка
+     */
+    @PatchMapping("/{id}/image")
+    @Operation(summary = "Обновление картинки объявления",
+            description = "Обновление картинки объявления")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "OK",
+                    content = @Content(schema = @Schema(implementation = AdvertisementService.class))),
+            @ApiResponse(responseCode = "401", description = "Пользователь не зарегистрирован в системе"),
+            @ApiResponse(responseCode = "403", description = "Пользователь не имеет доступа к контенту"),
+            @ApiResponse(responseCode = "404", description = "Объявление не найдено")
+    })
+    public ResponseEntity<Void> updateAdvertisementImage(@PathVariable("id") Long id,
+                                                         @RequestBody MultipartFile image) {
+        try {
+            return advertisementService.updateAdvertisementImage(id, image) ?
+                    ResponseEntity.ok().build() :
+                    ResponseEntity.notFound().build();
+        } catch (Exception e) {
+            return ResponseEntity.notFound().build();
+        }
     }
 }
