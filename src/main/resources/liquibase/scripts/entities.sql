@@ -57,3 +57,13 @@ create table public.tbl_comment(
 
 create index comment_i$1 on public.tbl_comment(id_advertisement);
 create index comment_i$2 on public.tbl_comment(id_author);
+
+-- changeset mikhail.belyaev:2
+
+alter table public.tbl_image
+    add column nm_name varchar(20) not null;
+
+-- changeset mikhail.belyaev:3
+
+alter table public.tbl_image
+    rename column nm_name to nm_image;
