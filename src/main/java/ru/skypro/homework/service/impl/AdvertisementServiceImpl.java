@@ -1,16 +1,22 @@
 package ru.skypro.homework.service.impl;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 import ru.skypro.homework.dto.Ad;
 import ru.skypro.homework.dto.Ads;
 import ru.skypro.homework.dto.CreateOrUpdateAd;
 import ru.skypro.homework.dto.ExtendedAd;
 import ru.skypro.homework.service.AdvertisementService;
+import ru.skypro.homework.service.ImageService;
 
 import java.util.List;
 
+@RequiredArgsConstructor
 @Service
 public class AdvertisementServiceImpl implements AdvertisementService {
+    ImageService imageService;
+
     @Override
     public ExtendedAd getAdvertisementInfo(Long id) {
         return new ExtendedAd(0L, "string", "string", "string", "string", "string", "string", 0, "string");
@@ -34,5 +40,11 @@ public class AdvertisementServiceImpl implements AdvertisementService {
     @Override
     public Ad updateAdvertisementInfo(Long id, CreateOrUpdateAd createOrUpdateAd) {
         return new Ad(0L, "string", "string", createOrUpdateAd.getPrice(), createOrUpdateAd.getTitle());
+    }
+
+    @Override
+    public Boolean updateAdvertisementImage(Long id, MultipartFile image) throws Exception {
+        imageService.saveImage(image);
+        return true;
     }
 }
