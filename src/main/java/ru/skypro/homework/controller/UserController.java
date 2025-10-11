@@ -17,7 +17,7 @@ import org.springframework.web.multipart.MultipartFile;
 import ru.skypro.homework.dto.NewPassword;
 import ru.skypro.homework.dto.UpdateUser;
 import ru.skypro.homework.dto.User;
-import ru.skypro.homework.service.ImageService;
+import ru.skypro.homework.service.impl.ImageServiceImpl;
 import ru.skypro.homework.service.UserService;
 
 import java.io.IOException;
@@ -37,7 +37,7 @@ import java.io.IOException;
 public class UserController {
 
     private final UserService userService;
-    private final ImageService imageService;
+    private final ImageServiceImpl imageService;
 
     /**
      * Обновляет пароль текущего авторизованного пользователя.
