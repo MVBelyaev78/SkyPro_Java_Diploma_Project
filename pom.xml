@@ -70,11 +70,11 @@
       <groupId>org.liquibase</groupId>
       <artifactId>liquibase-core</artifactId>
     </dependency>
-    <dependency>
+    <!--<dependency>
       <groupId>org.mapstruct</groupId>
       <artifactId>mapstruct</artifactId>
-      <version>1.6.0.Beta1</version>
-    </dependency>
+      <version>1.6.3</version>
+    </dependency>-->
 
   </dependencies>
 
@@ -86,20 +86,20 @@
         <configuration>
         </configuration>
       </plugin>
-      <plugin>
+      <!--<plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
-        <version>3.11.0</version>
+        <version>3.8.1</version>
         <configuration>
           <annotationProcessorPaths>
             <path>
               <groupId>org.mapstruct</groupId>
               <artifactId>mapstruct-processor</artifactId>
-              <version>1.6.0.Beta1</version>
+              <version>1.6.3</version>
             </path>
           </annotationProcessorPaths>
         </configuration>
-      </plugin>
+      </plugin>-->
 
     </plugins>
   </build>
