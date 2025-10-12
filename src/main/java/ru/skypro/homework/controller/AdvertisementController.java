@@ -175,8 +175,7 @@ public class AdvertisementController {
     @ApiResponses({
             @ApiResponse(responseCode = "201", description = "Created",
                     content = @Content(schema = @Schema(implementation = AdvertisementService.class))),
-            @ApiResponse(responseCode = "401", description = "Unauthorized",
-                    content = @Content(mediaType = ""))
+            @ApiResponse(responseCode = "401", description = "Unauthorized")
     })
     public ResponseEntity<Ad> createAdvertisement(@RequestBody CreateOrUpdateAd createOrUpdateAd,
                                                   @RequestBody MultipartFile image) {
