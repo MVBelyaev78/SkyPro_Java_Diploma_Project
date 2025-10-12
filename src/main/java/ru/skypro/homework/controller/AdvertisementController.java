@@ -97,8 +97,7 @@ public class AdvertisementController {
     @Operation(summary = "Удаление объявления",
             description = "Удаление объявления")
     @ApiResponses({
-            @ApiResponse(responseCode = "204", description = "No Content",
-                    content = @Content(schema = @Schema(implementation = AdvertisementService.class))),
+            @ApiResponse(responseCode = "204", description = "No Content"),
             @ApiResponse(responseCode = "401", description = "Unauthorized"),
             @ApiResponse(responseCode = "403", description = "Forbidden"),
             @ApiResponse(responseCode = "404", description = "Not found")
