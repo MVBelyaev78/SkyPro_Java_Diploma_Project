@@ -97,11 +97,11 @@ public class AdvertisementController {
     @Operation(summary = "Удаление объявления",
             description = "Удаление объявления")
     @ApiResponses({
-            @ApiResponse(responseCode = "204", description = "Удаление выполнено успешно",
+            @ApiResponse(responseCode = "204", description = "No Content",
                     content = @Content(schema = @Schema(implementation = AdvertisementService.class))),
-            @ApiResponse(responseCode = "401", description = "Пользователь не зарегистрирован в системе"),
-            @ApiResponse(responseCode = "403", description = "Пользователь не имеет доступа к контенту"),
-            @ApiResponse(responseCode = "404", description = "Объявление не найдено")
+            @ApiResponse(responseCode = "401", description = "Unauthorized"),
+            @ApiResponse(responseCode = "403", description = "Forbidden"),
+            @ApiResponse(responseCode = "404", description = "Not found")
     })
     public ResponseEntity<Void> deleteAdvertisement(@PathVariable("id") Long id) {
         if (advertisementService.deleteAdvertisement(id)) {
