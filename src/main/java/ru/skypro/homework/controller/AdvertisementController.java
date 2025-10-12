@@ -41,7 +41,7 @@ public class AdvertisementController {
             description = "Получение подробной информации об объявлении")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "OK",
-                    content = @Content(schema = @Schema(implementation = AdvertisementService.class),
+                    content = @Content(schema = @Schema(implementation = ExtendedAd.class),
                             mediaType = MediaType.APPLICATION_JSON_VALUE)),
             @ApiResponse(responseCode = "401", description = "Unauthorized",
                     content = @Content(mediaType = "")),
@@ -63,7 +63,7 @@ public class AdvertisementController {
             description = "Получение краткой информации о каждом из всех объявлений в системе")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "OK",
-                    content = @Content(schema = @Schema(implementation = AdvertisementService.class),
+                    content = @Content(schema = @Schema(implementation = Ads.class),
                             mediaType = MediaType.APPLICATION_JSON_VALUE))
     })
     public ResponseEntity<Ads> getAllAdvertisements() {
@@ -80,8 +80,10 @@ public class AdvertisementController {
             description = "Получение краткой информации о каждом объявлении авторизованного пользователя")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "OK",
-                    content = @Content(schema = @Schema(implementation = AdvertisementService.class))),
-            @ApiResponse(responseCode = "401", description = "Пользователь не зарегистрирован в системе")
+                    content = @Content(schema = @Schema(implementation = Ads.class),
+                            mediaType = MediaType.APPLICATION_JSON_VALUE)),
+            @ApiResponse(responseCode = "401", description = "Unauthorized",
+                    content = @Content(mediaType = ""))
     })
     public ResponseEntity<Ads> getAdvertisementsOfAuthorizedUser() {
         return ResponseEntity.ok(advertisementService.getAdvertisementsOfAuthorizedUser());
@@ -122,7 +124,7 @@ public class AdvertisementController {
             description = "Обновление информации об объявлении")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "OK",
-                    content = @Content(schema = @Schema(implementation = AdvertisementService.class))),
+                    content = @Content(schema = @Schema(implementation = Ad.class))),
             @ApiResponse(responseCode = "401", description = "Unauthorized",
                     content = @Content(mediaType = "")),
             @ApiResponse(responseCode = "403", description = "Forbidden",
@@ -180,7 +182,7 @@ public class AdvertisementController {
             description = "Добавление объявления")
     @ApiResponses({
             @ApiResponse(responseCode = "201", description = "Created",
-                    content = @Content(schema = @Schema(implementation = AdvertisementService.class),
+                    content = @Content(schema = @Schema(implementation = Ad.class),
                             mediaType = MediaType.APPLICATION_JSON_VALUE)),
             @ApiResponse(responseCode = "401", description = "Unauthorized",
                     content = @Content(mediaType = ""))
