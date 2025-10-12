@@ -41,9 +41,12 @@ public class AdvertisementController {
             description = "Получение подробной информации об объявлении")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "OK",
-                    content = @Content(schema = @Schema(implementation = AdvertisementService.class))),
-            @ApiResponse(responseCode = "401", description = "Пользователь не зарегистрирован в системе"),
-            @ApiResponse(responseCode = "404", description = "Объявление не найдено")
+                    content = @Content(schema = @Schema(implementation = AdvertisementService.class),
+                            mediaType = MediaType.APPLICATION_JSON_VALUE)),
+            @ApiResponse(responseCode = "401", description = "Unauthorized",
+                    content = @Content(mediaType = "")),
+            @ApiResponse(responseCode = "404", description = "Not found",
+                    content = @Content(mediaType = ""))
     })
     @GetMapping("/{id}")
     public ResponseEntity<ExtendedAd> getAdvertisementInfo(@PathVariable("id") Long id) {
