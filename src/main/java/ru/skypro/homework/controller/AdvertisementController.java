@@ -123,9 +123,12 @@ public class AdvertisementController {
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "OK",
                     content = @Content(schema = @Schema(implementation = AdvertisementService.class))),
-            @ApiResponse(responseCode = "401", description = "Unauthorized"),
-            @ApiResponse(responseCode = "403", description = "Forbidden"),
-            @ApiResponse(responseCode = "404", description = "Not found")
+            @ApiResponse(responseCode = "401", description = "Unauthorized",
+                    content = @Content(mediaType = "")),
+            @ApiResponse(responseCode = "403", description = "Forbidden",
+                    content = @Content(mediaType = "")),
+            @ApiResponse(responseCode = "404", description = "Not found",
+                    content = @Content(mediaType = ""))
     })
     public ResponseEntity<Ad> updateAdvertisementInfo(@PathVariable("id") Long id,
                                                       @RequestBody CreateOrUpdateAd createOrUpdateAd) {
