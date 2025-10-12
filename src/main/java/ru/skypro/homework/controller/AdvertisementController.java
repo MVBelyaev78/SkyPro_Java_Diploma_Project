@@ -168,14 +168,15 @@ public class AdvertisementController {
     */
     @PostMapping(
             value = "",
-            consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
-            produces = MediaType.APPLICATION_JSON_VALUE)
+            consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @Operation(summary = "Добавление объявления",
             description = "Добавление объявления")
     @ApiResponses({
             @ApiResponse(responseCode = "201", description = "Created",
-                    content = @Content(schema = @Schema(implementation = AdvertisementService.class))),
-            @ApiResponse(responseCode = "401", description = "Unauthorized")
+                    content = @Content(schema = @Schema(implementation = AdvertisementService.class),
+                            mediaType = MediaType.APPLICATION_JSON_VALUE)),
+            @ApiResponse(responseCode = "401", description = "Unauthorized",
+                    content = @Content(mediaType = ""))
     })
     public ResponseEntity<Ad> createAdvertisement(@RequestBody CreateOrUpdateAd createOrUpdateAd,
                                                   @RequestBody MultipartFile image) {
