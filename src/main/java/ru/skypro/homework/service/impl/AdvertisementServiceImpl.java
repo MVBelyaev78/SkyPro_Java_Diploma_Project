@@ -47,4 +47,10 @@ public class AdvertisementServiceImpl implements AdvertisementService {
         imageService.saveImage(image);
         return true;
     }
+
+    @Override
+    public Ad createAdvertisement(CreateOrUpdateAd createOrUpdateAd, MultipartFile image) throws Exception {
+        imageService.saveImage(image);
+        return new Ad(0L, "string", "string", createOrUpdateAd.getPrice(), createOrUpdateAd.getTitle());
+    }
 }

@@ -154,4 +154,28 @@ public class AdvertisementController {
             return ResponseEntity.notFound().build();
         }
     }
+
+    /**
+     * Добавление объявления
+     *
+     * @param createOrUpdateAd Поля объявления
+     * @param image Картинка
+     * @return информация об объявлении
+    */
+    @PostMapping("")
+    @Operation(summary = "Добавление объявления",
+            description = "Добавление объявления")
+    @ApiResponses({
+            @ApiResponse(responseCode = "201", description = "Создано успешно",
+                    content = @Content(schema = @Schema(implementation = AdvertisementService.class))),
+            @ApiResponse(responseCode = "401", description = "Пользователь не зарегистрирован в системе")
+    })
+    public ResponseEntity<Ad> createAdvertisement(@RequestBody CreateOrUpdateAd createOrUpdateAd,
+                                                  @RequestBody MultipartFile image) {
+        try {
+            return ResponseEntity.ok(advertisementService.createAdvertisement(createOrUpdateAd, image));
+        } catch (Exception e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
 }
