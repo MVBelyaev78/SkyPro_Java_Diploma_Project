@@ -18,4 +18,6 @@ public interface AdvertisementService {
     Ad updateAdvertisementInfo(Long id, CreateOrUpdateAd createOrUpdateAd);
 
     Boolean updateAdvertisementImage(Long id, MultipartFile image) throws Exception;
+
+    Ad createAdvertisement(CreateOrUpdateAd createOrUpdateAd, MultipartFile image) throws Exception;
 }
