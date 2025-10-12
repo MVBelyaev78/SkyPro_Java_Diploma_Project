@@ -13,10 +13,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import ru.skypro.homework.dto.Ad;
-import ru.skypro.homework.dto.Ads;
-import ru.skypro.homework.dto.CreateOrUpdateAd;
-import ru.skypro.homework.dto.ExtendedAd;
+import ru.skypro.homework.dto.*;
 import ru.skypro.homework.service.AdvertisementService;
 
 /**
@@ -148,7 +145,7 @@ public class AdvertisementController {
             description = "Обновление картинки объявления")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "OK",
-                    content = @Content(schema = @Schema(implementation = AdvertisementService.class),
+                    content = @Content(schema = @Schema(implementation = CreateOrUpdateComment.class),
                                 mediaType = MediaType.APPLICATION_OCTET_STREAM_VALUE)),
             @ApiResponse(responseCode = "401", description = "Unauthorized",
                     content = @Content(mediaType = "")),
@@ -157,12 +154,10 @@ public class AdvertisementController {
             @ApiResponse(responseCode = "404", description = "Not found",
                     content = @Content(mediaType = ""))
     })
-    public ResponseEntity<Void> updateAdvertisementImage(@PathVariable("id") Long id,
-                                                         @RequestBody MultipartFile image) {
+    public ResponseEntity<CreateOrUpdateComment> updateAdvertisementImage(@PathVariable("id") Long id,
+                                                                          @RequestBody MultipartFile image) {
         try {
-            return advertisementService.updateAdvertisementImage(id, image) ?
-                    ResponseEntity.ok().build() :
-                    ResponseEntity.notFound().build();
+            return ResponseEntity.ok(advertisementService.updateAdvertisementImage(id, image));
         } catch (Exception e) {
             return ResponseEntity.notFound().build();
         }
