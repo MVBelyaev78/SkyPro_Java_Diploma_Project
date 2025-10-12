@@ -163,7 +163,7 @@ public class AdvertisementController {
      * @param image Картинка
      * @return информация об объявлении
     */
-    @PostMapping("")
+    @PostMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Добавление объявления",
             description = "Добавление объявления")
     @ApiResponses({
