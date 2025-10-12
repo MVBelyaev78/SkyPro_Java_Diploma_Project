@@ -55,12 +55,13 @@ public class AdvertisementController {
      *
      * @return Набор краткой информации об объявлениях
      */
-    @GetMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping("")
     @Operation(summary = "Получение всех объявлений",
             description = "Получение краткой информации о каждом из всех объявлений в системе")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "OK",
-                    content = @Content(schema = @Schema(implementation = AdvertisementService.class)))
+                    content = @Content(schema = @Schema(implementation = AdvertisementService.class),
+                            mediaType = MediaType.APPLICATION_JSON_VALUE))
     })
     public ResponseEntity<Ads> getAllAdvertisements() {
         return ResponseEntity.ok(advertisementService.getAllAdvertisements());
