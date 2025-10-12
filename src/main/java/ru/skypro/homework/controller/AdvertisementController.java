@@ -26,7 +26,7 @@ import ru.skypro.homework.service.AdvertisementService;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/ads")
-@Tag(name = "Advertisement Controller", description = "API для управления объявлениями")
+@Tag(name = "Объявления", description = "API для управления объявлениями")
 public class AdvertisementController {
     private final AdvertisementService advertisementService;
 
