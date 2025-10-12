@@ -163,13 +163,16 @@ public class AdvertisementController {
      * @param image Картинка
      * @return информация об объявлении
     */
-    @PostMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(
+            value = "",
+            consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Добавление объявления",
             description = "Добавление объявления")
     @ApiResponses({
-            @ApiResponse(responseCode = "201", description = "Создано успешно",
+            @ApiResponse(responseCode = "201", description = "Created",
                     content = @Content(schema = @Schema(implementation = AdvertisementService.class))),
-            @ApiResponse(responseCode = "401", description = "Пользователь не зарегистрирован в системе")
+            @ApiResponse(responseCode = "401", description = "Unauthorized")
     })
     public ResponseEntity<Ad> createAdvertisement(@RequestBody CreateOrUpdateAd createOrUpdateAd,
                                                   @RequestBody MultipartFile image) {
