@@ -141,15 +141,19 @@ public class AdvertisementController {
      * @param id    Идентификатор объявления
      * @param image Картинка
      */
-    @PatchMapping("/{id}/image")
+    @PatchMapping(value = "/{id}/image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @Operation(summary = "Обновление картинки объявления",
             description = "Обновление картинки объявления")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "OK",
-                    content = @Content(schema = @Schema(implementation = AdvertisementService.class))),
-            @ApiResponse(responseCode = "401", description = "Пользователь не зарегистрирован в системе"),
-            @ApiResponse(responseCode = "403", description = "Пользователь не имеет доступа к контенту"),
-            @ApiResponse(responseCode = "404", description = "Объявление не найдено")
+                    content = @Content(schema = @Schema(implementation = AdvertisementService.class),
+                                mediaType = MediaType.APPLICATION_OCTET_STREAM_VALUE)),
+            @ApiResponse(responseCode = "401", description = "Unauthorized",
+                    content = @Content(mediaType = "")),
+            @ApiResponse(responseCode = "403", description = "Forbidden",
+                    content = @Content(mediaType = "")),
+            @ApiResponse(responseCode = "404", description = "Not found",
+                    content = @Content(mediaType = ""))
     })
     public ResponseEntity<Void> updateAdvertisementImage(@PathVariable("id") Long id,
                                                          @RequestBody MultipartFile image) {
