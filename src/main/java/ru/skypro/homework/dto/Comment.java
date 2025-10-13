@@ -22,7 +22,7 @@ public class Comment {
      * Идентификатор автора комментария
      */
     @Schema(description = "id автора комментария")
-    private int author;
+    private Long author;
 
     /**
      * Ссылка на аватарку автора
@@ -40,7 +40,7 @@ public class Comment {
      * Время создания комментария
      */
     @Schema(description = "дата и время создания комментария в миллисекундах с 00:00:00 01.01.1970")
-    private int createAt;
+    private Long createAt;
 
     /**
      * Идентификатор комментария

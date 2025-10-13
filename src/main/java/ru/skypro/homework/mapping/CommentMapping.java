@@ -1,19 +1,25 @@
 package ru.skypro.homework.mapping;
 
+import lombok.RequiredArgsConstructor;
 import ru.skypro.homework.dto.Comment;
 import ru.skypro.homework.entity.AdvertisementEntity;
 import ru.skypro.homework.entity.CommentEntity;
 import ru.skypro.homework.entity.UserEntity;
+import ru.skypro.homework.repository.AdvertisementRepository;
+import ru.skypro.homework.repository.UserRepository;
 
 import java.time.Instant;
 
+@RequiredArgsConstructor
 public class CommentMapping {
+    private final UserRepository userRepository;
+    private final AdvertisementRepository advertisementRepository;
 
     public static Comment fromEntity(CommentEntity entity) {
         UserEntity author = entity.getIdAuthor();
         return new Comment(
-                author.getId_user(),
-                author.getImagePath(),
+                author.getId(),
+                author.getPhone(),
                 author.getFirstName(),
                 entity.getDtCreateAsMillis(),
                 entity.getIdComment(),
@@ -21,7 +27,7 @@ public class CommentMapping {
         );
     }
 
-    public CommentEntity toEntity(Comment comment, Integer adId) {
+    public CommentEntity toEntity(Comment comment, Long adId) {
         UserEntity author = userRepository.findById(comment.getAuthor()).orElseThrow();
         AdvertisementEntity advertisement = advertisementRepository.findById(adId).orElseThrow();
 

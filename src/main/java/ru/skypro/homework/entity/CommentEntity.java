@@ -1,11 +1,11 @@
 package ru.skypro.homework.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.time.Instant;
 
 
 /**
@@ -26,7 +26,7 @@ public class CommentEntity {
     @Id
     @GeneratedValue
     @Column(name = "id_comment")
-    private int idComment;
+    private Integer idComment;
 
     /**
      * Текст комментария
@@ -38,14 +38,13 @@ public class CommentEntity {
      * Время создания комментария
      */
     @Column(name = "dt_create")
-    private int dtCreate;
+    private Instant dtCreate;
 
     /**
      * Идентификатор объявления
      */
     @ManyToOne
     @JoinColumn(name = "id_advertisement", nullable = false)
-    @JsonIgnore
     private AdvertisementEntity idAdvertisement;
 
     /**
@@ -53,6 +52,9 @@ public class CommentEntity {
      */
     @ManyToOne
     @JoinColumn(name = "id_author", nullable = false)
-    @JsonIgnore
     private UserEntity idAuthor;
+
+    public Long getDtCreateAsMillis() {
+        return dtCreate != null ? dtCreate.toEpochMilli() : 0;
+    }
 }
