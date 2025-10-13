@@ -1,7 +1,7 @@
 package ru.skypro.homework.service;
 
-import ru.skypro.homework.dto.Ads;
-import ru.skypro.homework.dto.ExtendedAd;
+import org.springframework.web.multipart.MultipartFile;
+import ru.skypro.homework.dto.*;
 
 public interface AdvertisementService {
     ExtendedAd getAdvertisementInfo(Long id);
@@ -11,4 +11,10 @@ public interface AdvertisementService {
     Ads getAdvertisementsOfAuthorizedUser();
 
     Boolean deleteAdvertisement(Long id);
+
+    Ad updateAdvertisementInfo(Long id, CreateOrUpdateAd createOrUpdateAd);
+
+    CreateOrUpdateComment updateAdvertisementImage(Long id, MultipartFile image) throws Exception;
+
+    Ad createAdvertisement(CreateOrUpdateAd createOrUpdateAd, MultipartFile image) throws Exception;
 }
