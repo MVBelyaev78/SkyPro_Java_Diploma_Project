@@ -1,5 +1,6 @@
 package ru.skypro.homework.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -45,6 +46,7 @@ public class CommentEntity {
      */
     @ManyToOne
     @JoinColumn(name = "id_advertisement", nullable = false)
+    @JsonIgnore
     private AdvertisementEntity idAdvertisement;
 
     /**
@@ -52,6 +54,7 @@ public class CommentEntity {
      */
     @ManyToOne
     @JoinColumn(name = "id_author", nullable = false)
+    @JsonIgnore
     private UserEntity idAuthor;
 
     public Long getDtCreateAsMillis() {
