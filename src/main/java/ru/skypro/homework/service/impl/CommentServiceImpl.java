@@ -15,7 +15,7 @@ public class CommentServiceImpl implements CommentService {
     @Override
     public Comments getComments(int id) {
         List<Comment> response = List.of(
-                new Comment(1, "img-url", "firstname", 999, 1, "text")
+                new Comment(1L, "img-url", "firstname", 999L, 1, "text")
         );
 
         return new Comments(response.size(), response);
@@ -23,7 +23,7 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     public Comment addComment(int id, CreateOrUpdateComment comment) {
-        Comment response = new Comment(1, "img-url", "firstname", 999, 1, comment.getText());
+        Comment response = new Comment(1L, "img-url", "firstname", 999L, 1, comment.getText());
 
         return response;
     }
@@ -34,7 +34,7 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     public Comment updateComment(int adId, int commentId, CreateOrUpdateComment comment) {
-        Comment response = new Comment(1, "img-url", "firstname", 999, commentId, comment.getText());
+        Comment response = new Comment(1L, "img-url", "firstname", 999L, commentId, comment.getText());
 
         return response;
     }
