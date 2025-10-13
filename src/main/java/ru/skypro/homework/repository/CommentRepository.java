@@ -6,12 +6,6 @@ import ru.skypro.homework.entity.CommentEntity;
 
 import java.util.List;
 
-/**
- * Репозиторий для работы с CommentEntity
- *
- * @author Maxim
- * @version 1.0
- */
 @Repository
 public interface CommentRepository extends JpaRepository<CommentEntity, Integer> {
     /**
@@ -20,7 +14,7 @@ public interface CommentRepository extends JpaRepository<CommentEntity, Integer>
      * @param idAdvertisement ID объявления
      * @return список комментариев
      */
-    List<CommentEntity> findAllByIdAdvertisement_IdAdvertisement(int idAdvertisement);
+    List<CommentEntity> findAllByIdAdvertisement_Id(Long idAdvertisement);
 
     /**
      * Удаляет комментарий по ID комментария и ID объявления
@@ -28,5 +22,5 @@ public interface CommentRepository extends JpaRepository<CommentEntity, Integer>
      * @param commentId       ID комментария
      * @param idAdvertisement ID объявления
      */
-    void deleteByIdCommentAndIdAdvertisement_IdAdvertisement(int commentId, int idAdvertisement);
+    void deleteByIdCommentAndIdAdvertisement_Id(int commentId, Long idAdvertisement);
 }
