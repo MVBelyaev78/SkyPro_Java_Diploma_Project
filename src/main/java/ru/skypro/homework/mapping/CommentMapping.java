@@ -1,6 +1,7 @@
 package ru.skypro.homework.mapping;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Component;
 import ru.skypro.homework.dto.Comment;
 import ru.skypro.homework.entity.AdvertisementEntity;
 import ru.skypro.homework.entity.CommentEntity;
@@ -10,6 +11,7 @@ import ru.skypro.homework.repository.UserRepository;
 
 import java.time.Instant;
 
+@Component
 @RequiredArgsConstructor
 public class CommentMapping {
     private final UserRepository userRepository;
