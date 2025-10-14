@@ -18,6 +18,9 @@ public class ImageEntity {
     @Column(name = "id_image")
     private Long id;
 
+    @Column(name ="nm_image")
+    private String name;
+
     @Column(name ="nm_file_path")
     private String filePath;
 
