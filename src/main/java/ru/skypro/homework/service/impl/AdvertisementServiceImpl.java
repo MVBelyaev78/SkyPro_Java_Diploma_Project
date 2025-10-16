@@ -1,22 +1,35 @@
 package ru.skypro.homework.service.impl;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import ru.skypro.homework.dto.*;
+import ru.skypro.homework.entity.AdvertisementEntity;
+import ru.skypro.homework.mapping.AdvertisementMapping;
+import ru.skypro.homework.repository.AdvertisementRepository;
 import ru.skypro.homework.service.AdvertisementService;
 import ru.skypro.homework.service.ImageService;
 
 import java.util.List;
+import java.util.Optional;
 
-@RequiredArgsConstructor
+//@RequiredArgsConstructor
 @Service
 public class AdvertisementServiceImpl implements AdvertisementService {
+    @Autowired
+    AdvertisementRepository repository;
+
+    @Autowired
+    AdvertisementMapping mapping;
+
+    @Autowired
     ImageService imageService;
 
     @Override
-    public ExtendedAd getAdvertisementInfo(Long id) {
-        return new ExtendedAd(0L, "string", "string", "string", "string", "string", "string", 0, "string");
+    public Optional<ExtendedAd> getAdvertisementInfo(Long id) {
+        final Optional<AdvertisementEntity> entity = repository.findById(id);
+        return mapping.getExtendedAdFromEntity(entity);
     }
 
     @Override
