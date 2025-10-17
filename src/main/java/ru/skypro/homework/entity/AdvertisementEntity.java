@@ -4,13 +4,16 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import javax.persistence.*;
+import java.util.Optional;
 
 @Data
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
+@Setter
 @Table(name = "tbl_advertisement", schema = "public")
 public class AdvertisementEntity {
     @Id
@@ -36,4 +39,8 @@ public class AdvertisementEntity {
     @JoinColumn(name = "id_image")
     @JsonIgnore
     private ImageEntity image;
+
+    public Optional<ImageEntity> getImage() {
+        return Optional.ofNullable(image);
+    }
 }

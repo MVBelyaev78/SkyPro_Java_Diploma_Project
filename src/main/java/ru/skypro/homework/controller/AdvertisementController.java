@@ -16,6 +16,8 @@ import org.springframework.web.multipart.MultipartFile;
 import ru.skypro.homework.dto.*;
 import ru.skypro.homework.service.AdvertisementService;
 
+import java.util.Optional;
+
 /**
  * API для управления объявлениями
  */
@@ -46,8 +48,13 @@ public class AdvertisementController {
                     content = @Content(mediaType = ""))
     })
     @GetMapping("/{id}")
-    public ResponseEntity<ExtendedAd> getAdvertisementInfo(@PathVariable("id") Long id) {
-        return ResponseEntity.ok(advertisementService.getAdvertisementInfo(id));
+    public ResponseEntity<?> getAdvertisementInfo(@PathVariable("id") Long id) {
+        try {
+            return ResponseEntity.ok(advertisementService.getAdvertisementInfo(id)
+                    .orElseThrow(IllegalArgumentException::new));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
     }
 
     /**
@@ -131,7 +138,12 @@ public class AdvertisementController {
     })
     public ResponseEntity<Ad> updateAdvertisementInfo(@PathVariable("id") Long id,
                                                       @RequestBody CreateOrUpdateAd createOrUpdateAd) {
-        return ResponseEntity.ok(advertisementService.updateAdvertisementInfo(id, createOrUpdateAd));
+        try {
+            return ResponseEntity.ok(advertisementService.updateAdvertisementInfo(id, createOrUpdateAd)
+                    .orElseThrow(IllegalArgumentException::new));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
     }
 
     /**
