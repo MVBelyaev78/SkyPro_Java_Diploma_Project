@@ -1,31 +1,71 @@
 package ru.skypro.homework.service.impl;
 
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import ru.skypro.homework.dto.Comment;
 import ru.skypro.homework.dto.Comments;
 import ru.skypro.homework.dto.CreateOrUpdateComment;
+import ru.skypro.homework.entity.AdvertisementEntity;
+import ru.skypro.homework.entity.CommentEntity;
+import ru.skypro.homework.entity.UserEntity;
+import ru.skypro.homework.mapping.CommentMapping;
+import ru.skypro.homework.repository.AdvertisementRepository;
+import ru.skypro.homework.repository.CommentRepository;
+import ru.skypro.homework.repository.UserRepository;
 import ru.skypro.homework.service.CommentService;
 
+import java.time.Instant;
 import java.util.List;
+import java.util.stream.Collectors;
 
-
+@Slf4j
 @Service
+@RequiredArgsConstructor
 public class CommentServiceImpl implements CommentService {
+
+    private final UserRepository userRepository;
+    private final AdvertisementRepository advertisementRepository;
+    private final CommentRepository commentRepository;
+    private final CommentMapping commentMapping;
 
     @Override
     public Comments getComments(int id) {
-        List<Comment> response = List.of(
-                new Comment(1L, "img-url", "firstname", 999L, 1, "text")
-        );
+        log.info("Получение комментариев для объявления с ID: {}", id);
 
-        return new Comments(response.size(), response);
+        List<CommentEntity> commentEntities = commentRepository.findAllByIdAdvertisement_Id((long) id);
+        List<Comment> comments = commentEntities.stream()
+                .map(commentMapping::fromEntity)
+                .collect(Collectors.toList());
+
+        return new Comments(comments.size(), comments);
     }
 
     @Override
     public Comment addComment(int id, CreateOrUpdateComment comment) {
-        Comment response = new Comment(1L, "img-url", "firstname", 999L, 1, comment.getText());
+        log.info("Добавление комментария к объявлению с ID: {}", id);
 
-        return response;
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+
+        UserEntity author = userRepository.findByEmail(username)
+                .orElseThrow(() -> new RuntimeException("Пользователь " + username + " не найден"));
+
+        AdvertisementEntity advertisement = advertisementRepository.findById((long) id)
+                .orElseThrow(() -> new RuntimeException("Объявление с ID " + id + " не найдено"));
+
+        CommentEntity commentEntity = new CommentEntity();
+        commentEntity.setNmText(comment.getText());
+        commentEntity.setDtCreate(Instant.now());
+        commentEntity.setIdAdvertisement(advertisement);
+        commentEntity.setIdAuthor(author);
+
+        CommentEntity savedComment = commentRepository.save(commentEntity);
+        log.info("Комментарий успешно добавлен");
+
+        return commentMapping.fromEntity(savedComment);
     }
 
     @Override
@@ -34,8 +74,25 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     public Comment updateComment(int adId, int commentId, CreateOrUpdateComment comment) {
-        Comment response = new Comment(1L, "img-url", "firstname", 999L, commentId, comment.getText());
+        log.info("Обновление комментария с ID: {} для объявления с ID: {}", commentId, adId);
 
-        return response;
+        CommentEntity commentEntity = commentRepository.findById(commentId)
+                .orElseThrow(() -> new RuntimeException("Комментарий с ID " + commentId + " не найден"));
+
+        if (!commentEntity.getIdAdvertisement().getId().equals((long) adId)) {
+            throw new RuntimeException("Комментарий не принадлежит указанному пользователю");
+        }
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+        UserEntity currentUser = userRepository.findByEmail(username)
+                .orElseThrow(() -> new RuntimeException("Пользователь не найден"));
+
+        commentEntity.setNmText(comment.getText());
+
+        CommentEntity updatedComment = commentRepository.save(commentEntity);
+        log.info("Комментарий с ID: {} успешно сохранен", commentId);
+
+        return commentMapping.fromEntity(updatedComment);
     }
 }

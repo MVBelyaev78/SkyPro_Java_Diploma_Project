@@ -17,7 +17,7 @@ public class CommentMapping {
     private final UserRepository userRepository;
     private final AdvertisementRepository advertisementRepository;
 
-    public static Comment fromEntity(CommentEntity entity) {
+    public Comment fromEntity(CommentEntity entity) {
         UserEntity author = entity.getIdAuthor();
         return new Comment(
                 author.getId(),
