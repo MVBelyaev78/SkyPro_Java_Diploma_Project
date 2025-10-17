@@ -138,7 +138,12 @@ public class AdvertisementController {
     })
     public ResponseEntity<Ad> updateAdvertisementInfo(@PathVariable("id") Long id,
                                                       @RequestBody CreateOrUpdateAd createOrUpdateAd) {
-        return ResponseEntity.ok(advertisementService.updateAdvertisementInfo(id, createOrUpdateAd));
+        try {
+            return ResponseEntity.ok(advertisementService.updateAdvertisementInfo(id, createOrUpdateAd)
+                    .orElseThrow(IllegalArgumentException::new));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
     }
 
     /**

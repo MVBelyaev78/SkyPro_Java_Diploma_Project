@@ -14,7 +14,7 @@ public interface AdvertisementService {
 
     Boolean deleteAdvertisement(Long id);
 
-    Ad updateAdvertisementInfo(Long id, CreateOrUpdateAd createOrUpdateAd);
+    Optional<Ad> updateAdvertisementInfo(Long id, CreateOrUpdateAd createOrUpdateAd);
 
     CreateOrUpdateComment updateAdvertisementImage(Long id, MultipartFile image) throws Exception;
 

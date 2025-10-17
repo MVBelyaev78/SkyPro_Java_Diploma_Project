@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import ru.skypro.homework.dto.*;
+import ru.skypro.homework.entity.AdvertisementEntity;
 import ru.skypro.homework.mapping.AdvertisementMapping;
 import ru.skypro.homework.repository.AdvertisementRepository;
 import ru.skypro.homework.service.AdvertisementService;
@@ -44,8 +45,14 @@ public class AdvertisementServiceImpl implements AdvertisementService {
     }
 
     @Override
-    public Ad updateAdvertisementInfo(Long id, CreateOrUpdateAd createOrUpdateAd) {
-        return new Ad(0L, "string", "string", createOrUpdateAd.getPrice(), createOrUpdateAd.getTitle());
+    public Optional<Ad> updateAdvertisementInfo(Long id, CreateOrUpdateAd createOrUpdateAd) {
+        final Optional<AdvertisementEntity> entity = repository.findById(id);
+        entity.ifPresent(e -> {
+            e.setTitle(createOrUpdateAd.getTitle());
+            e.setPrice(createOrUpdateAd.getPrice());
+            e.setDescription(createOrUpdateAd.getDescription());
+        });
+        return entity.map(e -> mapping.getAdFromEntity(repository.save(e)));
     }
 
     @Override
