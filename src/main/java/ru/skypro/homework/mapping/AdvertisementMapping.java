@@ -15,7 +15,7 @@ public class AdvertisementMapping {
     public Ad getAdFromEntity(AdvertisementEntity entity) {
         return new Ad(entity.getId(),
                 entity.getUser().getLastName(),
-                entity.getImage() != null ? entity.getImage().getName() : null,
+                "",//entity.getImage() != null ? entity.getImage().getName() : null,
                 entity.getPrice(),
                 entity.getTitle());
     }
