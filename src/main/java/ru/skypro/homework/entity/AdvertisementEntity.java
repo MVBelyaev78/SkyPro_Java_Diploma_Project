@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.Optional;
 
 @Data
 @Entity
@@ -36,4 +37,8 @@ public class AdvertisementEntity {
     @JoinColumn(name = "id_image")
     @JsonIgnore
     private ImageEntity image;
+
+    public Optional<ImageEntity> getImage() {
+        return Optional.ofNullable(image);
+    }
 }

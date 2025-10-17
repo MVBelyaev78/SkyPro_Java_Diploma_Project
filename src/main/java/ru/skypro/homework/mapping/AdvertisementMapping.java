@@ -35,7 +35,7 @@ public class AdvertisementMapping {
                 e.getUser().getLastName(),
                 e.getDescription(),
                 e.getUser().getEmail(),
-                e.getImage() != null ? e.getImage().getName() : null,
+                e.getImage().isPresent() ? e.getImage().get().getName() : null,
                 e.getUser().getPhone(),
                 e.getPrice(),
                 e.getTitle()));
