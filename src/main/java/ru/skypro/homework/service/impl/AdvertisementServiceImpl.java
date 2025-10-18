@@ -66,11 +66,16 @@ public class AdvertisementServiceImpl implements AdvertisementService {
      * Удаляет объявление по его идентификатору.
      *
      * @param id идентификатор объявления
-     * @return true, если удаление прошло успешно
+     * @return true, если удаление прошло успешно, иначе false
      */
     @Override
     public Boolean deleteAdvertisement(Long id) {
-        return true;
+        // Проверяем, существует ли объявление с данным идентификатором
+        if (repository.existsById(id)) {
+            repository.deleteById(id); // Удаляем объявление из базы данных
+            return true; // Возвращаем true, если удаление прошло успешно
+        }
+        return false; // Возвращаем false, если объявления с данным идентификатором не существует
     }
 
     /**
@@ -105,18 +110,17 @@ public class AdvertisementServiceImpl implements AdvertisementService {
         return new CreateOrUpdateComment("string");
     }
 
-    /**
-     * Создает новое объявление.
-     *
-     * @param createOrUpdateAd объект с данными нового объявления
-     * @param image файл изображения для объявления
-     * @return созданный объект Ad
-     * @throws Exception если произошла ошибка при сохранении изображения
-     */
-    @Override
-    public Ad createAdvertisement(CreateOrUpdateAd createOrUpdateAd, MultipartFile image) throws Exception {
-        imageService.saveImage(image);
-        return new Ad(0L, "string", "string", createOrUpdateAd.getPrice(), createOrUpdateAd.getTitle());
-    }
+/**
+ * Создает новое объявление.
+ *
+ * @param createOrUpdateAd объект с данными нового объявления
+ * @param image файл изображения для объявления
+ * @return созданный объект Ad
+ * @throws Exception если произошла ошибка при сохранении изображения
+ */
+@Override
+public Ad createAdvertisement(CreateOrUpdateAd createOrUpdateAd, MultipartFile image) throws Exception {
+    imageService.saveImage(image);
+    return new Ad(0L, "string", "string", createOrUpdateAd.getPrice(), createOrUpdateAd.getTitle());
 }
-
+}
