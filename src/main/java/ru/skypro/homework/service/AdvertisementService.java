@@ -3,8 +3,10 @@ package ru.skypro.homework.service;
 import org.springframework.web.multipart.MultipartFile;
 import ru.skypro.homework.dto.*;
 
+import java.util.Optional;
+
 public interface AdvertisementService {
-    ExtendedAd getAdvertisementInfo(Long id);
+    Optional<ExtendedAd> getAdvertisementInfo(Long id);
 
     Ads getAllAdvertisements();
 
@@ -12,7 +14,7 @@ public interface AdvertisementService {
 
     Boolean deleteAdvertisement(Long id);
 
-    Ad updateAdvertisementInfo(Long id, CreateOrUpdateAd createOrUpdateAd);
+    Optional<Ad> updateAdvertisementInfo(Long id, CreateOrUpdateAd createOrUpdateAd);
 
     CreateOrUpdateComment updateAdvertisementImage(Long id, MultipartFile image) throws Exception;
 
