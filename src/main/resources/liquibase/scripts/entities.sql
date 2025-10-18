@@ -67,3 +67,9 @@ alter table public.tbl_image
 
 alter table public.tbl_image
     rename column nm_name to nm_image;
+
+-- changeset maxim:4
+ALTER TABLE public.tbl_user ADD COLUMN nm_password VARCHAR(100) NOT NULL DEFAULT 'temp';
+
+-- changeset maxim:5
+ALTER TABLE public.tbl_user ALTER COLUMN nm_password DROP DEFAULT;
