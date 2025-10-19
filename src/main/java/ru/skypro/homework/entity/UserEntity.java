@@ -33,6 +33,9 @@ public class UserEntity {
     @Column(name = "nm_role", nullable = false, length = 10)
     private String role;
 
+    @Column(name = "nm_password", nullable = false, length = 100)
+    private String password;
+
     @ManyToOne
     @JoinColumn(name = "id_image")
     @JsonIgnore
