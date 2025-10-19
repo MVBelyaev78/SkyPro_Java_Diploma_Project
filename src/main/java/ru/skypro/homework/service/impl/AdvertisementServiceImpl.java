@@ -1,12 +1,16 @@
 package ru.skypro.homework.service.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import ru.skypro.homework.dto.*;
 import ru.skypro.homework.entity.AdvertisementEntity;
+import ru.skypro.homework.entity.UserEntity;
 import ru.skypro.homework.mapping.AdvertisementMapping;
 import ru.skypro.homework.repository.AdvertisementRepository;
+import ru.skypro.homework.repository.UserRepository;
 import ru.skypro.homework.service.AdvertisementService;
 import ru.skypro.homework.service.ImageService;
 
@@ -27,6 +31,9 @@ public class AdvertisementServiceImpl implements AdvertisementService {
 
     @Autowired
     ImageService imageService;
+
+    @Autowired
+    UserRepository userRepository;
 
     /**
      * Получает информацию о конкретном объявлении по его идентификатору.
@@ -59,7 +66,15 @@ public class AdvertisementServiceImpl implements AdvertisementService {
      */
     @Override
     public Ads getAdvertisementsOfAuthorizedUser() {
-        return new Ads(1, List.of(new Ad(0L, "string", "string", 0, "string")));
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+
+        UserEntity author = userRepository.findByEmail(username)
+                .orElseThrow(() -> new RuntimeException("Пользователь " + username + " не найден"));
+
+        List<AdvertisementEntity> ads = repository.findByUserId(author.getId());
+
+        return mapping.getAdsFromEntities(ads);
     }
 
     /**
