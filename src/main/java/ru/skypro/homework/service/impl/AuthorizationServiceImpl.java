@@ -8,14 +8,13 @@ import ru.skypro.homework.entity.UserEntity;
 import ru.skypro.homework.repository.AdvertisementRepository;
 import ru.skypro.homework.repository.CommentRepository;
 import ru.skypro.homework.service.AuthorizationService;
-import ru.skypro.homework.service.CurrentUserService;
 
 @Service
 @RequiredArgsConstructor
 public class AuthorizationServiceImpl implements AuthorizationService {
     private final CommentRepository commentRepository;
     private final AdvertisementRepository advertisementRepository;
-    private final CurrentUserService currentUserService;
+    private final CurrentUserServiceImpl currentUserService;
 
     public boolean isCommentAuthor(int commentId) {
         CommentEntity comment = commentRepository.findById(commentId)
