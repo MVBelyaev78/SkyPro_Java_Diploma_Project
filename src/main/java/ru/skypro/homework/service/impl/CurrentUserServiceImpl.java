@@ -8,14 +8,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.skypro.homework.config.UserEntityDetails;
 import ru.skypro.homework.entity.UserEntity;
-import ru.skypro.homework.service.UserEntityDetailsService;
 
 
 @Service
 @Transactional
 @RequiredArgsConstructor
 public class CurrentUserServiceImpl {
-    private final UserEntityDetailsService userEntityDetailsService;
+    private final UserEntityDetailsServiceImpl userEntityDetailsService;
 
     public UserEntity getCurrentUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
