@@ -10,7 +10,6 @@ import ru.skypro.homework.dto.CreateOrUpdateComment;
  * @author Maxim
  * @version 1.0
  */
-
 public interface CommentService {
     /**
      * Получить все комментарии для указанного объявления
@@ -28,7 +27,6 @@ public interface CommentService {
      * @return {@link Comment} созданный комментарий
      */
     Comment addComment(int id, CreateOrUpdateComment comment);
-
 
     /**
      * Удаляет комментарий
