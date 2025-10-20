@@ -31,6 +31,12 @@ public class CommentServiceImpl implements CommentService {
     private final CommentRepository commentRepository;
     private final CommentMapping commentMapping;
 
+    /**
+     * Получение комментариев для объявления по его идентификатору.
+     *
+     * @param id идентификатор объявления
+     * @return объект Comments, содержащий количество и список комментариев
+     */
     @Override
     public Comments getComments(int id) {
         log.info("Получение комментариев для объявления с ID: {}", id);
@@ -43,6 +49,13 @@ public class CommentServiceImpl implements CommentService {
         return new Comments(comments.size(), comments);
     }
 
+    /**
+     * Добавление нового комментария к объявлению.
+     *
+     * @param id идентификатор объявления
+     * @param comment объект CreateOrUpdateComment с данными нового комментария
+     * @return созданный комментарий
+     */
     @Override
     public Comment addComment(int id, CreateOrUpdateComment comment) {
         log.info("Добавление комментария к объявлению с ID: {}", id);
@@ -68,10 +81,25 @@ public class CommentServiceImpl implements CommentService {
         return commentMapping.fromEntity(savedComment);
     }
 
+    /**
+     * Удаление комментария по его идентификатору.
+     *
+     * @param adId идентификатор объявления (не используется в данной реализации)
+     * @param commentId идентификатор комментария для удаления
+     */
     @Override
     public void rmComment(int adId, int commentId) {
+        comments.removeIf(comment -> comment.getId() == commentId);
     }
 
+    /**
+     * Обновление существующего комментария.
+     *
+     * @param adId идентификатор объявления (не используется в данной реализации)
+     * @param commentId идентификатор комментария для обновления
+     * @param comment объект CreateOrUpdateComment с новыми данными комментария
+     * @return обновленный комментарий или null, если комментарий не найден
+     */
     @Override
     public Comment updateComment(int adId, int commentId, CreateOrUpdateComment comment) {
         log.info("Обновление комментария с ID: {} для объявления с ID: {}", commentId, adId);
