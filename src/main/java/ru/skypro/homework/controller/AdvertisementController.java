@@ -197,7 +197,7 @@ public class AdvertisementController {
     public ResponseEntity<Ad> createAdvertisement(@RequestBody CreateOrUpdateAd createOrUpdateAd,
                                                   @RequestBody MultipartFile image) {
         try {
-            return ResponseEntity.ok(advertisementService.createAdvertisement(createOrUpdateAd, image));
+            return ResponseEntity.ok(advertisementService.createAdvertisement(Optional.of(createOrUpdateAd), Optional.ofNullable(image)));
         } catch (Exception e) {
             return ResponseEntity.notFound().build();
         }
