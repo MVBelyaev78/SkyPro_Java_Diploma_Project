@@ -1,48 +1,48 @@
-package ru.skypro.homework.service;
+package ru.skypro.homework.service.impl;
 
 import ru.skypro.homework.dto.Comment;
 import ru.skypro.homework.dto.Comments;
 import ru.skypro.homework.dto.CreateOrUpdateComment;
+import ru.skypro.homework.service.CommentService;
 
-/**
- * Реализация сервиса для работы с комментариями к объявлениям
- *
- * @author Maxim
- * @version 1.0
- */
-public interface CommentService {
-    /**
-     * Получить все комментарии для указанного объявления
-     *
-     * @param id идентификатор объявления
-     * @return {@link Comments} содержащий кол-во комментариев и коллекцию {@link Comment}
-     */
-    Comments getComments(int id);
+import java.util.ArrayList;
+import java.util.List;
 
-    /**
-     * Добавляет комментарий к объявлению
-     *
-     * @param id      идентификатор объявления
-     * @param comment текст комментария
-     * @return {@link Comment} созданный комментарий
-     */
-    Comment addComment(int id, CreateOrUpdateComment comment);
+public class CommentServiceImpl implements CommentService {
+    private final List<Comment> comments = new ArrayList<>(); // Хранилище для комментариев
 
-    /**
-     * Удаляет комментарий
-     *
-     * @param adId      идентификатор объявления
-     * @param commentId идентификатор комментария
-     */
-    void rmComment(int adId, int commentId);
+    @Override
+    public Comments getComments(int id) {
+        // Реализация получения комментариев для объявления
+        // Здесь нужно вернуть все комментарии для указанного объявления
+        return new Comments(comments.size(), comments);
+    }
 
-    /**
-     * Обновляет комментарий
-     *
-     * @param adId      идентификатор объявления
-     * @param commentId идентификатор комментария
-     * @param comment   новый текст комментария
-     * @return {@link Comment} обновленный комментарий
-     */
-    Comment updateComment(int adId, int commentId, CreateOrUpdateComment comment);
+    @Override
+    public Comment addComment(int id, CreateOrUpdateComment comment) {
+        // Реализация добавления комментария
+        Comment newComment = new Comment(); // Создание нового комментария
+        newComment.setId(comments.size() + 1); // Установка уникального ID
+        newComment.setText(comment.getText()); // Установка текста комментария
+        comments.add(newComment); // Добавление комментария в хранилище
+        return newComment; // Возврат созданного комментария
+    }
+
+    @Override
+    public void rmComment(int adId, int commentId) {
+        // Реализация удаления комментария
+        comments.removeIf(comment -> comment.getId() == commentId); // Удаление комментария по ID
+    }
+
+    @Override
+    public Comment updateComment(int adId, int commentId, CreateOrUpdateComment comment) {
+        // Реализация обновления комментария
+        for (Comment existingComment : comments) {
+            if (existingComment.getId() == commentId) {
+                existingComment.setText(comment.getText()); // Обновление текста комментария
+                return existingComment; // Возврат обновленного комментария
+            }
+        }
+        return null; // Возврат null, если комментарий не найден
+    }
 }
