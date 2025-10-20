@@ -4,6 +4,7 @@ import org.springframework.stereotype.Component;
 import ru.skypro.homework.dto.*;
 import ru.skypro.homework.entity.AdvertisementEntity;
 import ru.skypro.homework.entity.ImageEntity;
+import ru.skypro.homework.entity.UserEntity;
 
 import java.util.List;
 import java.util.Objects;
@@ -41,13 +42,15 @@ public class AdvertisementMapping {
                 e.getTitle()));
     }
 
-    public AdvertisementEntity getEntityFromAd(CreateOrUpdateAd ad, User user, ImageEntity imageEntity) {
+    public AdvertisementEntity getEntityFromAd(Optional<CreateOrUpdateAd> createOrUpdateAd, Optional<UserEntity> userEntity, Optional<ImageEntity> imageEntity) {
         AdvertisementEntity entity = new AdvertisementEntity();
-        entity.setTitle(ad.getTitle());
-        entity.setDescription(ad.getDescription());
-        entity.setPrice(ad.getPrice());
-        entity.setUser((new UserMapping()).toEntity(user));
-        entity.setImage(imageEntity);
+        createOrUpdateAd.ifPresent(ad -> {
+            entity.setTitle(ad.getTitle());
+            entity.setDescription(ad.getDescription());
+            entity.setPrice(ad.getPrice());
+        });
+        userEntity.ifPresent(entity::setUser);
+        imageEntity.ifPresent(entity::setImage);
         return entity;
     }
 }

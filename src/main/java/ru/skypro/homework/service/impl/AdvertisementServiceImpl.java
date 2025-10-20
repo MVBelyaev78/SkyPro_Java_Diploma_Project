@@ -96,7 +96,7 @@ public class AdvertisementServiceImpl implements AdvertisementService {
     /**
      * Обновляет информацию об объявлении.
      *
-     * @param id идентификатор объявления
+     * @param id               идентификатор объявления
      * @param createOrUpdateAd объект с новыми данными объявления
      * @return обновленный объект Ad, если обновление прошло успешно
      */
@@ -114,28 +114,31 @@ public class AdvertisementServiceImpl implements AdvertisementService {
     /**
      * Обновляет изображение объявления.
      *
-     * @param id идентификатор объявления
+     * @param id    идентификатор объявления
      * @param image файл изображения
      * @return объект CreateOrUpdateComment с результатом операции
      * @throws Exception если произошла ошибка при сохранении изображения
      */
     @Override
     public CreateOrUpdateComment updateAdvertisementImage(Long id, MultipartFile image) throws Exception {
-        imageService.saveImage(image);
+        //imageService.saveImage(image);
         return new CreateOrUpdateComment("string");
     }
 
-/**
- * Создает новое объявление.
- *
- * @param createOrUpdateAd объект с данными нового объявления
- * @param image файл изображения для объявления
- * @return созданный объект Ad
- * @throws Exception если произошла ошибка при сохранении изображения
- */
-@Override
-public Ad createAdvertisement(CreateOrUpdateAd createOrUpdateAd, MultipartFile image) throws Exception {
-    imageService.saveImage(image);
-    return new Ad(0L, "string", "string", createOrUpdateAd.getPrice(), createOrUpdateAd.getTitle());
-}
+    /**
+     * Создает новое объявление.
+     *
+     * @param createOrUpdateAd объект с данными нового объявления
+     * @param image            файл изображения для объявления
+     * @return созданный объект Ad
+     * @throws Exception если произошла ошибка при сохранении изображения
+     */
+    @Override
+    public Ad createAdvertisement(Optional<CreateOrUpdateAd> createOrUpdateAd, Optional<MultipartFile> image) throws Exception {
+        final Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        final Optional<UserEntity> userEntity = userRepository.findByEmail(authentication.getName());
+        final AdvertisementEntity entity = mapping
+                .getEntityFromAd(createOrUpdateAd, userEntity, Optional.empty());
+        return mapping.getAdFromEntity(repository.save(entity));
+    }
 }
