@@ -18,7 +18,7 @@ public class AdvertisementMapping {
     public Ad getAdFromEntity(AdvertisementEntity entity) {
         return new Ad(entity.getId(),
                 entity.getUser().getLastName(),
-                entity.getImage().getFilePath(),
+                entity.getImage() != null ? entity.getImage().getFilePath() : "",
                 entity.getPrice(),
                 entity.getTitle());
     }
@@ -38,7 +38,7 @@ public class AdvertisementMapping {
                 e.getUser().getLastName(),
                 e.getDescription(),
                 e.getUser().getEmail(),
-                e.getImage().getFilePath(),
+                e.getImage() != null ? e.getImage().getFilePath() : "",
                 e.getUser().getPhone(),
                 e.getPrice(),
                 e.getTitle()));
