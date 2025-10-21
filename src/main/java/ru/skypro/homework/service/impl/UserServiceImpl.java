@@ -49,7 +49,13 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UpdateUser updateUser(String userName, UpdateUser updateUser) {
-        return new UpdateUser("Иван", "Иванов", "+79991234567");
+        UserEntity userEntity = userRepository.findByEmail(userName)
+                .orElseThrow(() -> new RuntimeException("Пользователь не найден: " + userName));
+
+        userMapping.updateEntityFromUpdateDTO(userEntity, updateUser);
+        UserEntity savedUser = userRepository.save(userEntity);
+
+        return userMapping.toUpdateUser(savedUser);
     }
 
     @Override
