@@ -18,5 +18,5 @@ public interface AdvertisementService {
 
     CreateOrUpdateComment updateAdvertisementImage(Long id, MultipartFile image) throws Exception;
 
-    Ad createAdvertisement(Optional<CreateOrUpdateAd> createOrUpdateAd, Optional<MultipartFile> image) throws Exception;
+    Ad createAdvertisement(CreateOrUpdateAd createOrUpdateAd, MultipartFile image) throws Exception;
 }
