@@ -122,12 +122,11 @@ public class AdvertisementServiceImpl implements AdvertisementService {
      */
     @Override
     public String updateAdvertisementImage(Long id, MultipartFile image) throws Exception {
-        AdvertisementEntity ad = repository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Объявление не найдено"));
-
+        AdvertisementEntity adEntity = repository.findById(id)
+                .orElseThrow(IllegalArgumentException::new);
         ImageEntity imageEntity = imageService.saveImage(image);
-        ad.setImage(imageEntity);
-        repository.save(ad);
+        adEntity.setImage(imageEntity);
+        repository.save(adEntity);
 
         return imageEntity.getFilePath();
     }
