@@ -123,9 +123,15 @@ public class AdvertisementServiceImpl implements AdvertisementService {
      * @throws Exception если произошла ошибка при сохранении изображения
      */
     @Override
-    public CreateOrUpdateComment updateAdvertisementImage(Long id, MultipartFile image) throws Exception {
-        //imageService.saveImage(image);
-        return new CreateOrUpdateComment("string");
+    public String updateAdvertisementImage(Long id, MultipartFile image) throws Exception {
+        AdvertisementEntity ad = repository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Объявление не найдено"));
+
+        ImageEntity imageEntity = imageService.saveImage(image);
+        ad.setImage(imageEntity);
+        repository.save(ad);
+
+        return imageEntity.getFilePath();
     }
 
     /**
