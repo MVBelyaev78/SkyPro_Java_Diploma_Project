@@ -52,10 +52,10 @@ public class UserServiceImpl implements UserService {
         UserEntity userEntity = userRepository.findByEmail(userName)
                 .orElseThrow(() -> new RuntimeException("Пользователь не найден: " + userName));
 
-        userMapping.updateEntityFromUpdateDTO(userEntity, updateUser);
+        mapping.updateEntityFromUpdateDTO(userEntity, updateUser);
         UserEntity savedUser = userRepository.save(userEntity);
 
-        return userMapping.toUpdateUser(savedUser);
+        return mapping.toUpdateUser(savedUser);
     }
 
     @Override
