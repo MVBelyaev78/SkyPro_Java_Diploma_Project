@@ -30,16 +30,16 @@ import java.util.stream.Collectors;
 @Transactional
 public class AdvertisementServiceImpl implements AdvertisementService {
     @Autowired
-    AdvertisementRepository repository;
+    private AdvertisementRepository repository;
 
     @Autowired
-    AdvertisementMapping mapping;
+    private AdvertisementMapping mapping;
 
     @Autowired
-    ImageService imageService;
+    private ImageService imageService;
 
     @Autowired
-    UserRepository userRepository;
+    private UserRepository userRepository;
 
     /**
      * Получает информацию о конкретном объявлении по его идентификатору.
