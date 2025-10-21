@@ -14,7 +14,9 @@ import ru.skypro.homework.entity.UserEntity;
 import ru.skypro.homework.repository.UserRepository;
 import ru.skypro.homework.service.AuthService;
 
-
+/**
+ * Реализация сервиса аутентификации, обеспечивающая функции входа и регистрации пользователей.
+ */
 @Service
 @Transactional
 @RequiredArgsConstructor
@@ -24,7 +26,13 @@ public class AuthServiceImpl implements AuthService {
     private final PasswordEncoder encoder;
     private final AuthenticationManager authenticationManager;
 
-
+    /**
+     * Выполняет аутентификацию пользователя с указанными именем пользователя и паролем.
+     *
+     * @param userName имя пользователя
+     * @param password пароль пользователя
+     * @return true, если аутентификация прошла успешно, иначе false
+     */
     @Override
     public boolean login(String userName, String password) {
         try {
@@ -38,6 +46,12 @@ public class AuthServiceImpl implements AuthService {
         }
     }
 
+    /**
+     * Регистрирует нового пользователя с указанной информацией.
+     *
+     * @param register объект, содержащий данные для регистрации пользователя
+     * @return true, если регистрация прошла успешно, иначе false (например, если пользователь с таким email уже существует)
+     */
     @Override
     public boolean register(Register register) {
         if (repository.existsByEmail(register.getUsername())) {
@@ -55,5 +69,4 @@ public class AuthServiceImpl implements AuthService {
         repository.save(user);
         return true;
     }
-
 }
