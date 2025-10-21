@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.util.Optional;
 
 @Data
 @Entity
@@ -39,4 +40,7 @@ public class AdvertisementEntity {
     @JsonIgnore
     private ImageEntity image;
 
+    public Optional<ImageEntity> getImage() {
+        return Optional.ofNullable(image);
+    }
 }
