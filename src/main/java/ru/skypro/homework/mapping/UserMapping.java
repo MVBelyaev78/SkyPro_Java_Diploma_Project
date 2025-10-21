@@ -23,9 +23,9 @@ public class UserMapping {
             return null;
         }
 
-        String imagePath = null;
-        if (entity.getImage() != null) {
-            imagePath = entity.getImage().getFilePath();
+        String imagePath = "";
+        if (entity.getImage().isPresent()) {
+            imagePath = entity.getImage().get().getFilePath();
         }
 
         return new User(
@@ -157,9 +157,9 @@ public class UserMapping {
             return null;
         }
 
-        String imagePath = null;
-        if (entity.getImage() != null) {
-            imagePath = entity.getImage().getFilePath();
+        String imagePath = "";
+        if (entity.getImage().isPresent()) {
+            imagePath = entity.getImage().get().getFilePath();
         }
 
         return new User(

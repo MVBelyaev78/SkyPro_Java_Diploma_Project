@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.Optional;
 
 @Entity
 @Table(name = "tbl_user", schema = "public")
@@ -40,4 +41,8 @@ public class UserEntity {
     @JoinColumn(name = "id_image")
     @JsonIgnore
     private ImageEntity image;
+
+    public Optional<ImageEntity> getImage() {
+        return Optional.ofNullable(image);
+    }
 }
