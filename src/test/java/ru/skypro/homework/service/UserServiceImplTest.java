@@ -145,7 +145,7 @@ public class UserServiceImplTest {
             userService.getUserByUserName(TEST_EMAIL);
         });
 
-        assertEquals("Пользователь не найден: " + TEST_EMAIL, exception.getMessage());
+        assertEquals("Пользователь " + TEST_EMAIL + " не найден", exception.getMessage());
         verify(userRepository).findByEmail(TEST_EMAIL);
         verify(userMapping, never()).toDto(any(UserEntity.class));
     }
