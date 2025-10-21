@@ -5,11 +5,13 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
-import ru.skypro.homework.dto.Role;
 import ru.skypro.homework.dto.UpdateUser;
 import ru.skypro.homework.dto.User;
+import ru.skypro.homework.entity.ImageEntity;
 import ru.skypro.homework.entity.UserEntity;
+import ru.skypro.homework.mapping.UserMapping;
 import ru.skypro.homework.repository.UserRepository;
+import ru.skypro.homework.service.ImageService;
 import ru.skypro.homework.service.UserService;
 
 import java.io.IOException;
@@ -20,6 +22,8 @@ import java.io.IOException;
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final UserMapping mapping;
+    private final ImageService imageService;
 
     @Override
     public boolean changePassword(String userName, String currentPassword, String newPassword) {
@@ -37,16 +41,33 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User getUserByUserName(String userName) {
-        return new User(1L, "user@example.com", "Иван", "Иванов", "+79991234567", Role.USER, "/images/avatar.jpg");
+        UserEntity author = userRepository.findByEmail(userName)
+                .orElseThrow(() -> new RuntimeException("Пользователь " + userName + " не найден"));
+
+        return mapping.toDto(author);
     }
 
     @Override
     public UpdateUser updateUser(String userName, UpdateUser updateUser) {
-        return new UpdateUser("Иван", "Иванов", "+79991234567");
+        UserEntity userEntity = userRepository.findByEmail(userName)
+                .orElseThrow(() -> new RuntimeException("Пользователь не найден: " + userName));
+
+        mapping.updateEntityFromUpdateDTO(userEntity, updateUser);
+        UserEntity savedUser = userRepository.save(userEntity);
+
+        return mapping.toUpdateUser(savedUser);
     }
 
     @Override
     public String updateUserAvatar(String userName, MultipartFile image) throws IOException {
-        return "User Avatar";
+        UserEntity author = userRepository.findByEmail(userName)
+                .orElseThrow(() -> new RuntimeException("Пользователь " + userName + " не найден"));
+
+        ImageEntity imageEntity = imageService.saveImage(image);
+
+        author.setImage(imageEntity);
+        userRepository.save(author);
+
+        return imageEntity.getFilePath();
     }
 }

@@ -16,8 +16,6 @@ import org.springframework.web.multipart.MultipartFile;
 import ru.skypro.homework.dto.*;
 import ru.skypro.homework.service.AdvertisementService;
 
-import java.util.Optional;
-
 /**
  * API для управления объявлениями
  */
@@ -157,8 +155,7 @@ public class AdvertisementController {
             description = "Обновление картинки объявления")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "OK",
-                    content = @Content(schema = @Schema(implementation = CreateOrUpdateComment.class),
-                                mediaType = MediaType.APPLICATION_OCTET_STREAM_VALUE)),
+                    content = @Content(schema = @Schema(implementation = String.class))),
             @ApiResponse(responseCode = "401", description = "Unauthorized",
                     content = @Content(mediaType = "")),
             @ApiResponse(responseCode = "403", description = "Forbidden",
@@ -166,7 +163,7 @@ public class AdvertisementController {
             @ApiResponse(responseCode = "404", description = "Not found",
                     content = @Content(mediaType = ""))
     })
-    public ResponseEntity<CreateOrUpdateComment> updateAdvertisementImage(@PathVariable("id") Long id,
+    public ResponseEntity<?> updateAdvertisementImage(@PathVariable("id") Long id,
                                                                           @RequestBody MultipartFile image) {
         try {
             return ResponseEntity.ok(advertisementService.updateAdvertisementImage(id, image));
@@ -181,9 +178,8 @@ public class AdvertisementController {
      * @param createOrUpdateAd Поля объявления
      * @param image Картинка
      * @return информация об объявлении
-    */
-    @PostMapping(
-            value = "",
+     */
+    @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE,
             consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @Operation(summary = "Добавление объявления",
             description = "Добавление объявления")
@@ -194,10 +190,10 @@ public class AdvertisementController {
             @ApiResponse(responseCode = "401", description = "Unauthorized",
                     content = @Content(mediaType = ""))
     })
-    public ResponseEntity<Ad> createAdvertisement(@RequestBody CreateOrUpdateAd createOrUpdateAd,
-                                                  @RequestBody MultipartFile image) {
+    public ResponseEntity<Ad> createAdvertisement(@RequestPart("properties") CreateOrUpdateAd createOrUpdateAd,
+                                                  @RequestPart("image") MultipartFile image) {
         try {
-            return ResponseEntity.ok(advertisementService.createAdvertisement(Optional.of(createOrUpdateAd), Optional.ofNullable(image)));
+            return ResponseEntity.ok(advertisementService.createAdvertisement(createOrUpdateAd, image));
         } catch (Exception e) {
             return ResponseEntity.notFound().build();
         }
