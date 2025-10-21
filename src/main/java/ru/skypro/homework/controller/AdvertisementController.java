@@ -155,8 +155,7 @@ public class AdvertisementController {
             description = "Обновление картинки объявления")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "OK",
-                    content = @Content(schema = @Schema(implementation = CreateOrUpdateComment.class),
-                                mediaType = MediaType.APPLICATION_OCTET_STREAM_VALUE)),
+                    content = @Content(schema = @Schema(implementation = String.class))),
             @ApiResponse(responseCode = "401", description = "Unauthorized",
                     content = @Content(mediaType = "")),
             @ApiResponse(responseCode = "403", description = "Forbidden",
@@ -164,7 +163,7 @@ public class AdvertisementController {
             @ApiResponse(responseCode = "404", description = "Not found",
                     content = @Content(mediaType = ""))
     })
-    public ResponseEntity<CreateOrUpdateComment> updateAdvertisementImage(@PathVariable("id") Long id,
+    public ResponseEntity<?> updateAdvertisementImage(@PathVariable("id") Long id,
                                                                           @RequestBody MultipartFile image) {
         try {
             return ResponseEntity.ok(advertisementService.updateAdvertisementImage(id, image));

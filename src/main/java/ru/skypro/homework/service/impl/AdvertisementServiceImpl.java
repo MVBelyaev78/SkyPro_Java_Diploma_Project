@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import ru.skypro.homework.dto.*;
 import ru.skypro.homework.entity.AdvertisementEntity;
@@ -25,6 +26,7 @@ import java.util.stream.Collectors;
  */
 @Slf4j
 @Service
+@Transactional
 public class AdvertisementServiceImpl implements AdvertisementService {
     @Autowired
     AdvertisementRepository repository;
@@ -123,9 +125,15 @@ public class AdvertisementServiceImpl implements AdvertisementService {
      * @throws Exception если произошла ошибка при сохранении изображения
      */
     @Override
-    public CreateOrUpdateComment updateAdvertisementImage(Long id, MultipartFile image) throws Exception {
-        //imageService.saveImage(image);
-        return new CreateOrUpdateComment("string");
+    public String updateAdvertisementImage(Long id, MultipartFile image) throws Exception {
+        AdvertisementEntity ad = repository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Объявление не найдено"));
+
+        ImageEntity imageEntity = imageService.saveImage(image);
+        ad.setImage(imageEntity);
+        repository.save(ad);
+
+        return imageEntity.getFilePath();
     }
 
     /**
