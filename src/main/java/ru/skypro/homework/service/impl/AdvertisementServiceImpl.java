@@ -1,12 +1,15 @@
 package ru.skypro.homework.service.impl;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import ru.skypro.homework.dto.*;
 import ru.skypro.homework.entity.AdvertisementEntity;
+import ru.skypro.homework.entity.ImageEntity;
 import ru.skypro.homework.entity.UserEntity;
 import ru.skypro.homework.mapping.AdvertisementMapping;
 import ru.skypro.homework.repository.AdvertisementRepository;
@@ -21,7 +24,9 @@ import java.util.stream.Collectors;
 /**
  * Реализация сервиса для работы с объявлениями.
  */
+@Slf4j
 @Service
+@Transactional
 public class AdvertisementServiceImpl implements AdvertisementService {
     @Autowired
     AdvertisementRepository repository;
@@ -120,9 +125,15 @@ public class AdvertisementServiceImpl implements AdvertisementService {
      * @throws Exception если произошла ошибка при сохранении изображения
      */
     @Override
-    public CreateOrUpdateComment updateAdvertisementImage(Long id, MultipartFile image) throws Exception {
-        //imageService.saveImage(image);
-        return new CreateOrUpdateComment("string");
+    public String updateAdvertisementImage(Long id, MultipartFile image) throws Exception {
+        AdvertisementEntity ad = repository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Объявление не найдено"));
+
+        ImageEntity imageEntity = imageService.saveImage(image);
+        ad.setImage(imageEntity);
+        repository.save(ad);
+
+        return imageEntity.getFilePath();
     }
 
     /**
@@ -134,11 +145,18 @@ public class AdvertisementServiceImpl implements AdvertisementService {
      * @throws Exception если произошла ошибка при сохранении изображения
      */
     @Override
-    public Ad createAdvertisement(Optional<CreateOrUpdateAd> createOrUpdateAd, Optional<MultipartFile> image) throws Exception {
+    public Ad createAdvertisement(CreateOrUpdateAd createOrUpdateAd, MultipartFile image) throws Exception {
+        final ImageEntity imageEntity = imageService.saveImage(image);
+
         final Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        final Optional<UserEntity> userEntity = userRepository.findByEmail(authentication.getName());
+        String username = authentication.getName();
+
+        UserEntity author = userRepository.findByEmail(username)
+                .orElseThrow(() -> new RuntimeException("Пользователь " + username + " не найден"));
+
         final AdvertisementEntity entity = mapping
-                .getEntityFromAd(createOrUpdateAd, userEntity, Optional.empty());
+                .getEntityFromAd(createOrUpdateAd, author, imageEntity);
+
         return mapping.getAdFromEntity(repository.save(entity));
     }
 }
