@@ -9,6 +9,7 @@ import ru.skypro.homework.dto.Role;
 import ru.skypro.homework.dto.UpdateUser;
 import ru.skypro.homework.dto.User;
 import ru.skypro.homework.entity.UserEntity;
+import ru.skypro.homework.mapping.UserMapping;
 import ru.skypro.homework.repository.UserRepository;
 import ru.skypro.homework.service.UserService;
 
@@ -20,6 +21,7 @@ import java.io.IOException;
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final UserMapping userMapping;
 
     @Override
     public boolean changePassword(String userName, String currentPassword, String newPassword) {
@@ -37,12 +39,20 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User getUserByUserName(String userName) {
-        return new User(1L, "user@example.com", "Иван", "Иванов", "+79991234567", Role.USER, "/images/avatar.jpg");
+        UserEntity userEntity = userRepository.findByEmail(userName)
+                .orElseThrow(() -> new RuntimeException("Пользователь не найден: " + userName));
+        return userMapping.toDto(userEntity);
     }
 
     @Override
     public UpdateUser updateUser(String userName, UpdateUser updateUser) {
-        return new UpdateUser("Иван", "Иванов", "+79991234567");
+        UserEntity userEntity = userRepository.findByEmail(userName)
+                .orElseThrow(() -> new RuntimeException("Пользователь не найден: " + userName));
+
+        userMapping.updateEntityFromUpdateDTO(userEntity, updateUser);
+        UserEntity savedUser = userRepository.save(userEntity);
+
+        return userMapping.toUpdateUser(savedUser);
     }
 
     @Override
