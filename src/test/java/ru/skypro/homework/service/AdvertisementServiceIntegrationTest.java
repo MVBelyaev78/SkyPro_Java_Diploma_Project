@@ -14,7 +14,7 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest
-public class AdvertisementServiceTest {
+public class AdvertisementServiceIntegrationTest {
     @Autowired
     private AdvertisementService advertisementService;
 
