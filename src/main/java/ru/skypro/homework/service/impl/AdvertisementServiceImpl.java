@@ -72,15 +72,10 @@ public class AdvertisementServiceImpl implements AdvertisementService {
      */
     @Override
     public Ads getAdvertisementsOfAuthorizedUser() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String username = authentication.getName();
+        final UserEntity authorEntity = userRepository.findByEmail(getAuthentication().getName())
+                .orElseThrow(IllegalArgumentException::new);
 
-        UserEntity author = userRepository.findByEmail(username)
-                .orElseThrow(() -> new RuntimeException("Пользователь " + username + " не найден"));
-
-        List<AdvertisementEntity> ads = repository.findByUserId(author.getId());
-
-        return mapping.getAdsFromEntities(ads);
+        return mapping.getAdsFromEntities(repository.findByUserId(authorEntity.getId()));
     }
 
     /**
@@ -147,13 +142,16 @@ public class AdvertisementServiceImpl implements AdvertisementService {
      */
     @Override
     public Ad createAdvertisement(CreateOrUpdateAd createOrUpdateAd, MultipartFile image) throws IOException {
-        final Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         final UserEntity authorEntity = userRepository
-                .findByEmail(authentication.getName())
+                .findByEmail(getAuthentication().getName())
                 .orElseThrow(IllegalArgumentException::new);
         final AdvertisementEntity entity = mapping
                 .getEntityFromAd(createOrUpdateAd, authorEntity, imageService.saveImage(image));
 
         return mapping.getAdFromEntity(repository.save(entity));
+    }
+
+    private Authentication getAuthentication() {
+        return SecurityContextHolder.getContext().getAuthentication();
     }
 }
