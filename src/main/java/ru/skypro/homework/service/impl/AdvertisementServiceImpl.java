@@ -17,6 +17,7 @@ import ru.skypro.homework.repository.UserRepository;
 import ru.skypro.homework.service.AdvertisementService;
 import ru.skypro.homework.service.ImageService;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -58,7 +59,7 @@ public class AdvertisementServiceImpl implements AdvertisementService {
      */
     @Override
     public Ads getAllAdvertisements() {
-        List<Ad> ads = repository.findAll().stream()
+        final List<Ad> ads = repository.findAll().stream()
                 .map(mapping::getAdFromEntity)
                 .collect(Collectors.toList());
         return new Ads(ads.size(), ads);
@@ -71,15 +72,10 @@ public class AdvertisementServiceImpl implements AdvertisementService {
      */
     @Override
     public Ads getAdvertisementsOfAuthorizedUser() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String username = authentication.getName();
+        final UserEntity authorEntity = userRepository.findByEmail(getAuthentication().getName())
+                .orElseThrow(IllegalArgumentException::new);
 
-        UserEntity author = userRepository.findByEmail(username)
-                .orElseThrow(() -> new RuntimeException("Пользователь " + username + " не найден"));
-
-        List<AdvertisementEntity> ads = repository.findByUserId(author.getId());
-
-        return mapping.getAdsFromEntities(ads);
+        return mapping.getAdsFromEntities(repository.findByUserId(authorEntity.getId()));
     }
 
     /**
@@ -126,12 +122,11 @@ public class AdvertisementServiceImpl implements AdvertisementService {
      */
     @Override
     public String updateAdvertisementImage(Long id, MultipartFile image) throws Exception {
-        AdvertisementEntity ad = repository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Объявление не найдено"));
-
+        AdvertisementEntity adEntity = repository.findById(id)
+                .orElseThrow(IllegalArgumentException::new);
         ImageEntity imageEntity = imageService.saveImage(image);
-        ad.setImage(imageEntity);
-        repository.save(ad);
+        adEntity.setImage(imageEntity);
+        repository.save(adEntity);
 
         return imageEntity.getFilePath();
     }
@@ -142,21 +137,20 @@ public class AdvertisementServiceImpl implements AdvertisementService {
      * @param createOrUpdateAd объект с данными нового объявления
      * @param image            файл изображения для объявления
      * @return созданный объект Ad
-     * @throws Exception если произошла ошибка при сохранении изображения
+     * @throws IOException если произошла ошибка при сохранении изображения
      */
     @Override
-    public Ad createAdvertisement(CreateOrUpdateAd createOrUpdateAd, MultipartFile image) throws Exception {
-        final ImageEntity imageEntity = imageService.saveImage(image);
-
-        final Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String username = authentication.getName();
-
-        UserEntity author = userRepository.findByEmail(username)
-                .orElseThrow(() -> new RuntimeException("Пользователь " + username + " не найден"));
-
+    public Ad createAdvertisement(CreateOrUpdateAd createOrUpdateAd, MultipartFile image) throws IOException {
+        final UserEntity authorEntity = userRepository
+                .findByEmail(getAuthentication().getName())
+                .orElseThrow(IllegalArgumentException::new);
         final AdvertisementEntity entity = mapping
-                .getEntityFromAd(createOrUpdateAd, author, imageEntity);
+                .getEntityFromAd(createOrUpdateAd, authorEntity, imageService.saveImage(image));
 
         return mapping.getAdFromEntity(repository.save(entity));
+    }
+
+    private Authentication getAuthentication() {
+        return SecurityContextHolder.getContext().getAuthentication();
     }
 }
