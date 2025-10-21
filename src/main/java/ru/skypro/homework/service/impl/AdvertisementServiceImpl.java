@@ -17,6 +17,7 @@ import ru.skypro.homework.repository.UserRepository;
 import ru.skypro.homework.service.AdvertisementService;
 import ru.skypro.homework.service.ImageService;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -58,7 +59,7 @@ public class AdvertisementServiceImpl implements AdvertisementService {
      */
     @Override
     public Ads getAllAdvertisements() {
-        List<Ad> ads = repository.findAll().stream()
+        final List<Ad> ads = repository.findAll().stream()
                 .map(mapping::getAdFromEntity)
                 .collect(Collectors.toList());
         return new Ads(ads.size(), ads);
@@ -142,20 +143,16 @@ public class AdvertisementServiceImpl implements AdvertisementService {
      * @param createOrUpdateAd объект с данными нового объявления
      * @param image            файл изображения для объявления
      * @return созданный объект Ad
-     * @throws Exception если произошла ошибка при сохранении изображения
+     * @throws IOException если произошла ошибка при сохранении изображения
      */
     @Override
-    public Ad createAdvertisement(CreateOrUpdateAd createOrUpdateAd, MultipartFile image) throws Exception {
-        final ImageEntity imageEntity = imageService.saveImage(image);
-
+    public Ad createAdvertisement(CreateOrUpdateAd createOrUpdateAd, MultipartFile image) throws IOException {
         final Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String username = authentication.getName();
-
-        UserEntity author = userRepository.findByEmail(username)
-                .orElseThrow(() -> new RuntimeException("Пользователь " + username + " не найден"));
-
+        final UserEntity authorEntity = userRepository
+                .findByEmail(authentication.getName())
+                .orElseThrow(IllegalArgumentException::new);
         final AdvertisementEntity entity = mapping
-                .getEntityFromAd(createOrUpdateAd, author, imageEntity);
+                .getEntityFromAd(createOrUpdateAd, authorEntity, imageService.saveImage(image));
 
         return mapping.getAdFromEntity(repository.save(entity));
     }
