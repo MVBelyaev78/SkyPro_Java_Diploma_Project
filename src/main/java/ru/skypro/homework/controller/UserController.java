@@ -97,7 +97,7 @@ public class UserController {
      * @param authentication объект аутентификации Spring Security
      * @return статус обновления информации
      */
-    @Operation(summary = "Обновление информации о пользователе")
+    @Operation(summary = "Обновление информации о авторизованном пользователе")
     @ApiResponses({
             @ApiResponse(
                     responseCode = "200",

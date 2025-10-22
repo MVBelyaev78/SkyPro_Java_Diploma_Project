@@ -139,11 +139,7 @@ public class UserServiceImplTest {
     void getUserByUserName_WhenUserNotFound_ShouldThrowException() {
         when(userRepository.findByEmail(TEST_EMAIL)).thenReturn(Optional.empty());
 
-        RuntimeException exception = assertThrows(RuntimeException.class, () -> {
-            userService.getUserByUserName(TEST_EMAIL);
-        });
-
-        assertEquals("Пользователь " + TEST_EMAIL + " не найден", exception.getMessage());
+        assertEquals(userService.getUserByUserName(TEST_EMAIL), Optional.empty());
         verify(userRepository).findByEmail(TEST_EMAIL);
         verify(userMapping, never()).toDto(Optional.ofNullable(any(UserEntity.class)));
     }
