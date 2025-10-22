@@ -12,7 +12,7 @@ public interface UserService {
 
     public Optional<User> getUserByUserName(String userName);
 
-    public UpdateUser updateUser(String userName, UpdateUser updateUser);
+    public Optional<UpdateUser> updateUser(String userName, UpdateUser updateUser);
 
     public String updateUserAvatar(String userName, MultipartFile image) throws IOException;
 }

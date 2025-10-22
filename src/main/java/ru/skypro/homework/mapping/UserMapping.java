@@ -69,41 +69,8 @@ public class UserMapping {
      * @param entity сущность пользователя
      * @return DTO для обновления пользователя
      */
-    public UpdateUser toUpdateUser(UserEntity entity) {
-        if (entity == null) {
-            return null;
-        }
-
-        return new UpdateUser(
-                entity.getFirstName(),
-                entity.getLastName(),
-                entity.getPhone()
-        );
-    }
-
-    /**
-     * Обновляем UserEntity на основе данных из UpdateUser DTO
-     *
-     * @param entity существующая сущность пользователя
-     * @param updateDto DTO с обновленными данными
-     * @return обновленная сущность пользователя
-     */
-    public UserEntity updateEntityFromUpdateDTO(UserEntity entity, UpdateUser updateDto) {
-        if (entity == null || updateDto == null) {
-            return entity;
-        }
-
-        if (updateDto.getFirstName() != null) {
-            entity.setFirstName(updateDto.getFirstName());
-        }
-        if (updateDto.getLastName() != null) {
-            entity.setLastName(updateDto.getLastName());
-        }
-        if (updateDto.getPhone() != null) {
-            entity.setPhone(updateDto.getPhone());
-        }
-
-        return entity;
+    public Optional<UpdateUser> toUpdateUser(Optional<UserEntity> entity) {
+        return entity.map(e -> new UpdateUser(e.getFirstName(), e.getLastName(), e.getPhone()));
     }
 
     /**

@@ -12,12 +12,15 @@ import lombok.Data;
 @AllArgsConstructor
 @Schema(description = "Данные для обновления информации о пользователе")
 public class UpdateUser {
-    @Schema(description = "Имя пользователя", example = "string")
+    @Schema(description = "Имя пользователя", example = "string",
+            requiredMode = Schema.RequiredMode.REQUIRED)
     private String firstName;
 
-    @Schema(description = "Фамилия пользователя", example = "string")
+    @Schema(description = "Фамилия пользователя", example = "string",
+            requiredMode = Schema.RequiredMode.REQUIRED)
     private String lastName;
 
-    @Schema(description = "Телефон пользователя", example = "+7 (323) 419-03-91")
+    @Schema(description = "Телефон пользователя", example = "+7 (323) 419-03-91",
+            requiredMode = Schema.RequiredMode.REQUIRED)
     private String phone;
 }

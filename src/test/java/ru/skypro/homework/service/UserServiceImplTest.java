@@ -10,6 +10,7 @@ import ru.skypro.homework.dto.Role;
 import ru.skypro.homework.dto.UpdateUser;
 import ru.skypro.homework.dto.User;
 import ru.skypro.homework.entity.UserEntity;
+import ru.skypro.homework.exception.ResourceNotFoundException;
 import ru.skypro.homework.mapping.UserMapping;
 import ru.skypro.homework.repository.UserRepository;
 import ru.skypro.homework.service.impl.UserServiceImpl;
@@ -170,16 +171,14 @@ public class UserServiceImplTest {
 
         when(userRepository.findByEmail(TEST_EMAIL)).thenReturn(Optional.of(existingUser));
         when(userRepository.save(existingUser)).thenReturn(existingUser);
-        when(userMapping.toUpdateUser(existingUser)).thenReturn(expectedUpdateUser);
+        when(userMapping.toUpdateUser(Optional.of(existingUser))).thenReturn(Optional.of(expectedUpdateUser));
 
-        UpdateUser result = userService.updateUser(TEST_EMAIL, updateUser);
+        Optional<UpdateUser> result = userService.updateUser(TEST_EMAIL, updateUser);
 
-        assertNotNull(result);
-        assertEquals(expectedUpdateUser, result);
+        assertEquals(Optional.of(expectedUpdateUser), result);
         verify(userRepository).findByEmail(TEST_EMAIL);
-        verify(userMapping).updateEntityFromUpdateDTO(existingUser, updateUser);
         verify(userRepository).save(existingUser);
-        verify(userMapping).toUpdateUser(existingUser);
+        verify(userMapping).toUpdateUser(Optional.of(existingUser));
     }
 
     @Test
@@ -193,8 +192,7 @@ public class UserServiceImplTest {
 
         assertEquals("Пользователь не найден: " + TEST_EMAIL, exception.getMessage());
         verify(userRepository).findByEmail(TEST_EMAIL);
-        verify(userMapping, never()).updateEntityFromUpdateDTO(any(), any());
         verify(userRepository, never()).save(any(UserEntity.class));
-        verify(userMapping, never()).toUpdateUser(any(UserEntity.class));
+        verify(userMapping, never()).toUpdateUser(Optional.ofNullable(any(UserEntity.class)));
     }
 }

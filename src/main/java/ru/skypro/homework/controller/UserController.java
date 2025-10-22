@@ -110,10 +110,10 @@ public class UserController {
     @PatchMapping("/me")
     public ResponseEntity<UpdateUser> updateCurrentUser(@RequestBody UpdateUser updateUser,
                                                         Authentication authentication) {
-        final UpdateUser updatedUser = userService.updateUser(authentication.getName(), updateUser);
-        if (updatedUser != null) {
-            return ResponseEntity.ok(updatedUser);
-        } else {
+        try {
+            return ResponseEntity.ok(userService.updateUser(authentication.getName(), updateUser)
+                    .orElseThrow(() -> new ResourceNotFoundException("")));
+        } catch (ResourceNotFoundException e) {
             return ResponseEntity.notFound().build();
         }
     }
