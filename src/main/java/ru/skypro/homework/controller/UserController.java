@@ -17,7 +17,6 @@ import org.springframework.web.multipart.MultipartFile;
 import ru.skypro.homework.dto.NewPassword;
 import ru.skypro.homework.dto.UpdateUser;
 import ru.skypro.homework.dto.User;
-import ru.skypro.homework.service.impl.ImageServiceImpl;
 import ru.skypro.homework.service.UserService;
 
 import java.io.IOException;
@@ -37,44 +36,30 @@ import java.io.IOException;
 public class UserController {
 
     private final UserService userService;
-    private final ImageServiceImpl imageService;
 
     /**
      * Обновляет пароль текущего авторизованного пользователя.
      *
-     * @param newPassword DTO объект содержащий текущий и новый пароли
+     * @param newPassword    DTO объект содержащий текущий и новый пароли
      * @param authentication объект аутентификации Spring Security
      * @return ResponseEntity со статусом Ok при успешном обновлении,
-     *          FORBIDDEN при неверном текущем пароле или INTERNAL_SERVER_ERROR при ошибке
+     * FORBIDDEN при неверном текущем пароле или INTERNAL_SERVER_ERROR при ошибке
      */
-    @Operation(
-            summary = "Обновление пароля",
-            description = "Позволяет текущему авторизованному пользователю изменить свой пароль"
-    )
+    @Operation(summary = "Обновление пароля")
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Пароль успешно обновлен"),
-            @ApiResponse(responseCode = "403", description = "Текущий пароль указан не верно"),
-            @ApiResponse(responseCode = "500", description = "Внутренняя ошибка сервера"),
+            @ApiResponse(responseCode = "200", description = "OK"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized"),
+            @ApiResponse(responseCode = "403", description = "Forbidden"),
     })
     @PostMapping("/setPassword")
     public ResponseEntity<?> setPassword(@RequestBody NewPassword newPassword,
                                          Authentication authentication) {
-        try {
-            String userName = authentication.getName();
-            boolean success = userService.changePassword(
-                    userName,
-                    newPassword.getCurrentPassword(),
-                    newPassword.getNewPassword()
-            );
-
-            if (success) {
-                return ResponseEntity.ok().build();
-            } else {
-                return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
-            }
-        } catch (Exception e) {
-            log.error("Ошибка смены пароля", e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        if (userService.changePassword(authentication.getName(),
+                newPassword.getCurrentPassword(),
+                newPassword.getNewPassword())) {
+            return ResponseEntity.ok().build();
+        } else {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
     }
 
@@ -84,10 +69,7 @@ public class UserController {
      * @param authentication объект аутентификации Spring Security
      * @return ResponseEntity с данными пользователя или статусом NOT_FOUND/INTERNAL_SERVER_ERROR
      */
-    @Operation(
-            summary = "Получение информации о текущем пользователе",
-            description = "Возвращает полную информацию об авторизованном пользователе"
-    )
+    @Operation(summary = "Получение информации об авторизованном пользователе")
     @ApiResponses({
             @ApiResponse(
                     responseCode = "200",
@@ -117,7 +99,7 @@ public class UserController {
     /**
      * Обновляет информацию о текущем авторизованном пользователе.
      *
-     * @param updateUser DTO объект с обновляемыми полями пользователя
+     * @param updateUser     DTO объект с обновляемыми полями пользователя
      * @param authentication объект аутентификации Spring Security
      * @return ResponseEntity с обновленными данными пользователя или статусом NOT_FOUND/INTERNAL_SERVER_ERROR
      */
@@ -155,7 +137,7 @@ public class UserController {
     /**
      * Обновляет аватар текущего авторизованного пользователя.
      *
-     * @param image файл изображения для установки в качестве аватара
+     * @param image          файл изображения для установки в качестве аватара
      * @param authentication объект аутентификации Spring Security
      * @return ResponseEntity с путем к сохраненному изображению или статусом ошибки
      */
