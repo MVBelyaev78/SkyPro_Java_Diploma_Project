@@ -74,6 +74,21 @@ public class UserMapping {
     }
 
     /**
+     * Обновляем UserEntity
+     *
+     * @param entity сущность пользователя
+     * @return обновленная сущность пользователя
+     */
+    public Optional<UserEntity> updateUserEntity(Optional<UserEntity> entity, Optional<UpdateUser> updateUser) {
+        updateUser.ifPresent(u -> entity.ifPresent(e -> {
+            e.setFirstName(u.getFirstName());
+            e.setLastName(u.getLastName());
+            e.setPhone(u.getPhone());
+        }));
+        return entity;
+    }
+
+    /**
      * Создаем новый UserEntity на основе UpdateUser DTO
      *
      * @param updateDto DTO с данными пользователя

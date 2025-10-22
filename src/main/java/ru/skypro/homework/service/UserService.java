@@ -10,9 +10,9 @@ import java.util.Optional;
 public interface UserService {
     boolean changePassword(String userName, String currentPassword, String newPassword);
 
-    public Optional<User> getUserByUserName(String userName);
+    Optional<User> getUserByUserName(String userName);
 
-    public Optional<UpdateUser> updateUser(String userName, UpdateUser updateUser);
+    Optional<UpdateUser> updateUser(String userName, Optional<UpdateUser> updateUser);
 
-    public String updateUserAvatar(String userName, MultipartFile image) throws IOException;
+    String updateUserAvatar(String userName, MultipartFile image) throws IOException;
 }

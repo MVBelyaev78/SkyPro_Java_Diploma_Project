@@ -22,6 +22,7 @@ import ru.skypro.homework.service.UserService;
 
 import java.io.IOException;
 import java.util.Objects;
+import java.util.Optional;
 
 /**
  * Контроллер для управления информацией о пользователях.
@@ -111,7 +112,7 @@ public class UserController {
     public ResponseEntity<UpdateUser> updateCurrentUser(@RequestBody UpdateUser updateUser,
                                                         Authentication authentication) {
         try {
-            return ResponseEntity.ok(userService.updateUser(authentication.getName(), updateUser)
+            return ResponseEntity.ok(userService.updateUser(authentication.getName(), Optional.ofNullable(updateUser))
                     .orElseThrow(() -> new ResourceNotFoundException("")));
         } catch (ResourceNotFoundException e) {
             return ResponseEntity.notFound().build();
