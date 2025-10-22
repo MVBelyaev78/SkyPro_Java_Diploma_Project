@@ -89,40 +89,30 @@ public class UserController {
     }
 
     /**
-     * Обновляет информацию о текущем авторизованном пользователе.
+     * Обновление информации о пользователе
      *
      * @param updateUser     DTO объект с обновляемыми полями пользователя
      * @param authentication объект аутентификации Spring Security
-     * @return ResponseEntity с обновленными данными пользователя или статусом NOT_FOUND/INTERNAL_SERVER_ERROR
+     * @return статус обновления информации
      */
-    @Operation(
-            summary = "Обновление информации о пользователе",
-            description = "Позволяет обновить информацию о текущем авторизованном пользователе"
-    )
+    @Operation(summary = "Обновление информации о пользователе")
     @ApiResponses({
             @ApiResponse(
                     responseCode = "200",
-                    description = "Информация о пользователе обновлена",
+                    description = "OK",
                     content = @Content(mediaType = "application/json", schema = @Schema(implementation = UpdateUser.class))
             ),
-            @ApiResponse(responseCode = "404", description = "Пользователь не найден"),
-            @ApiResponse(responseCode = "500", description = "Внутренняя ошибка сервера")
+            @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content(mediaType = "")),
+            @ApiResponse(responseCode = "404", description = "Not found", content = @Content(mediaType = ""))
     })
     @PatchMapping("/me")
     public ResponseEntity<UpdateUser> updateCurrentUser(@RequestBody UpdateUser updateUser,
                                                         Authentication authentication) {
-        try {
-            String userName = authentication.getName();
-            UpdateUser updatedUser = userService.updateUser(userName, updateUser);
-
-            if (updatedUser != null) {
-                return ResponseEntity.ok(updatedUser);
-            } else {
-                return ResponseEntity.notFound().build();
-            }
-        } catch (Exception e) {
-            log.error("Ошибка обновления информации о пользователе", e);
-            return ResponseEntity.internalServerError().build();
+        final UpdateUser updatedUser = userService.updateUser(authentication.getName(), updateUser);
+        if (updatedUser != null) {
+            return ResponseEntity.ok(updatedUser);
+        } else {
+            return ResponseEntity.notFound().build();
         }
     }
 
