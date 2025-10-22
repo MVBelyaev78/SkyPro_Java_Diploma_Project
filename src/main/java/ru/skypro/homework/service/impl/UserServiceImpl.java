@@ -15,6 +15,7 @@ import ru.skypro.homework.service.ImageService;
 import ru.skypro.homework.service.UserService;
 
 import java.io.IOException;
+import java.util.Optional;
 
 @Service
 @Transactional
@@ -40,11 +41,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User getUserByUserName(String userName) {
-        UserEntity author = userRepository.findByEmail(userName)
-                .orElseThrow(() -> new RuntimeException("Пользователь " + userName + " не найден"));
-
-        return mapping.toDto(author);
+    public Optional<User> getUserByUserName(String userName) {
+        return mapping.toDto(userRepository.findByEmail(userName));
     }
 
     @Override

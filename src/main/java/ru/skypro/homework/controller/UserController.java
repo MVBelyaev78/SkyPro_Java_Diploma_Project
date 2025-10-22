@@ -17,6 +17,7 @@ import org.springframework.web.multipart.MultipartFile;
 import ru.skypro.homework.dto.NewPassword;
 import ru.skypro.homework.dto.UpdateUser;
 import ru.skypro.homework.dto.User;
+import ru.skypro.homework.exception.ResourceNotFoundException;
 import ru.skypro.homework.service.UserService;
 
 import java.io.IOException;
@@ -81,10 +82,10 @@ public class UserController {
     })
     @GetMapping("/me")
     public ResponseEntity<User> getCurrentUser(Authentication authentication) {
-        final User user = userService.getUserByUserName(authentication.getName());
-        if (user != null) {
-            return ResponseEntity.ok(user);
-        } else {
+        try {
+            return ResponseEntity.ok(userService.getUserByUserName(authentication.getName())
+                    .orElseThrow(() -> new ResourceNotFoundException("")));
+        } catch (ResourceNotFoundException e) {
             return ResponseEntity.notFound().build();
         }
     }

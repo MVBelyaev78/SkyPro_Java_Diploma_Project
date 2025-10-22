@@ -127,14 +127,11 @@ public class UserServiceImplTest {
         User expectedUser = createTestUserDto();
 
         when(userRepository.findByEmail(TEST_EMAIL)).thenReturn(Optional.of(userEntity));
-        when(userMapping.toDto(userEntity)).thenReturn(expectedUser);
+        when(userMapping.toDto(Optional.of(userEntity))).thenReturn(Optional.of(expectedUser));
 
-        User result = userService.getUserByUserName(TEST_EMAIL);
-
-        assertNotNull(result);
-        assertEquals(expectedUser, result);
+        assertEquals(Optional.of(expectedUser), userService.getUserByUserName(TEST_EMAIL));
         verify(userRepository).findByEmail(TEST_EMAIL);
-        verify(userMapping).toDto(userEntity);
+        verify(userMapping).toDto(Optional.of(userEntity));
     }
 
     @Test
@@ -147,7 +144,7 @@ public class UserServiceImplTest {
 
         assertEquals("Пользователь " + TEST_EMAIL + " не найден", exception.getMessage());
         verify(userRepository).findByEmail(TEST_EMAIL);
-        verify(userMapping, never()).toDto(any(UserEntity.class));
+        verify(userMapping, never()).toDto(Optional.ofNullable(any(UserEntity.class)));
     }
 
     @Test
@@ -157,12 +154,11 @@ public class UserServiceImplTest {
         User expectedUser = createTestUserDto();
 
         when(userRepository.findByEmail(emailWithUppercase)).thenReturn(Optional.of(userEntity));
-        when(userMapping.toDto(userEntity)).thenReturn(expectedUser);
+        when(userMapping.toDto(Optional.of(userEntity))).thenReturn(Optional.of(expectedUser));
 
-        User result = userService.getUserByUserName(emailWithUppercase);
+        Optional<User> result = userService.getUserByUserName(emailWithUppercase);
 
-        assertNotNull(result);
-        assertEquals(expectedUser, result);
+        assertEquals(Optional.of(expectedUser), result);
         verify(userRepository).findByEmail(emailWithUppercase);
     }
 
