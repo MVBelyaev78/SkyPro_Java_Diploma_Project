@@ -20,6 +20,7 @@ import ru.skypro.homework.dto.User;
 import ru.skypro.homework.service.UserService;
 
 import java.io.IOException;
+import java.util.Objects;
 
 /**
  * Контроллер для управления информацией о пользователях.
@@ -117,47 +118,30 @@ public class UserController {
     }
 
     /**
-     * Обновляет аватар текущего авторизованного пользователя.
+     * Обновление аватара авторизованного пользователя
      *
      * @param image          файл изображения для установки в качестве аватара
      * @param authentication объект аутентификации Spring Security
-     * @return ResponseEntity с путем к сохраненному изображению или статусом ошибки
+     * @return статус обновления
      */
-    @Operation(
-            summary = "Обновление аватара пользователя",
-            description = "Позволяет обновить аватар текущего авторизованного пользователя"
-    )
+    @Operation(summary = "Обновление аватара авторизованного пользователя")
     @ApiResponses({
-            @ApiResponse(
-                    responseCode = "200",
-                    description = "Аватар успешно обновлен",
-                    content = @Content(mediaType = "text/plain", schema = @Schema(implementation = String.class))
-            ),
-            @ApiResponse(responseCode = "400", description = "Неверный формат файла или файл не предоставлен"),
-            @ApiResponse(responseCode = "500", description = "Внутренняя ошибка сервера")
+            @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "")),
+            @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content(mediaType = ""))
     })
     @PatchMapping(value = "/me/image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<String> updateUserAvatar(@RequestParam("image") MultipartFile image,
                                                    Authentication authentication) {
+        if (image.isEmpty()) {
+            return ResponseEntity.badRequest().body("Изображение не предоставлено");
+        }
+        if (!Objects.requireNonNull(image.getContentType()).startsWith("image/")) {
+            return ResponseEntity.badRequest().body("Файл должен быть изображением");
+        }
         try {
-            String userName = authentication.getName();
-
-            if (image.isEmpty()) {
-                return ResponseEntity.badRequest().body("Изображение не предоставлено");
-            }
-
-            if (!image.getContentType().startsWith("image/")) {
-                return ResponseEntity.badRequest().body("Файл должен быть изображением");
-            }
-
-            String imagePath = userService.updateUserAvatar(userName, image);
-            return ResponseEntity.ok(imagePath);
-
+            return ResponseEntity.ok(userService.updateUserAvatar(authentication.getName(), image));
         } catch (IOException e) {
             log.error("Ошибка загрузки аватара пользователя", e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Ошибка загрузки изображения");
-        } catch (Exception e) {
-            log.error("Ошибка изменения аватара пользователя", e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
