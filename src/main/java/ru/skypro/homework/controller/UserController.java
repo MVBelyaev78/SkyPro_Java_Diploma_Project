@@ -38,12 +38,11 @@ public class UserController {
     private final UserService userService;
 
     /**
-     * Обновляет пароль текущего авторизованного пользователя.
+     * Обновление пароля
      *
      * @param newPassword    DTO объект содержащий текущий и новый пароли
      * @param authentication объект аутентификации Spring Security
-     * @return ResponseEntity со статусом Ok при успешном обновлении,
-     * FORBIDDEN при неверном текущем пароле или INTERNAL_SERVER_ERROR при ошибке
+     * @return статус обновления
      */
     @Operation(summary = "Обновление пароля")
     @ApiResponses({
