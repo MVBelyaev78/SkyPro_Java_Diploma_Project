@@ -9,12 +9,14 @@ import ru.skypro.homework.dto.UpdateUser;
 import ru.skypro.homework.dto.User;
 import ru.skypro.homework.entity.ImageEntity;
 import ru.skypro.homework.entity.UserEntity;
+import ru.skypro.homework.exception.ResourceNotFoundException;
 import ru.skypro.homework.mapping.UserMapping;
 import ru.skypro.homework.repository.UserRepository;
 import ru.skypro.homework.service.ImageService;
 import ru.skypro.homework.service.UserService;
 
 import java.io.IOException;
+import java.util.Optional;
 
 @Service
 @Transactional
@@ -40,22 +42,16 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User getUserByUserName(String userName) {
-        UserEntity author = userRepository.findByEmail(userName)
-                .orElseThrow(() -> new RuntimeException("Пользователь " + userName + " не найден"));
-
-        return mapping.toDto(author);
+    public Optional<User> getUserByUserName(String userName) {
+        return mapping.toDto(userRepository.findByEmail(userName));
     }
 
     @Override
-    public UpdateUser updateUser(String userName, UpdateUser updateUser) {
-        UserEntity userEntity = userRepository.findByEmail(userName)
-                .orElseThrow(() -> new RuntimeException("Пользователь не найден: " + userName));
+    public Optional<UpdateUser> updateUser(String userName, UpdateUser updateUser) {
+        final Optional<UserEntity> userEntity = userRepository.findByEmail(userName);
 
-        mapping.updateEntityFromUpdateDTO(userEntity, updateUser);
-        UserEntity savedUser = userRepository.save(userEntity);
-
-        return mapping.toUpdateUser(savedUser);
+        return mapping.toUpdateUser(Optional.of(userRepository.save(userEntity
+                .orElseThrow(() -> new ResourceNotFoundException("Пользователь не найден: " + userName)))));
     }
 
     @Override

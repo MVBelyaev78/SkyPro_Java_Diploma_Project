@@ -17,6 +17,7 @@ import org.springframework.web.multipart.MultipartFile;
 import ru.skypro.homework.dto.NewPassword;
 import ru.skypro.homework.dto.UpdateUser;
 import ru.skypro.homework.dto.User;
+import ru.skypro.homework.exception.ResourceNotFoundException;
 import ru.skypro.homework.service.UserService;
 
 import java.io.IOException;
@@ -81,10 +82,10 @@ public class UserController {
     })
     @GetMapping("/me")
     public ResponseEntity<User> getCurrentUser(Authentication authentication) {
-        final User user = userService.getUserByUserName(authentication.getName());
-        if (user != null) {
-            return ResponseEntity.ok(user);
-        } else {
+        try {
+            return ResponseEntity.ok(userService.getUserByUserName(authentication.getName())
+                    .orElseThrow(() -> new ResourceNotFoundException("")));
+        } catch (ResourceNotFoundException e) {
             return ResponseEntity.notFound().build();
         }
     }
@@ -96,7 +97,7 @@ public class UserController {
      * @param authentication объект аутентификации Spring Security
      * @return статус обновления информации
      */
-    @Operation(summary = "Обновление информации о пользователе")
+    @Operation(summary = "Обновление информации о авторизованном пользователе")
     @ApiResponses({
             @ApiResponse(
                     responseCode = "200",
@@ -109,10 +110,10 @@ public class UserController {
     @PatchMapping("/me")
     public ResponseEntity<UpdateUser> updateCurrentUser(@RequestBody UpdateUser updateUser,
                                                         Authentication authentication) {
-        final UpdateUser updatedUser = userService.updateUser(authentication.getName(), updateUser);
-        if (updatedUser != null) {
-            return ResponseEntity.ok(updatedUser);
-        } else {
+        try {
+            return ResponseEntity.ok(userService.updateUser(authentication.getName(), updateUser)
+                    .orElseThrow(() -> new ResourceNotFoundException("")));
+        } catch (ResourceNotFoundException e) {
             return ResponseEntity.notFound().build();
         }
     }

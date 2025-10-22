@@ -6,6 +6,8 @@ import ru.skypro.homework.dto.UpdateUser;
 import ru.skypro.homework.dto.User;
 import ru.skypro.homework.entity.UserEntity;
 
+import java.util.Optional;
+
 /**
  * Маппер для преобразования между сущностью UserEntity и DTO объектами
  */
@@ -18,24 +20,14 @@ public class UserMapping {
      * @param entity сущность пользователя
      * @return DTO пользоваетля
      */
-    public User toDto(UserEntity entity) {
-        if (entity == null) {
-            return null;
-        }
-
-        String imagePath = "";
-        if (entity.getImage().isPresent()) {
-            imagePath = entity.getImage().get().getFilePath();
-        }
-
-        return new User(
-                entity.getId(),
-                entity.getEmail(),
-                entity.getFirstName(),
-                entity.getLastName(),
-                entity.getPhone(),
-                covertToRole(entity.getRole()),
-                imagePath);
+    public Optional<User> toDto(Optional<UserEntity> entity) {
+        return entity.map(e -> new User(e.getId(),
+                e.getEmail(),
+                e.getFirstName(),
+                e.getLastName(),
+                e.getPhone(),
+                covertToRole(e.getRole()),
+                e.getImage().isPresent() ? e.getImage().get().getFilePath() : ""));
     }
 
     private Role covertToRole(String roleString) {
@@ -77,41 +69,8 @@ public class UserMapping {
      * @param entity сущность пользователя
      * @return DTO для обновления пользователя
      */
-    public UpdateUser toUpdateUser(UserEntity entity) {
-        if (entity == null) {
-            return null;
-        }
-
-        return new UpdateUser(
-                entity.getFirstName(),
-                entity.getLastName(),
-                entity.getPhone()
-        );
-    }
-
-    /**
-     * Обновляем UserEntity на основе данных из UpdateUser DTO
-     *
-     * @param entity существующая сущность пользователя
-     * @param updateDto DTO с обновленными данными
-     * @return обновленная сущность пользователя
-     */
-    public UserEntity updateEntityFromUpdateDTO(UserEntity entity, UpdateUser updateDto) {
-        if (entity == null || updateDto == null) {
-            return entity;
-        }
-
-        if (updateDto.getFirstName() != null) {
-            entity.setFirstName(updateDto.getFirstName());
-        }
-        if (updateDto.getLastName() != null) {
-            entity.setLastName(updateDto.getLastName());
-        }
-        if (updateDto.getPhone() != null) {
-            entity.setPhone(updateDto.getPhone());
-        }
-
-        return entity;
+    public Optional<UpdateUser> toUpdateUser(Optional<UserEntity> entity) {
+        return entity.map(e -> new UpdateUser(e.getFirstName(), e.getLastName(), e.getPhone()));
     }
 
     /**

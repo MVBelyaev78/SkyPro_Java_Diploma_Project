@@ -5,13 +5,14 @@ import ru.skypro.homework.dto.UpdateUser;
 import ru.skypro.homework.dto.User;
 
 import java.io.IOException;
+import java.util.Optional;
 
 public interface UserService {
     boolean changePassword(String userName, String currentPassword, String newPassword);
 
-    public User getUserByUserName(String userName);
+    public Optional<User> getUserByUserName(String userName);
 
-    public UpdateUser updateUser(String userName, UpdateUser updateUser);
+    public Optional<UpdateUser> updateUser(String userName, UpdateUser updateUser);
 
     public String updateUserAvatar(String userName, MultipartFile image) throws IOException;
 }
