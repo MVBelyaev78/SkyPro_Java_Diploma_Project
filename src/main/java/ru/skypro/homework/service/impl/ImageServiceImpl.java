@@ -71,7 +71,7 @@ public class ImageServiceImpl implements ImageService {
      * @throws IOException если файл не найден или произошла ошибка при чтении
      */
     public byte[] getImage(String imagePath) throws IOException {
-        String fileName = imagePath.replace("/images/", "");
+        String fileName = imagePath.replace("/artifacts/images/", "");
         Path filePath = Paths.get(uploadDir).resolve(fileName);
 
         if (Files.exists(filePath)) {
