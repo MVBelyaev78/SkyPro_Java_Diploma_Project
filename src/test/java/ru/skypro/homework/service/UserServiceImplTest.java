@@ -169,7 +169,7 @@ public class UserServiceImplTest {
         when(userRepository.save(existingUser)).thenReturn(existingUser);
         when(userMapping.toUpdateUser(Optional.of(existingUser))).thenReturn(Optional.of(expectedUpdateUser));
 
-        Optional<UpdateUser> result = userService.updateUser(TEST_EMAIL, updateUser);
+        Optional<UpdateUser> result = userService.updateUser(TEST_EMAIL, Optional.of(updateUser));
 
         assertEquals(Optional.of(expectedUpdateUser), result);
         verify(userRepository).findByEmail(TEST_EMAIL);
@@ -183,7 +183,7 @@ public class UserServiceImplTest {
         when(userRepository.findByEmail(TEST_EMAIL)).thenReturn(Optional.empty());
 
         RuntimeException exception = assertThrows(RuntimeException.class, () -> {
-            userService.updateUser(TEST_EMAIL, updateUser);
+            userService.updateUser(TEST_EMAIL, Optional.of(updateUser));
         });
 
         assertEquals("Пользователь не найден: " + TEST_EMAIL, exception.getMessage());

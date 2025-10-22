@@ -47,8 +47,9 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Optional<UpdateUser> updateUser(String userName, UpdateUser updateUser) {
-        final Optional<UserEntity> userEntity = userRepository.findByEmail(userName);
+    public Optional<UpdateUser> updateUser(String userName, Optional<UpdateUser> updateUser) {
+        final Optional<UserEntity> userEntity = mapping.updateUserEntity(
+                userRepository.findByEmail(userName), updateUser);
 
         return mapping.toUpdateUser(Optional.of(userRepository.save(userEntity
                 .orElseThrow(() -> new ResourceNotFoundException("Пользователь не найден: " + userName)))));
