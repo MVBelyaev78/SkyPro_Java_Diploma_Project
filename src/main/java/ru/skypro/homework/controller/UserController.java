@@ -63,35 +63,28 @@ public class UserController {
     }
 
     /**
-     * Получает информацию о текущем авторизованном пользователе.
+     * Получение информации об авторизованном пользователе
      *
      * @param authentication объект аутентификации Spring Security
-     * @return ResponseEntity с данными пользователя или статусом NOT_FOUND/INTERNAL_SERVER_ERROR
+     * @return статус получения
      */
     @Operation(summary = "Получение информации об авторизованном пользователе")
     @ApiResponses({
             @ApiResponse(
                     responseCode = "200",
-                    description = "Информация о пользователе получена",
+                    description = "OK",
                     content = @Content(mediaType = "application/json", schema = @Schema(implementation = User.class))
             ),
-            @ApiResponse(responseCode = "404", description = "Пользователь не найден"),
-            @ApiResponse(responseCode = "500", description = "Внутренняя ошибка сервера"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content(mediaType = "")),
+            @ApiResponse(responseCode = "404", description = "Not found", content = @Content(mediaType = "")),
     })
     @GetMapping("/me")
     public ResponseEntity<User> getCurrentUser(Authentication authentication) {
-        try {
-            String userName = authentication.getName();
-            User user = userService.getUserByUserName(userName);
-
-            if (user != null) {
-                return ResponseEntity.ok(user);
-            } else {
-                return ResponseEntity.notFound().build();
-            }
-        } catch (Exception e) {
-            log.error("Ошибка вывода авторизованного пользователя", e);
-            return ResponseEntity.internalServerError().build();
+        final User user = userService.getUserByUserName(authentication.getName());
+        if (user != null) {
+            return ResponseEntity.ok(user);
+        } else {
+            return ResponseEntity.notFound().build();
         }
     }
 
