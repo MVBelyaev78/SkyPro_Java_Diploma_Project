@@ -47,9 +47,9 @@ public class UserController {
      */
     @Operation(summary = "Обновление пароля")
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "OK"),
-            @ApiResponse(responseCode = "401", description = "Unauthorized"),
-            @ApiResponse(responseCode = "403", description = "Forbidden"),
+            @ApiResponse(responseCode = "200", description = "OK", content = @Content(mediaType = "")),
+            @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content(mediaType = "")),
+            @ApiResponse(responseCode = "403", description = "Forbidden", content = @Content(mediaType = "")),
     })
     @PostMapping("/setPassword")
     public ResponseEntity<?> setPassword(@RequestBody NewPassword newPassword,
