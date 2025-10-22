@@ -4,6 +4,7 @@ import org.springframework.stereotype.Component;
 import ru.skypro.homework.dto.Role;
 import ru.skypro.homework.dto.UpdateUser;
 import ru.skypro.homework.dto.User;
+import ru.skypro.homework.entity.ImageEntity;
 import ru.skypro.homework.entity.UserEntity;
 
 import java.util.Optional;
@@ -21,24 +22,17 @@ public class UserMapping {
      * @return DTO пользоваетля
      */
     public Optional<User> toDto(Optional<UserEntity> entity) {
-        return entity.map(e -> new User(e.getId(),
-                e.getEmail(),
-                e.getFirstName(),
-                e.getLastName(),
-                e.getPhone(),
-                covertToRole(e.getRole()),
-                e.getImage().isPresent() ? e.getImage().get().getFilePath() : ""));
-    }
-
-    private Role covertToRole(String roleString) {
-        if (roleString == null) {
-            return null;
-        }
-        try {
-            return Role.valueOf(roleString);
-        } catch (IllegalArgumentException e) {
-            return Role.USER;
-        }
+        return entity.map(e -> {
+            User user = new User();
+            user.setId(e.getId());
+            user.setEmail(e.getEmail());
+            user.setFirstName(e.getFirstName());
+            user.setLastName(e.getLastName());
+            user.setPhone(e.getPhone());
+            user.setRole(Role.valueOf(e.getRole()));
+            user.setImage(String.valueOf(Optional.ofNullable(e.getImage())));
+            return user;
+        });
     }
 
     /**
@@ -47,20 +41,17 @@ public class UserMapping {
      * @param dto DTO пользователя
      * @return сущность пользователя
      */
-    public UserEntity toEntity(User dto) {
-        if (dto == null) {
-            return null;
-        }
-
-        UserEntity entity = new UserEntity();
-        entity.setId(dto.getId());
-        entity.setEmail(dto.getEmail());
-        entity.setFirstName(dto.getFirstName());
-        entity.setLastName(dto.getLastName());
-        entity.setPhone(dto.getPhone());
-        entity.setRole(convertToString(dto.getRole()));
-
-        return entity;
+    public Optional<UserEntity> toEntity(Optional<User> dto) {
+        return dto.map(d -> {
+            UserEntity entity = new UserEntity();
+            entity.setId(d.getId());
+            entity.setEmail(d.getEmail());
+            entity.setFirstName(d.getFirstName());
+            entity.setLastName(d.getLastName());
+            entity.setPhone(d.getPhone());
+            entity.setRole(convertToString(Optional.ofNullable(d.getRole())));
+            return entity;
+        });
     }
 
     /**
@@ -94,30 +85,14 @@ public class UserMapping {
      * @param updateDto DTO с данными пользователя
      * @return новая сущность пользователя
      */
-    public UserEntity toEntityFromUpdateDto(UpdateUser updateDto) {
-        if (updateDto == null) {
-            return null;
-        }
-
-        UserEntity entity = new UserEntity();
-        entity.setFirstName(updateDto.getFirstName());
-        entity.setLastName(updateDto.getLastName());
-        entity.setPhone(updateDto.getPhone());
-
-        return entity;
-    }
-
-    /**
-     * Преобразуем enum Role в строку
-     *
-     * @param role enum роль
-     * @return строковое представление роли
-     */
-    private String convertToString(Role role) {
-        if (role == null) {
-            return "USER";
-        }
-        return role.name();
+    public Optional<UserEntity> toEntityFromUpdateDto(Optional<UpdateUser> updateDto) {
+        return updateDto.map(u -> {
+            UserEntity userEntity = new UserEntity();
+            userEntity.setFirstName(u.getFirstName());
+            userEntity.setLastName(u.getLastName());
+            userEntity.setPhone(u.getPhone());
+            return userEntity;
+        });
     }
 
     /**
@@ -126,23 +101,24 @@ public class UserMapping {
      * @param entity сущность пользователя
      * @return упрощенный DTO пользователя
      */
-    public User toSimpleDto(UserEntity entity) {
-        if (entity == null) {
-            return null;
-        }
+    public Optional<User> toSimpleDto(Optional<UserEntity> entity) {
+        return entity.map(ue -> {
+            User user = new User();
+            user.setId(ue.getId());
+            user.setEmail(ue.getEmail());
+            user.setFirstName(ue.getFirstName());
+            user.setLastName(ue.getLastName());
+            user.setPhone(ue.getPhone());
+            user.setRole(Role.valueOf(ue.getRole()));
+            user.setImage(String.valueOf(ue.getImage().map(ImageEntity::getFilePath)));
+            return user;
+        });
+    }
 
-        String imagePath = "";
-        if (entity.getImage().isPresent()) {
-            imagePath = entity.getImage().get().getFilePath();
+    private String convertToString(Optional<Role> role) {
+        if (role.isEmpty()) {
+            return Role.USER.toString();
         }
-
-        return new User(
-                entity.getId(),
-                entity.getEmail(),
-                entity.getFirstName(),
-                entity.getLastName(),
-                entity.getPhone(),
-                covertToRole(entity.getRole()),
-                imagePath);
+        return role.toString();
     }
 }
