@@ -12,12 +12,12 @@ import lombok.Data;
 @AllArgsConstructor
 @Schema(description = "Данные для обновления информации о пользователе")
 public class UpdateUser {
-    @Schema(description = "Имя пользователя", example = "Иван")
+    @Schema(description = "Имя пользователя", example = "string")
     private String firstName;
 
-    @Schema(description = "Фамилия пользователя", example = "Иванов")
+    @Schema(description = "Фамилия пользователя", example = "string")
     private String lastName;
 
-    @Schema(description = "Телефон пользователя", example = "+79991234567")
+    @Schema(description = "Телефон пользователя", example = "+7 (323) 419-03-91")
     private String phone;
 }
