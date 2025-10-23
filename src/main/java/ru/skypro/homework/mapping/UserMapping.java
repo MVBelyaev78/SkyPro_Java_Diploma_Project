@@ -98,14 +98,15 @@ public class UserMapping {
      * @param updateDto DTO с данными пользователя
      * @return новая сущность пользователя
      */
-    public Optional<UserEntity> toEntityFromUpdateDto(Optional<UpdateUser> updateDto) {
-        return updateDto.map(u -> {
-            UserEntity userEntity = new UserEntity();
-            userEntity.setFirstName(u.getFirstName());
-            userEntity.setLastName(u.getLastName());
-            userEntity.setPhone(u.getPhone());
-            return userEntity;
-        });
+    public Optional<UserEntity> toEntityFromUpdateDto(UpdateUser updateDto) {
+        if (updateDto == null) {
+            return Optional.empty();
+        }
+        UserEntity userEntity = new UserEntity();
+        userEntity.setFirstName(updateDto.getFirstName());
+        userEntity.setLastName(updateDto.getLastName());
+        userEntity.setPhone(updateDto.getPhone());
+        return Optional.of(userEntity);
     }
 
     /**
