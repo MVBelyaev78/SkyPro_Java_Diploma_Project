@@ -45,17 +45,18 @@ public class UserMapping {
      * @param dto DTO пользователя
      * @return сущность пользователя
      */
-    public Optional<UserEntity> toEntity(Optional<User> dto) {
-        return dto.map(d -> {
-            UserEntity entity = new UserEntity();
-            entity.setId(d.getId());
-            entity.setEmail(d.getEmail());
-            entity.setFirstName(d.getFirstName());
-            entity.setLastName(d.getLastName());
-            entity.setPhone(d.getPhone());
-            entity.setRole(convertToString(Optional.ofNullable(d.getRole())));
-            return entity;
-        });
+    public Optional<UserEntity> toEntity(User dto) {
+        if (dto == null) {
+            return Optional.empty();
+        }
+        UserEntity entity = new UserEntity();
+        entity.setId(dto.getId());
+        entity.setEmail(dto.getEmail());
+        entity.setFirstName(dto.getFirstName());
+        entity.setLastName(dto.getLastName());
+        entity.setPhone(dto.getPhone());
+        entity.setRole(String.valueOf(entity.getRole()));
+        return Optional.of(entity);
     }
 
     /**
