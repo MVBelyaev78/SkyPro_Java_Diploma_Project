@@ -21,18 +21,22 @@ public class UserMapping {
      * @param entity сущность пользователя
      * @return DTO пользоваетля
      */
-    public Optional<User> toDto(Optional<UserEntity> entity) {
-        return entity.map(e -> {
-            User user = new User();
-            user.setId(e.getId());
-            user.setEmail(e.getEmail());
-            user.setFirstName(e.getFirstName());
-            user.setLastName(e.getLastName());
-            user.setPhone(e.getPhone());
-            user.setRole(Role.valueOf(e.getRole()));
-            user.setImage(String.valueOf(Optional.ofNullable(e.getImage())));
-            return user;
+    public Optional<User> toDto(UserEntity entity) {
+        if (entity == null) {
+            return Optional.empty();
+        }
+        User user = new User();
+        user.setId(entity.getId());
+        user.setEmail(entity.getEmail());
+        user.setFirstName(entity.getFirstName());
+        user.setLastName(entity.getLastName());
+        user.setPhone(entity.getPhone());
+        user.setRole(Role.valueOf(entity.getRole()));
+        user.setImage("");
+        entity.getImage().ifPresent(ue -> {
+            user.setImage(ue.getName());
         });
+        return Optional.of(user);
     }
 
     /**
@@ -70,13 +74,14 @@ public class UserMapping {
      * @param entity сущность пользователя
      * @return обновленная сущность пользователя
      */
-    public Optional<UserEntity> updateUserEntity(Optional<UserEntity> entity, Optional<UpdateUser> updateUser) {
-        updateUser.ifPresent(u -> entity.ifPresent(e -> {
-            e.setFirstName(u.getFirstName());
-            e.setLastName(u.getLastName());
-            e.setPhone(u.getPhone());
-        }));
-        return entity;
+    public Optional<UserEntity> updateUserEntity(UserEntity entity, UpdateUser updateUser) {
+        if (entity == null || updateUser ==  null) {
+            return Optional.empty();
+        }
+        entity.setFirstName(updateUser.getFirstName());
+        entity.setLastName(updateUser.getLastName());
+        entity.setPhone(updateUser.getPhone());
+        return Optional.of(entity);
     }
 
     /**

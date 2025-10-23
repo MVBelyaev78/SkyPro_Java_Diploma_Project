@@ -11,6 +11,7 @@ import ru.skypro.homework.dto.CreateOrUpdateComment;
 import ru.skypro.homework.entity.AdvertisementEntity;
 import ru.skypro.homework.entity.CommentEntity;
 import ru.skypro.homework.entity.UserEntity;
+import ru.skypro.homework.exception.ResourceNotFoundException;
 import ru.skypro.homework.mapping.CommentMapping;
 import ru.skypro.homework.repository.AdvertisementRepository;
 import ru.skypro.homework.repository.CommentRepository;
@@ -63,9 +64,10 @@ public class CommentServiceImpl implements CommentService {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
 
-        UserEntity author = userRepository.findByEmail(username)
-                .orElseThrow(() -> new RuntimeException("Пользователь " + username + " не найден"));
-
+        UserEntity author = userRepository.findByEmail(username);
+        if (author == null) {
+            throw new ResourceNotFoundException("Пользователь не найден");
+        }
         AdvertisementEntity advertisement = advertisementRepository.findById((long) id)
                 .orElseThrow(() -> new RuntimeException("Объявление с ID " + id + " не найдено"));
 
@@ -113,9 +115,10 @@ public class CommentServiceImpl implements CommentService {
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
-        UserEntity currentUser = userRepository.findByEmail(username)
-                .orElseThrow(() -> new RuntimeException("Пользователь не найден"));
-
+        UserEntity currentUser = userRepository.findByEmail(username);
+        if (currentUser == null) {
+            throw new ResourceNotFoundException("Пользователь не найден");
+        }
         commentEntity.setNmText(comment.getText());
 
         CommentEntity updatedComment = commentRepository.save(commentEntity);
