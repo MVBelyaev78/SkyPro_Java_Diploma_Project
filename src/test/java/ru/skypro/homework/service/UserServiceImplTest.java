@@ -190,10 +190,11 @@ public class UserServiceImplTest {
 
         assertEquals(Optional.of(updateUser), result);
 
-        verify(userRepository).findByEmail(TEST_EMAIL);
-        verify(userMapping).updateUserEntity(Optional.of(existingUserEntity), Optional.of(updateUser));
-        verify(userRepository).save(resultUserEntity);
-        verify(userMapping).toUpdateUser(Optional.of(resultUserEntity));
+        verify(userRepository, times(1)).findByEmail(TEST_EMAIL);
+        verify(userMapping, times(1))
+                .updateUserEntity(Optional.of(existingUserEntity), Optional.of(updateUser));
+        verify(userRepository, times(1)).save(resultUserEntity);
+        verify(userMapping, times(1)).toUpdateUser(Optional.of(resultUserEntity));
     }
 
     @Test
