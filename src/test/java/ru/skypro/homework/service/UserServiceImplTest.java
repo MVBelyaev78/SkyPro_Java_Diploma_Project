@@ -10,7 +10,6 @@ import ru.skypro.homework.dto.Role;
 import ru.skypro.homework.dto.UpdateUser;
 import ru.skypro.homework.dto.User;
 import ru.skypro.homework.entity.UserEntity;
-import ru.skypro.homework.exception.ResourceNotFoundException;
 import ru.skypro.homework.mapping.UserMapping;
 import ru.skypro.homework.repository.UserRepository;
 import ru.skypro.homework.service.impl.UserServiceImpl;
@@ -161,20 +160,40 @@ public class UserServiceImplTest {
 
     @Test
     void updateUser_WhenUserExists_ShouldReturnUpdateUser() {
-        UserEntity existingUser = createTestUserEntity();
-        UpdateUser updateUser = createTestUpdateUser();
-        UpdateUser expectedUpdateUser = new UpdateUser("Петр", "Петров", "+79991234567");
+        final UserEntity existingUserEntity = new UserEntity();
+        existingUserEntity.setId(1L);
+        existingUserEntity.setEmail(TEST_EMAIL);
+        existingUserEntity.setFirstName("Иван");
+        existingUserEntity.setLastName("Иванов");
+        existingUserEntity.setPhone("+79878765432");
+        existingUserEntity.setRole("USER");
+        existingUserEntity.setPassword(ENCODED_PASSWORD);
 
-        when(userRepository.findByEmail(TEST_EMAIL)).thenReturn(Optional.of(existingUser));
-        when(userRepository.save(existingUser)).thenReturn(existingUser);
-        when(userMapping.toUpdateUser(Optional.of(existingUser))).thenReturn(Optional.of(expectedUpdateUser));
+        final UpdateUser updateUser = new UpdateUser("Петр", "Петров", "+79991234567");
+
+        final UserEntity resultUserEntity = new UserEntity();
+        resultUserEntity.setId(1L);
+        resultUserEntity.setEmail(TEST_EMAIL);
+        resultUserEntity.setFirstName("Петр");
+        resultUserEntity.setLastName("Петров");
+        resultUserEntity.setPhone("+79991234567");
+        resultUserEntity.setRole("USER");
+        resultUserEntity.setPassword(ENCODED_PASSWORD);
+
+        when(userRepository.findByEmail(TEST_EMAIL)).thenReturn(Optional.of(existingUserEntity));
+        when(userMapping.updateUserEntity(Optional.of(existingUserEntity), Optional.of(updateUser)))
+                .thenReturn(Optional.of(resultUserEntity));
+        when(userRepository.save(resultUserEntity)).thenReturn(resultUserEntity);
+        when(userMapping.toUpdateUser(Optional.of(resultUserEntity))).thenReturn(Optional.of(updateUser));
 
         Optional<UpdateUser> result = userService.updateUser(TEST_EMAIL, Optional.of(updateUser));
 
-        assertEquals(Optional.of(expectedUpdateUser), result);
+        assertEquals(Optional.of(updateUser), result);
+
         verify(userRepository).findByEmail(TEST_EMAIL);
-        verify(userRepository).save(existingUser);
-        verify(userMapping).toUpdateUser(Optional.of(existingUser));
+        verify(userMapping).updateUserEntity(Optional.of(existingUserEntity), Optional.of(updateUser));
+        verify(userRepository).save(resultUserEntity);
+        verify(userMapping).toUpdateUser(Optional.of(resultUserEntity));
     }
 
     @Test
