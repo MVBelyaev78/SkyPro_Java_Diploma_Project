@@ -65,8 +65,15 @@ public class UserMapping {
      * @param entity сущность пользователя
      * @return DTO для обновления пользователя
      */
-    public Optional<UpdateUser> toUpdateUser(Optional<UserEntity> entity) {
-        return entity.map(e -> new UpdateUser(e.getFirstName(), e.getLastName(), e.getPhone()));
+    public Optional<UpdateUser> toUpdateUser(UserEntity entity) {
+        if (entity == null) {
+            return Optional.empty();
+        }
+        UpdateUser updateUser = new UpdateUser();
+        updateUser.setFirstName(entity.getFirstName());
+        updateUser.setLastName(entity.getLastName());
+        updateUser.setPhone(entity.getPhone());
+        return Optional.of(updateUser);
     }
 
     /**
@@ -75,14 +82,14 @@ public class UserMapping {
      * @param entity сущность пользователя
      * @return обновленная сущность пользователя
      */
-    public Optional<UserEntity> updateUserEntity(UserEntity entity, UpdateUser updateUser) {
+    public UserEntity updateUserEntity(UserEntity entity, UpdateUser updateUser) {
         if (entity == null || updateUser ==  null) {
-            return Optional.empty();
+            return null;
         }
         entity.setFirstName(updateUser.getFirstName());
         entity.setLastName(updateUser.getLastName());
         entity.setPhone(updateUser.getPhone());
-        return Optional.of(entity);
+        return entity;
     }
 
     /**

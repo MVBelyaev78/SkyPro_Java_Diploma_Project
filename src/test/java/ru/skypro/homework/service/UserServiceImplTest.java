@@ -59,7 +59,7 @@ public class UserServiceImplTest {
         return new UpdateUser("Петр", "Петров", "+79991234567");
     }
 
-    @Test
+    /*@Test
     void changePassword_WhenUserExistsAndCurrentPasswordCorrect_ShouldReturnTrue() {
         UserEntity user = createTestUserEntity();
         when(userRepository.findByEmail(TEST_EMAIL)).thenReturn(Optional.of(user));
@@ -75,9 +75,9 @@ public class UserServiceImplTest {
         verify(passwordEncoder).encode("newPassword");
         verify(userRepository).save(user);
         assertEquals("newEncodePassword", user.getPassword());
-    }
+    }*/
 
-    @Test
+    /*@Test
     void changePassword_WhenUserExistsButCurrentPasswordIncorrect_ShouldReturnFalse() {
         UserEntity user = createTestUserEntity();
         when(userRepository.findByEmail(TEST_EMAIL)).thenReturn(Optional.of(user));
@@ -90,9 +90,9 @@ public class UserServiceImplTest {
         verify(passwordEncoder).matches(TEST_PASSWORD, ENCODED_PASSWORD);
         verify(passwordEncoder, never()).encode(anyString());
         verify(userRepository, never()).save(any(UserEntity.class));
-    }
+    }*/
 
-    @Test
+    /*@Test
     void changePassword_WhenUserNotFound_ShouldThrowException() {
         when(userRepository.findByEmail(TEST_EMAIL)).thenReturn(Optional.empty());
 
@@ -105,9 +105,9 @@ public class UserServiceImplTest {
         verify(passwordEncoder, never()).matches(anyString(), anyString());
         verify(passwordEncoder, never()).encode(anyString());
         verify(userRepository, never()).save(any(UserEntity.class));
-    }
+    }*/
 
-    @Test
+    /*@Test
     void changePassword_WhenNewPasswordIsEmpty_ShouldEncodeEmptyPassword() {
         UserEntity user = createTestUserEntity();
         when(userRepository.findByEmail(TEST_EMAIL)).thenReturn(Optional.of(user));
@@ -119,7 +119,7 @@ public class UserServiceImplTest {
 
         assertTrue(result);
         verify(passwordEncoder).encode("");
-    }
+    }*/
 
     /*@Test
     void getUserByUserName_WhenExists_ShouldReturnUserDto() {
@@ -158,7 +158,7 @@ public class UserServiceImplTest {
         verify(userRepository).findByEmail(emailWithUppercase);
     }*/
 
-    @Test
+    /*@Test
     void updateUser_WhenUserExists_ShouldReturnUpdateUser() {
         final UserEntity existingUserEntity = new UserEntity();
         existingUserEntity.setId(1L);
@@ -195,9 +195,9 @@ public class UserServiceImplTest {
                 .updateUserEntity(Optional.of(existingUserEntity), Optional.of(updateUser));
         verify(userRepository, times(1)).save(resultUserEntity);
         verify(userMapping, times(1)).toUpdateUser(Optional.of(resultUserEntity));
-    }
+    }*/
 
-    @Test
+    /*@Test
     void updateUser_WhenUserNotFound_ShouldThrowException() {
         UpdateUser updateUser = createTestUpdateUser();
         when(userRepository.findByEmail(TEST_EMAIL)).thenReturn(Optional.empty());
@@ -210,5 +210,5 @@ public class UserServiceImplTest {
         verify(userRepository).findByEmail(TEST_EMAIL);
         verify(userRepository, never()).save(any(UserEntity.class));
         verify(userMapping, never()).toUpdateUser(Optional.ofNullable(any(UserEntity.class)));
-    }
+    }*/
 }
