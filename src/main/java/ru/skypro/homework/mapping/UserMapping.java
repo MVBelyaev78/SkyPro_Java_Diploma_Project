@@ -92,23 +92,6 @@ public class UserMapping {
         return entity;
     }
 
-    /**
-     * Создаем новый UserEntity на основе UpdateUser DTO
-     *
-     * @param updateDto DTO с данными пользователя
-     * @return новая сущность пользователя
-     */
-    public Optional<UserEntity> toEntityFromUpdateDto(UpdateUser updateDto) {
-        if (updateDto == null) {
-            return Optional.empty();
-        }
-        UserEntity userEntity = new UserEntity();
-        userEntity.setFirstName(updateDto.getFirstName());
-        userEntity.setLastName(updateDto.getLastName());
-        userEntity.setPhone(updateDto.getPhone());
-        return Optional.of(userEntity);
-    }
-
     private String convertToString(Optional<Role> role) {
         if (role.isEmpty()) {
             return Role.USER.toString();
