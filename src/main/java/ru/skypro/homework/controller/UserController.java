@@ -35,7 +35,7 @@ import java.util.Optional;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/users")
-@Tag(name = "Пользователи", description = "API для управления информацией о пользователях")
+@Tag(name = "Пользователи")
 public class UserController {
 
     private final UserService userService;
