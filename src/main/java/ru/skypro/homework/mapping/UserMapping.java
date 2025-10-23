@@ -109,26 +109,6 @@ public class UserMapping {
         return Optional.of(userEntity);
     }
 
-    /**
-     * Создаем упрощенный User DTO только с основной информацией
-     *
-     * @param entity сущность пользователя
-     * @return упрощенный DTO пользователя
-     */
-    public Optional<User> toSimpleDto(Optional<UserEntity> entity) {
-        return entity.map(ue -> {
-            User user = new User();
-            user.setId(ue.getId());
-            user.setEmail(ue.getEmail());
-            user.setFirstName(ue.getFirstName());
-            user.setLastName(ue.getLastName());
-            user.setPhone(ue.getPhone());
-            user.setRole(Role.valueOf(ue.getRole()));
-            user.setImage(String.valueOf(ue.getImage().map(ImageEntity::getFilePath)));
-            return user;
-        });
-    }
-
     private String convertToString(Optional<Role> role) {
         if (role.isEmpty()) {
             return Role.USER.toString();
