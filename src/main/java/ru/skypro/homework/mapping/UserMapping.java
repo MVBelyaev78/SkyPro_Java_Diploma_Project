@@ -92,8 +92,8 @@ public class UserMapping {
         return entity;
     }
 
-    private String convertToString(Optional<Role> role) {
-        if (role.isEmpty()) {
+    private String convertToString(Role role) {
+        if (role == null) {
             return Role.USER.toString();
         }
         return role.toString();
