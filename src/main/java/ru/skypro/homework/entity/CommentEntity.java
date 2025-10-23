@@ -1,9 +1,7 @@
 package ru.skypro.homework.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 import java.time.Instant;
@@ -25,6 +23,8 @@ import java.time.Instant;
 public class CommentEntity {
 
     @Id
+    @ToString.Include
+    @EqualsAndHashCode.Include
     @GeneratedValue
     @Column(name = "id_comment")
     private Integer idComment;
