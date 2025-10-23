@@ -1,5 +1,6 @@
 package ru.skypro.homework.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -32,6 +33,7 @@ public class User {
     @Schema(description = "string")
     private Role role;
 
-    @Schema(description = "Наименование аватара пользователя", example = "string")
+    @Schema(description = "Аватар пользователя", example = "string")
+    @JsonIgnore
     private String image;
 }
