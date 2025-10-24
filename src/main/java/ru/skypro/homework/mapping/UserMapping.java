@@ -4,7 +4,10 @@ import org.springframework.stereotype.Component;
 import ru.skypro.homework.dto.Role;
 import ru.skypro.homework.dto.UpdateUser;
 import ru.skypro.homework.dto.User;
+import ru.skypro.homework.entity.ImageEntity;
 import ru.skypro.homework.entity.UserEntity;
+
+import java.util.Optional;
 
 /**
  * Маппер для преобразования между сущностью UserEntity и DTO объектами
@@ -18,35 +21,22 @@ public class UserMapping {
      * @param entity сущность пользователя
      * @return DTO пользоваетля
      */
-    public User toDto(UserEntity entity) {
+    public Optional<User> toDto(UserEntity entity) {
         if (entity == null) {
-            return null;
+            return Optional.empty();
         }
-
-        String imagePath = "";
-        if (entity.getImage().isPresent()) {
-            imagePath = entity.getImage().get().getFilePath();
-        }
-
-        return new User(
-                entity.getId(),
-                entity.getEmail(),
-                entity.getFirstName(),
-                entity.getLastName(),
-                entity.getPhone(),
-                covertToRole(entity.getRole()),
-                imagePath);
-    }
-
-    private Role covertToRole(String roleString) {
-        if (roleString == null) {
-            return null;
-        }
-        try {
-            return Role.valueOf(roleString);
-        } catch (IllegalArgumentException e) {
-            return Role.USER;
-        }
+        User user = new User();
+        user.setId(entity.getId());
+        user.setEmail(entity.getEmail());
+        user.setFirstName(entity.getFirstName());
+        user.setLastName(entity.getLastName());
+        user.setPhone(entity.getPhone());
+        user.setRole(Role.valueOf(entity.getRole()));
+        user.setImage("");
+        entity.getImage().ifPresent(ue -> {
+            user.setImage(ue.getName());
+        });
+        return Optional.of(user);
     }
 
     /**
@@ -55,20 +45,18 @@ public class UserMapping {
      * @param dto DTO пользователя
      * @return сущность пользователя
      */
-    public UserEntity toEntity(User dto) {
+    public Optional<UserEntity> toEntity(User dto) {
         if (dto == null) {
-            return null;
+            return Optional.empty();
         }
-
         UserEntity entity = new UserEntity();
         entity.setId(dto.getId());
         entity.setEmail(dto.getEmail());
         entity.setFirstName(dto.getFirstName());
         entity.setLastName(dto.getLastName());
         entity.setPhone(dto.getPhone());
-        entity.setRole(convertToString(dto.getRole()));
-
-        return entity;
+        entity.setRole(String.valueOf(entity.getRole()));
+        return Optional.of(entity);
     }
 
     /**
@@ -77,98 +65,37 @@ public class UserMapping {
      * @param entity сущность пользователя
      * @return DTO для обновления пользователя
      */
-    public UpdateUser toUpdateUser(UserEntity entity) {
+    public Optional<UpdateUser> toUpdateUser(UserEntity entity) {
         if (entity == null) {
-            return null;
+            return Optional.empty();
         }
-
-        return new UpdateUser(
-                entity.getFirstName(),
-                entity.getLastName(),
-                entity.getPhone()
-        );
+        UpdateUser updateUser = new UpdateUser();
+        updateUser.setFirstName(entity.getFirstName());
+        updateUser.setLastName(entity.getLastName());
+        updateUser.setPhone(entity.getPhone());
+        return Optional.of(updateUser);
     }
 
     /**
-     * Обновляем UserEntity на основе данных из UpdateUser DTO
-     *
-     * @param entity существующая сущность пользователя
-     * @param updateDto DTO с обновленными данными
-     * @return обновленная сущность пользователя
-     */
-    public UserEntity updateEntityFromUpdateDTO(UserEntity entity, UpdateUser updateDto) {
-        if (entity == null || updateDto == null) {
-            return entity;
-        }
-
-        if (updateDto.getFirstName() != null) {
-            entity.setFirstName(updateDto.getFirstName());
-        }
-        if (updateDto.getLastName() != null) {
-            entity.setLastName(updateDto.getLastName());
-        }
-        if (updateDto.getPhone() != null) {
-            entity.setPhone(updateDto.getPhone());
-        }
-
-        return entity;
-    }
-
-    /**
-     * Создаем новый UserEntity на основе UpdateUser DTO
-     *
-     * @param updateDto DTO с данными пользователя
-     * @return новая сущность пользователя
-     */
-    public UserEntity toEntityFromUpdateDto(UpdateUser updateDto) {
-        if (updateDto == null) {
-            return null;
-        }
-
-        UserEntity entity = new UserEntity();
-        entity.setFirstName(updateDto.getFirstName());
-        entity.setLastName(updateDto.getLastName());
-        entity.setPhone(updateDto.getPhone());
-
-        return entity;
-    }
-
-    /**
-     * Преобразуем enum Role в строку
-     *
-     * @param role enum роль
-     * @return строковое представление роли
-     */
-    private String convertToString(Role role) {
-        if (role == null) {
-            return "USER";
-        }
-        return role.name();
-    }
-
-    /**
-     * Создаем упрощенный User DTO только с основной информацией
+     * Обновляем UserEntity
      *
      * @param entity сущность пользователя
-     * @return упрощенный DTO пользователя
+     * @return обновленная сущность пользователя
      */
-    public User toSimpleDto(UserEntity entity) {
-        if (entity == null) {
+    public UserEntity updateUserEntity(UserEntity entity, UpdateUser updateUser) {
+        if (entity == null || updateUser ==  null) {
             return null;
         }
+        entity.setFirstName(updateUser.getFirstName());
+        entity.setLastName(updateUser.getLastName());
+        entity.setPhone(updateUser.getPhone());
+        return entity;
+    }
 
-        String imagePath = "";
-        if (entity.getImage().isPresent()) {
-            imagePath = entity.getImage().get().getFilePath();
+    private String convertToString(Role role) {
+        if (role == null) {
+            return Role.USER.toString();
         }
-
-        return new User(
-                entity.getId(),
-                entity.getEmail(),
-                entity.getFirstName(),
-                entity.getLastName(),
-                entity.getPhone(),
-                covertToRole(entity.getRole()),
-                imagePath);
+        return role.toString();
     }
 }

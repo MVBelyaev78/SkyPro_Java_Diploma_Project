@@ -10,9 +10,9 @@ import lombok.Data;
 @Data
 @Schema(description = "Данные для смены пароля пользователя")
 public class NewPassword {
-    @Schema(description = "Текущий пароль пользователя", example = "oldPassword123")
+    @Schema(description = "Текущий пароль пользователя", example = "stringst")
     private String currentPassword;
 
-    @Schema(description = "Новый пароль пользователя", example = "newPassword456")
+    @Schema(description = "Новый пароль пользователя", example = "stringst")
     private String newPassword;
 }

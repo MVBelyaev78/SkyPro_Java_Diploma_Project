@@ -10,6 +10,7 @@ import ru.skypro.homework.repository.AdvertisementRepository;
 import ru.skypro.homework.repository.UserRepository;
 
 import java.time.Instant;
+import java.util.Optional;
 
 @Component
 @RequiredArgsConstructor
@@ -29,16 +30,20 @@ public class CommentMapping {
         );
     }
 
-    public CommentEntity toEntity(Comment comment, Long adId) {
-        UserEntity author = userRepository.findById(comment.getAuthor()).orElseThrow();
-        AdvertisementEntity advertisement = advertisementRepository.findById(adId).orElseThrow();
+    public Optional<CommentEntity> toEntity(Comment comment, Long adId) {
+        final Optional<UserEntity> author = userRepository.findById(comment.getAuthor());
+        final Optional<AdvertisementEntity> advertisement = advertisementRepository.findById(adId);
+
+        if (author.isEmpty() || advertisement.isEmpty()) {
+            return Optional.empty();
+        }
 
         CommentEntity entity = new CommentEntity();
         entity.setNmText(comment.getText());
-        entity.setIdAuthor(author);
-        entity.setIdAdvertisement(advertisement);
+        entity.setIdAuthor(author.get());
+        entity.setIdAdvertisement(advertisement.get());
         entity.setDtCreate(Instant.now());
 
-        return entity;
+        return Optional.of(entity);
     }
 }
