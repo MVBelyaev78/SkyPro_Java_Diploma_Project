@@ -32,18 +32,24 @@ public class CommentEntity {
     /**
      * Текст комментария
      */
+    @ToString.Include
+    @EqualsAndHashCode.Exclude
     @Column(name = "nm_text", nullable = false, length = 200)
     private String nmText;
 
     /**
      * Время создания комментария
      */
+    @ToString.Include
+    @EqualsAndHashCode.Exclude
     @Column(name = "dt_create")
     private Instant dtCreate;
 
     /**
      * Идентификатор объявления
      */
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     @ManyToOne
     @JoinColumn(name = "id_advertisement", nullable = false)
     @JsonIgnore
@@ -53,6 +59,8 @@ public class CommentEntity {
      * Идентификатор автора комментария
      */
     @ManyToOne
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     @JoinColumn(name = "id_author", nullable = false)
     @JsonIgnore
     private UserEntity idAuthor;
