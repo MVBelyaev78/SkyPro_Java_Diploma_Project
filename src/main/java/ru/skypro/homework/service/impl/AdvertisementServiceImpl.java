@@ -49,7 +49,11 @@ public class AdvertisementServiceImpl implements AdvertisementService {
      */
     @Override
     public Optional<ExtendedAd> getAdvertisementInfo(Long id) {
-        return mapping.getExtendedAdFromEntity(repository.findById(id));
+        final Optional<AdvertisementEntity> entity = repository.findById(id);
+        if (entity.isEmpty()) {
+            return Optional.empty();
+        }
+        return mapping.getExtendedAdFromEntity(entity.get());
     }
 
     /**
