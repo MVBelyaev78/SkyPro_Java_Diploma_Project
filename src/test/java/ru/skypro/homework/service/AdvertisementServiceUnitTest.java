@@ -15,7 +15,7 @@ import ru.skypro.homework.service.impl.AdvertisementServiceImpl;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class AdvertisementServiceUnitTest {
@@ -29,17 +29,16 @@ public class AdvertisementServiceUnitTest {
     AdvertisementServiceImpl service;
 
     @Test
-    public void should_getAdvertisementInfo_succeed() {
+    public void testGetAdvertisementInfo_withRelevantId_returnsRelevantDto() {
         // Given
-        final Long idUser = 1L;
         final UserEntity userEntity = new UserEntity();
-        userEntity.setId(idUser);
+        userEntity.setId(1L);
         userEntity.setEmail("wertin@bk.ru");
         userEntity.setFirstName("Сергей");
         userEntity.setLastName("Петров");
         userEntity.setPhone("+79356661300");
         userEntity.setRole("USER");
-        userEntity.setPassword("123456");
+        userEntity.setPassword("qw123456");
         final Long idAd = 1L;
         final AdvertisementEntity adEntity = new AdvertisementEntity();
         adEntity.setId(idAd);
@@ -60,8 +59,10 @@ public class AdvertisementServiceUnitTest {
                 );
         // When
         when(repository.findById(idAd)).thenReturn(Optional.of(adEntity));
-        when(mapping.getExtendedAdFromEntity(Optional.of(adEntity))).thenReturn(Optional.of(extendedAd));
+        when(mapping.getExtendedAdFromEntity(adEntity)).thenReturn(Optional.of(extendedAd));
         // Then
         assertEquals(Optional.of(extendedAd), service.getAdvertisementInfo(idAd));
+        verify(repository, times(1)).findById(idAd);
+        verify(mapping, times(1)).getExtendedAdFromEntity(adEntity);
     }
 }
