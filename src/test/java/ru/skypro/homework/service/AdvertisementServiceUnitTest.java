@@ -63,6 +63,34 @@ public class AdvertisementServiceUnitTest {
         // Then
         assertEquals(Optional.of(extendedAd), service.getAdvertisementInfo(idAd));
         verify(repository, times(1)).findById(idAd);
+        verifyNoMoreInteractions(repository);
         verify(mapping, times(1)).getExtendedAdFromEntity(adEntity);
+        verifyNoMoreInteractions(mapping);
+    }
+
+    @Test
+    public void testGetAdvertisementInfo_withIrrelevantId_returnsEmpty() {
+        // Given
+        final Long idAd = 1L;
+        // When
+        when(repository.findById(idAd)).thenReturn(Optional.empty());
+        // Then
+        assertEquals(Optional.empty(), service.getAdvertisementInfo(idAd));
+        verify(repository, times(1)).findById(idAd);
+        verifyNoMoreInteractions(repository);
+        verify(mapping, never()).getExtendedAdFromEntity(any());
+    }
+
+    @Test
+    public void testGetAdvertisementInfo_withNullId_returnsEmpty() {
+        // Given
+        final Long idAd = null;
+        // When
+        when(repository.findById(idAd)).thenReturn(Optional.empty());
+        // Then
+        assertEquals(Optional.empty(), service.getAdvertisementInfo(idAd));
+        verify(repository, times(1)).findById(idAd);
+        verifyNoMoreInteractions(repository);
+        verify(mapping, never()).getExtendedAdFromEntity(any());
     }
 }
