@@ -15,11 +15,13 @@ import java.util.Optional;
 @Repository
 public interface UserRepository extends JpaRepository<UserEntity, Long> {
 
+    Optional<UserEntity> findById(Long id);
+
     /**
      * Находит пользователя по email (используется как userName в аутентификации)
      *
      * @param email email пользователя
-     * @return Optional с пользователем, если найден
+     * @return Аользователь
      */
     UserEntity findByEmail(String email);
 
@@ -53,7 +55,7 @@ public interface UserRepository extends JpaRepository<UserEntity, Long> {
      * Находит пользователя по номеру телефона
      *
      * @param phone номер телефона
-     * @return Optional с пользователем, если найден
+     * @return пользователь
      */
     UserEntity findByPhone(String phone);
 
