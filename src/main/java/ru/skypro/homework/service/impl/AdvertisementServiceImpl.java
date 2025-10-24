@@ -63,10 +63,7 @@ public class AdvertisementServiceImpl implements AdvertisementService {
      */
     @Override
     public Ads getAllAdvertisements() {
-        final List<Ad> ads = repository.findAll().stream()
-                .map(mapping::getAdFromEntity)
-                .collect(Collectors.toList());
-        return new Ads(ads.size(), ads);
+        return mapping.getAdsFromEntities(repository.findAll());
     }
 
     /**
