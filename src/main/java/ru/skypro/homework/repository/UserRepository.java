@@ -21,7 +21,7 @@ public interface UserRepository extends JpaRepository<UserEntity, Long> {
      * @param email email пользователя
      * @return Optional с пользователем, если найден
      */
-    Optional<UserEntity> findByEmail(String email);
+    UserEntity findByEmail(String email);
 
     /**
      * Проверяет существование пользователя по email
@@ -55,7 +55,7 @@ public interface UserRepository extends JpaRepository<UserEntity, Long> {
      * @param phone номер телефона
      * @return Optional с пользователем, если найден
      */
-    Optional<UserEntity> findByPhone(String phone);
+    UserEntity findByPhone(String phone);
 
     /**
      * Проверяет существование пользователя с таким же именем и фамилией (исключая текущего пользователя)

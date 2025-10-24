@@ -72,9 +72,7 @@ public class AdvertisementServiceImpl implements AdvertisementService {
      */
     @Override
     public Ads getAdvertisementsOfAuthorizedUser() {
-        final UserEntity authorEntity = userRepository.findByEmail(getAuthentication().getName())
-                .orElseThrow(IllegalArgumentException::new);
-
+        final UserEntity authorEntity = userRepository.findByEmail(getAuthentication().getName());
         return mapping.getAdsFromEntities(repository.findByUserId(authorEntity.getId()));
     }
 
@@ -141,9 +139,7 @@ public class AdvertisementServiceImpl implements AdvertisementService {
      */
     @Override
     public Ad createAdvertisement(CreateOrUpdateAd createOrUpdateAd, MultipartFile image) throws IOException {
-        final UserEntity authorEntity = userRepository
-                .findByEmail(getAuthentication().getName())
-                .orElseThrow(IllegalArgumentException::new);
+        final UserEntity authorEntity = userRepository.findByEmail(getAuthentication().getName());
         final AdvertisementEntity entity = mapping
                 .getEntityFromAd(createOrUpdateAd, authorEntity, imageService.saveImage(image));
 

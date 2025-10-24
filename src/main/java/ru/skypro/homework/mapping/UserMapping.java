@@ -21,18 +21,22 @@ public class UserMapping {
      * @param entity сущность пользователя
      * @return DTO пользоваетля
      */
-    public Optional<User> toDto(Optional<UserEntity> entity) {
-        return entity.map(e -> {
-            User user = new User();
-            user.setId(e.getId());
-            user.setEmail(e.getEmail());
-            user.setFirstName(e.getFirstName());
-            user.setLastName(e.getLastName());
-            user.setPhone(e.getPhone());
-            user.setRole(Role.valueOf(e.getRole()));
-            user.setImage(String.valueOf(Optional.ofNullable(e.getImage())));
-            return user;
+    public Optional<User> toDto(UserEntity entity) {
+        if (entity == null) {
+            return Optional.empty();
+        }
+        User user = new User();
+        user.setId(entity.getId());
+        user.setEmail(entity.getEmail());
+        user.setFirstName(entity.getFirstName());
+        user.setLastName(entity.getLastName());
+        user.setPhone(entity.getPhone());
+        user.setRole(Role.valueOf(entity.getRole()));
+        user.setImage("");
+        entity.getImage().ifPresent(ue -> {
+            user.setImage(ue.getName());
         });
+        return Optional.of(user);
     }
 
     /**
@@ -41,17 +45,18 @@ public class UserMapping {
      * @param dto DTO пользователя
      * @return сущность пользователя
      */
-    public Optional<UserEntity> toEntity(Optional<User> dto) {
-        return dto.map(d -> {
-            UserEntity entity = new UserEntity();
-            entity.setId(d.getId());
-            entity.setEmail(d.getEmail());
-            entity.setFirstName(d.getFirstName());
-            entity.setLastName(d.getLastName());
-            entity.setPhone(d.getPhone());
-            entity.setRole(convertToString(Optional.ofNullable(d.getRole())));
-            return entity;
-        });
+    public Optional<UserEntity> toEntity(User dto) {
+        if (dto == null) {
+            return Optional.empty();
+        }
+        UserEntity entity = new UserEntity();
+        entity.setId(dto.getId());
+        entity.setEmail(dto.getEmail());
+        entity.setFirstName(dto.getFirstName());
+        entity.setLastName(dto.getLastName());
+        entity.setPhone(dto.getPhone());
+        entity.setRole(String.valueOf(entity.getRole()));
+        return Optional.of(entity);
     }
 
     /**
@@ -60,8 +65,15 @@ public class UserMapping {
      * @param entity сущность пользователя
      * @return DTO для обновления пользователя
      */
-    public Optional<UpdateUser> toUpdateUser(Optional<UserEntity> entity) {
-        return entity.map(e -> new UpdateUser(e.getFirstName(), e.getLastName(), e.getPhone()));
+    public Optional<UpdateUser> toUpdateUser(UserEntity entity) {
+        if (entity == null) {
+            return Optional.empty();
+        }
+        UpdateUser updateUser = new UpdateUser();
+        updateUser.setFirstName(entity.getFirstName());
+        updateUser.setLastName(entity.getLastName());
+        updateUser.setPhone(entity.getPhone());
+        return Optional.of(updateUser);
     }
 
     /**
@@ -70,53 +82,18 @@ public class UserMapping {
      * @param entity сущность пользователя
      * @return обновленная сущность пользователя
      */
-    public Optional<UserEntity> updateUserEntity(Optional<UserEntity> entity, Optional<UpdateUser> updateUser) {
-        updateUser.ifPresent(u -> entity.ifPresent(e -> {
-            e.setFirstName(u.getFirstName());
-            e.setLastName(u.getLastName());
-            e.setPhone(u.getPhone());
-        }));
+    public UserEntity updateUserEntity(UserEntity entity, UpdateUser updateUser) {
+        if (entity == null || updateUser ==  null) {
+            return null;
+        }
+        entity.setFirstName(updateUser.getFirstName());
+        entity.setLastName(updateUser.getLastName());
+        entity.setPhone(updateUser.getPhone());
         return entity;
     }
 
-    /**
-     * Создаем новый UserEntity на основе UpdateUser DTO
-     *
-     * @param updateDto DTO с данными пользователя
-     * @return новая сущность пользователя
-     */
-    public Optional<UserEntity> toEntityFromUpdateDto(Optional<UpdateUser> updateDto) {
-        return updateDto.map(u -> {
-            UserEntity userEntity = new UserEntity();
-            userEntity.setFirstName(u.getFirstName());
-            userEntity.setLastName(u.getLastName());
-            userEntity.setPhone(u.getPhone());
-            return userEntity;
-        });
-    }
-
-    /**
-     * Создаем упрощенный User DTO только с основной информацией
-     *
-     * @param entity сущность пользователя
-     * @return упрощенный DTO пользователя
-     */
-    public Optional<User> toSimpleDto(Optional<UserEntity> entity) {
-        return entity.map(ue -> {
-            User user = new User();
-            user.setId(ue.getId());
-            user.setEmail(ue.getEmail());
-            user.setFirstName(ue.getFirstName());
-            user.setLastName(ue.getLastName());
-            user.setPhone(ue.getPhone());
-            user.setRole(Role.valueOf(ue.getRole()));
-            user.setImage(String.valueOf(ue.getImage().map(ImageEntity::getFilePath)));
-            return user;
-        });
-    }
-
-    private String convertToString(Optional<Role> role) {
-        if (role.isEmpty()) {
+    private String convertToString(Role role) {
+        if (role == null) {
             return Role.USER.toString();
         }
         return role.toString();
