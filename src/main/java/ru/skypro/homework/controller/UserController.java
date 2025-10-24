@@ -112,7 +112,7 @@ public class UserController {
     public ResponseEntity<UpdateUser> updateCurrentUser(@RequestBody UpdateUser updateUser,
                                                         Authentication authentication) {
         try {
-            return ResponseEntity.ok(userService.updateUser(authentication.getName(), Optional.ofNullable(updateUser))
+            return ResponseEntity.ok(userService.updateUser(authentication.getName(), updateUser)
                     .orElseThrow(() -> new ResourceNotFoundException("")));
         } catch (ResourceNotFoundException e) {
             return ResponseEntity.notFound().build();

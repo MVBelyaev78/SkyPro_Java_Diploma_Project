@@ -34,6 +34,5 @@ public class User {
     private Role role;
 
     @Schema(description = "Аватар пользователя", example = "string")
-    @JsonIgnore
     private String image;
 }

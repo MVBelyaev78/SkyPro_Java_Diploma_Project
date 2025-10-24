@@ -10,6 +10,7 @@ import ru.skypro.homework.dto.Role;
 import ru.skypro.homework.dto.UpdateUser;
 import ru.skypro.homework.dto.User;
 import ru.skypro.homework.entity.UserEntity;
+import ru.skypro.homework.exception.ResourceNotFoundException;
 import ru.skypro.homework.mapping.UserMapping;
 import ru.skypro.homework.repository.UserRepository;
 import ru.skypro.homework.service.impl.UserServiceImpl;
@@ -61,13 +62,13 @@ public class UserServiceImplTest {
 
     @Test
     void changePassword_WhenUserExistsAndCurrentPasswordCorrect_ShouldReturnTrue() {
-        UserEntity user = createTestUserEntity();
-        when(userRepository.findByEmail(TEST_EMAIL)).thenReturn(Optional.of(user));
+        final UserEntity user = createTestUserEntity();
+        when(userRepository.findByEmail(TEST_EMAIL)).thenReturn(user);
         when(passwordEncoder.matches(TEST_PASSWORD, ENCODED_PASSWORD)).thenReturn(true);
         when(passwordEncoder.encode("newPassword")).thenReturn("newEncodePassword");
         when(userRepository.save(any(UserEntity.class))).thenReturn(user);
 
-        boolean result = userService.changePassword(TEST_EMAIL, TEST_PASSWORD, "newPassword");
+        final boolean result = userService.changePassword(TEST_EMAIL, TEST_PASSWORD, "newPassword");
 
         assertTrue(result);
         verify(userRepository).findByEmail(TEST_EMAIL);
@@ -79,11 +80,11 @@ public class UserServiceImplTest {
 
     @Test
     void changePassword_WhenUserExistsButCurrentPasswordIncorrect_ShouldReturnFalse() {
-        UserEntity user = createTestUserEntity();
-        when(userRepository.findByEmail(TEST_EMAIL)).thenReturn(Optional.of(user));
+        final UserEntity user = createTestUserEntity();
+        when(userRepository.findByEmail(TEST_EMAIL)).thenReturn(user);
         when(passwordEncoder.matches(TEST_PASSWORD, ENCODED_PASSWORD)).thenReturn(false);
 
-        boolean result = userService.changePassword(TEST_EMAIL, TEST_PASSWORD, "newPassword");
+        final boolean result = userService.changePassword(TEST_EMAIL, TEST_PASSWORD, "newPassword");
 
         assertFalse(result);
         verify(userRepository).findByEmail(TEST_EMAIL);
@@ -94,9 +95,9 @@ public class UserServiceImplTest {
 
     @Test
     void changePassword_WhenUserNotFound_ShouldThrowException() {
-        when(userRepository.findByEmail(TEST_EMAIL)).thenReturn(Optional.empty());
+        when(userRepository.findByEmail(TEST_EMAIL)).thenReturn(null);
 
-        RuntimeException exception = assertThrows(RuntimeException.class, () -> {
+        ResourceNotFoundException exception = assertThrows(ResourceNotFoundException.class, () -> {
             userService.changePassword(TEST_EMAIL, TEST_PASSWORD, "newPassword");
         });
 
@@ -109,13 +110,13 @@ public class UserServiceImplTest {
 
     @Test
     void changePassword_WhenNewPasswordIsEmpty_ShouldEncodeEmptyPassword() {
-        UserEntity user = createTestUserEntity();
-        when(userRepository.findByEmail(TEST_EMAIL)).thenReturn(Optional.of(user));
+        final UserEntity user = createTestUserEntity();
+        when(userRepository.findByEmail(TEST_EMAIL)).thenReturn(user);
         when(passwordEncoder.matches(TEST_PASSWORD, ENCODED_PASSWORD)).thenReturn(true);
         when(passwordEncoder.encode("")).thenReturn("encodeEmptyPassword");
         when(userRepository.save(any(UserEntity.class))).thenReturn(user);
 
-        boolean result = userService.changePassword(TEST_EMAIL, TEST_PASSWORD, "");
+        final boolean result = userService.changePassword(TEST_EMAIL, TEST_PASSWORD, "");
 
         assertTrue(result);
         verify(passwordEncoder).encode("");
@@ -123,34 +124,34 @@ public class UserServiceImplTest {
 
     @Test
     void getUserByUserName_WhenExists_ShouldReturnUserDto() {
-        UserEntity userEntity = createTestUserEntity();
-        User expectedUser = createTestUserDto();
+        final UserEntity userEntity = createTestUserEntity();
+        final User expectedUser = createTestUserDto();
 
-        when(userRepository.findByEmail(TEST_EMAIL)).thenReturn(Optional.of(userEntity));
-        when(userMapping.toDto(Optional.of(userEntity))).thenReturn(Optional.of(expectedUser));
+        when(userRepository.findByEmail(TEST_EMAIL)).thenReturn(userEntity);
+        when(userMapping.toDto(userEntity)).thenReturn(Optional.of(expectedUser));
 
         assertEquals(Optional.of(expectedUser), userService.getUserByUserName(TEST_EMAIL));
         verify(userRepository).findByEmail(TEST_EMAIL);
-        verify(userMapping).toDto(Optional.of(userEntity));
+        verify(userMapping).toDto(userEntity);
     }
 
     @Test
     void getUserByUserName_WhenUserNotFound_ShouldThrowException() {
-        when(userRepository.findByEmail(TEST_EMAIL)).thenReturn(Optional.empty());
+        when(userRepository.findByEmail(TEST_EMAIL)).thenReturn(null);
 
         assertEquals(userService.getUserByUserName(TEST_EMAIL), Optional.empty());
         verify(userRepository).findByEmail(TEST_EMAIL);
-        verify(userMapping, never()).toDto(Optional.ofNullable(any(UserEntity.class)));
+        verify(userMapping, never()).toDto(any(UserEntity.class));
     }
 
     @Test
     void getUserByUserName_WithDifferentEmailCases_ShouldWorkCorrectly() {
-        String emailWithUppercase = "TEST@EXAMPLE.COM";
-        UserEntity userEntity = createTestUserEntity();
-        User expectedUser = createTestUserDto();
+        final String emailWithUppercase = "TEST@EXAMPLE.COM";
+        final UserEntity userEntity = createTestUserEntity();
+        final User expectedUser = createTestUserDto();
 
-        when(userRepository.findByEmail(emailWithUppercase)).thenReturn(Optional.of(userEntity));
-        when(userMapping.toDto(Optional.of(userEntity))).thenReturn(Optional.of(expectedUser));
+        when(userRepository.findByEmail(emailWithUppercase)).thenReturn(userEntity);
+        when(userMapping.toDto(userEntity)).thenReturn(Optional.of(expectedUser));
 
         Optional<User> result = userService.getUserByUserName(emailWithUppercase);
 
@@ -180,35 +181,35 @@ public class UserServiceImplTest {
         resultUserEntity.setRole("USER");
         resultUserEntity.setPassword(ENCODED_PASSWORD);
 
-        when(userRepository.findByEmail(TEST_EMAIL)).thenReturn(Optional.of(existingUserEntity));
-        when(userMapping.updateUserEntity(Optional.of(existingUserEntity), Optional.of(updateUser)))
-                .thenReturn(Optional.of(resultUserEntity));
+        when(userRepository.findByEmail(TEST_EMAIL)).thenReturn(existingUserEntity);
+        when(userMapping.updateUserEntity(existingUserEntity, updateUser))
+                .thenReturn(resultUserEntity);
         when(userRepository.save(resultUserEntity)).thenReturn(resultUserEntity);
-        when(userMapping.toUpdateUser(Optional.of(resultUserEntity))).thenReturn(Optional.of(updateUser));
+        when(userMapping.toUpdateUser(resultUserEntity)).thenReturn(Optional.of(updateUser));
 
-        Optional<UpdateUser> result = userService.updateUser(TEST_EMAIL, Optional.of(updateUser));
+        Optional<UpdateUser> result = userService.updateUser(TEST_EMAIL, updateUser);
 
         assertEquals(Optional.of(updateUser), result);
 
         verify(userRepository, times(1)).findByEmail(TEST_EMAIL);
         verify(userMapping, times(1))
-                .updateUserEntity(Optional.of(existingUserEntity), Optional.of(updateUser));
+                .updateUserEntity(existingUserEntity, updateUser);
         verify(userRepository, times(1)).save(resultUserEntity);
-        verify(userMapping, times(1)).toUpdateUser(Optional.of(resultUserEntity));
+        verify(userMapping, times(1)).toUpdateUser(resultUserEntity);
     }
 
     @Test
     void updateUser_WhenUserNotFound_ShouldThrowException() {
         UpdateUser updateUser = createTestUpdateUser();
-        when(userRepository.findByEmail(TEST_EMAIL)).thenReturn(Optional.empty());
+        when(userRepository.findByEmail(TEST_EMAIL)).thenReturn(null);
 
-        RuntimeException exception = assertThrows(RuntimeException.class, () -> {
-            userService.updateUser(TEST_EMAIL, Optional.of(updateUser));
+        ResourceNotFoundException exception = assertThrows(ResourceNotFoundException.class, () -> {
+            userService.updateUser(TEST_EMAIL, updateUser);
         });
 
-        assertEquals("Пользователь не найден: " + TEST_EMAIL, exception.getMessage());
+        assertEquals("Пользователь не найден", exception.getMessage());
         verify(userRepository).findByEmail(TEST_EMAIL);
         verify(userRepository, never()).save(any(UserEntity.class));
-        verify(userMapping, never()).toUpdateUser(Optional.ofNullable(any(UserEntity.class)));
+        verify(userMapping, never()).toUpdateUser(any(UserEntity.class));
     }
 }

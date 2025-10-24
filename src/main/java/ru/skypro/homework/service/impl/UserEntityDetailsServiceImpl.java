@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.skypro.homework.config.UserEntityDetails;
 import ru.skypro.homework.entity.UserEntity;
+import ru.skypro.homework.exception.ResourceNotFoundException;
 import ru.skypro.homework.repository.UserRepository;
 
 /**
@@ -30,11 +31,11 @@ public class UserEntityDetailsServiceImpl implements UserDetailsService {
      */
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        UserEntity user = repository.findByEmail(username)
-                .orElseThrow(() -> {
-                    log.error("User not found: {}", username);
-                    return new UsernameNotFoundException("Пользователь не найден: " + username);
-                });
+        UserEntity user = repository.findByEmail(username);
+        if (user == null) {
+            log.error("User not found: {}", username);
+            throw new ResourceNotFoundException("Пользователь не найден");
+        }
         log.info("User found: {} {}", user.getFirstName(), user.getLastName());
         return new UserEntityDetails(user);
     }

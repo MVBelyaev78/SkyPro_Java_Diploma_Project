@@ -29,15 +29,16 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public boolean changePassword(String userName, String currentPassword, String newPassword) {
-        UserEntity user = userRepository.findByEmail(userName)
-                .orElseThrow(() -> new RuntimeException("Пользователь не найден"));
-
+        UserEntity user = userRepository.findByEmail(userName);
+        if (user == null) {
+            throw new ResourceNotFoundException("Пользователь не найден");
+        }
         if (!passwordEncoder.matches(currentPassword, user.getPassword())) {
             return false;
         }
-
         user.setPassword(passwordEncoder.encode(newPassword));
         userRepository.save(user);
+
         return true;
     }
 
@@ -47,24 +48,32 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Optional<UpdateUser> updateUser(String userName, Optional<UpdateUser> updateUser) {
-        final Optional<UserEntity> userEntity = mapping.updateUserEntity(
-                userRepository.findByEmail(userName), updateUser);
-
-        return mapping.toUpdateUser(Optional.of(userRepository.save(userEntity
-                .orElseThrow(() -> new ResourceNotFoundException("Пользователь не найден: " + userName)))));
+    public Optional<UpdateUser> updateUser(String userName, UpdateUser updateUser) {
+        final UserEntity userEntity = userRepository.findByEmail(userName);
+        if (userEntity == null) {
+            throw new ResourceNotFoundException("Пользователь не найден");
+        }
+        final UserEntity userEntityUpdated = mapping.updateUserEntity(userEntity, updateUser);
+        if (userEntityUpdated == null) {
+            throw new ResourceNotFoundException("Пользователь не найден");
+        }
+        return mapping.toUpdateUser(userRepository.save(userEntityUpdated));
     }
 
     @Override
     public String updateUserAvatar(String userName, MultipartFile image) throws IOException {
-        UserEntity author = userRepository.findByEmail(userName)
-                .orElseThrow(() -> new RuntimeException("Пользователь " + userName + " не найден"));
-
-        ImageEntity imageEntity = imageService.saveImage(image);
-
-        author.setImage(imageEntity);
+        String result = "";
+        UserEntity author = userRepository.findByEmail(userName);
+        if (author == null) {
+            throw new ResourceNotFoundException("Пользователь не найден");
+        }
+        if (image != null) {
+            ImageEntity imageEntity = imageService.saveImage(image);
+            author.setImage(imageEntity);
+            result = imageEntity.getFilePath();
+        }
         userRepository.save(author);
 
-        return imageEntity.getFilePath();
+        return result;
     }
 }
