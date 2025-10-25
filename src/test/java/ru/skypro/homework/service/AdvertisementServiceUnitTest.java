@@ -51,16 +51,16 @@ public class AdvertisementServiceUnitTest {
         adEntity.setPrice(30);
         adEntity.setUser(userEntity);
         final ExtendedAd extendedAd = new ExtendedAd(
-                idAd,
-                "Сергей",
-                "Петров",
-                "Школьный глобус с политической картой",
-                "wertin@bk.ru",
-                "",
-                "+79356661300",
-                30,
-                "Глобус"
-                );
+            idAd,
+            "Сергей",
+            "Петров",
+            "Школьный глобус с политической картой",
+            "wertin@bk.ru",
+            "",
+            "+79356661300",
+            30,
+            "Глобус"
+        );
         // When
         when(repository.findById(idAd)).thenReturn(Optional.of(adEntity));
         when(mapping.getExtendedAdFromEntity(adEntity)).thenReturn(Optional.of(extendedAd));
@@ -150,5 +150,18 @@ public class AdvertisementServiceUnitTest {
         verifyNoMoreInteractions(repository);
         verify(mapping, atMost(1)).getAdsFromEntities(List.of());
         verifyNoMoreInteractions(mapping);
+    }
+
+    @Test
+    public void testDeleteAdvertisement_existedAdvertisement_returnsTrue() {
+        // Given
+        final Long idAd = 1L;
+        // When
+        when(repository.existsById(idAd)).thenReturn(true);
+        // Then
+        assertEquals(true, service.deleteAdvertisement(idAd));
+        verify(repository, times(1)).existsById(idAd);
+        verify(repository, times(1)).deleteById(idAd);
+        verifyNoMoreInteractions(repository);
     }
 }
