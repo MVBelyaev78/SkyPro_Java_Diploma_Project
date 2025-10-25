@@ -153,7 +153,7 @@ public class AdvertisementServiceUnitTest {
     }
 
     @Test
-    public void testDeleteAdvertisement_existedAdvertisement_returnsTrue() {
+    public void testDeleteAdvertisement_existentAdvertisement_returnsTrue() {
         // Given
         final Long idAd = 1L;
         // When
@@ -162,6 +162,18 @@ public class AdvertisementServiceUnitTest {
         assertEquals(true, service.deleteAdvertisement(idAd));
         verify(repository, times(1)).existsById(idAd);
         verify(repository, times(1)).deleteById(idAd);
+        verifyNoMoreInteractions(repository);
+    }
+
+    @Test
+    public void testDeleteAdvertisement_nonExistentAdvertisement_returnsTrue() {
+        // Given
+        final Long idAd = 1L;
+        // When
+        when(repository.existsById(idAd)).thenReturn(false);
+        // Then
+        assertEquals(false, service.deleteAdvertisement(idAd));
+        verify(repository, times(1)).existsById(idAd);
         verifyNoMoreInteractions(repository);
     }
 }
