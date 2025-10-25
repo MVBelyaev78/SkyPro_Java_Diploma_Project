@@ -99,7 +99,7 @@ public class AdvertisementServiceUnitTest {
     }
 
     @Test
-    public void testGetAllAdvertisements_returnsAllExistedAds() {
+    public void testGetAllAdvertisements_withoutArguments_returnsFullyCompletedAds() {
         // Given
         final UserEntity userEntity = new UserEntity();
         userEntity.setId(1L);
@@ -135,5 +135,18 @@ public class AdvertisementServiceUnitTest {
         verifyNoMoreInteractions(repository);
         verify(mapping, times(1)).getAdsFromEntities(adEntityList);
         verifyNoMoreInteractions(mapping);
+    }
+
+    @Test
+    public void testGetAllAdvertisements_withoutArguments_returnsBlankAds() {
+        // Given
+        final Ads ads = new Ads(0, List.of());
+        // When
+        when(repository.findAll()).thenReturn(List.of());
+        when(mapping.getAdsFromEntities(List.of())).thenReturn(ads);
+        // Then
+        assertEquals(ads, service.getAllAdvertisements());
+        verify(repository, times(1)).findAll();
+        verify(mapping, atMost(1)).getAdsFromEntities(List.of());
     }
 }
