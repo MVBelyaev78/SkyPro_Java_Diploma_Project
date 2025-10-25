@@ -147,6 +147,8 @@ public class AdvertisementServiceUnitTest {
         // Then
         assertEquals(ads, service.getAllAdvertisements());
         verify(repository, times(1)).findAll();
+        verifyNoMoreInteractions(repository);
         verify(mapping, atMost(1)).getAdsFromEntities(List.of());
+        verifyNoMoreInteractions(mapping);
     }
 }
