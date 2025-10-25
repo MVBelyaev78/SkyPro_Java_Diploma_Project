@@ -7,6 +7,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import ru.skypro.homework.dto.Ad;
 import ru.skypro.homework.dto.Ads;
+import ru.skypro.homework.dto.CreateOrUpdateAd;
 import ru.skypro.homework.dto.ExtendedAd;
 import ru.skypro.homework.entity.AdvertisementEntity;
 import ru.skypro.homework.entity.UserEntity;
@@ -175,5 +176,58 @@ public class AdvertisementServiceUnitTest {
         assertEquals(false, service.deleteAdvertisement(idAd));
         verify(repository, times(1)).existsById(idAd);
         verifyNoMoreInteractions(repository);
+    }
+
+    @Test
+    public void testUpdateAdvertisementInfo_withRelevantId_returnsRelevantDto() {
+        // Given
+        final UserEntity userEntity = new UserEntity();
+        userEntity.setId(1L);
+        userEntity.setEmail("wertin@bk.ru");
+        userEntity.setFirstName("Сергей");
+        userEntity.setLastName("Петров");
+        userEntity.setPhone("+79356661300");
+        userEntity.setRole("USER");
+        userEntity.setPassword("qw123456");
+
+        final Long idAd = 1L;
+        final AdvertisementEntity adInitEntity = new AdvertisementEntity();
+        adInitEntity.setId(idAd);
+        adInitEntity.setTitle("Глобус");
+        adInitEntity.setDescription("Школьный глобус с политической картой");
+        adInitEntity.setPrice(30);
+        adInitEntity.setUser(userEntity);
+
+        final CreateOrUpdateAd createOrUpdateAd = new CreateOrUpdateAd();
+        createOrUpdateAd.setTitle("Глобус");
+        createOrUpdateAd.setPrice(35);
+        createOrUpdateAd.setDescription("Большой школьный глобус с политической картой");
+
+        final AdvertisementEntity adResultEntity = new AdvertisementEntity();
+        adResultEntity.setId(idAd);
+        adResultEntity.setTitle("Глобус");
+        adResultEntity.setDescription("Большой школьный глобус с политической картой");
+        adResultEntity.setPrice(35);
+        adResultEntity.setUser(userEntity);
+
+        final Ad resultAd = new Ad();
+        resultAd.setPk(1L);
+        resultAd.setAuthor("Петров");
+        resultAd.setImage("");
+        resultAd.setPrice(35);
+        resultAd.setTitle("Глобус");
+        // When
+        when(repository.findById(idAd)).thenReturn(Optional.of(adInitEntity));
+        when(mapping.getReadyForUpdateEntity(adInitEntity, createOrUpdateAd)).thenReturn(Optional.of(adResultEntity));
+        when(repository.save(adResultEntity)).thenReturn(adResultEntity);
+        when(mapping.getAdFromEntity(adResultEntity)).thenReturn(resultAd);
+        // Then
+        assertEquals(Optional.of(resultAd), service.updateAdvertisementInfo(idAd, createOrUpdateAd));
+        verify(repository, times(1)).findById(idAd);
+        verify(repository, times(1)).save(adResultEntity);
+        verifyNoMoreInteractions(repository);
+        verify(mapping, times(1)).getReadyForUpdateEntity(adInitEntity, createOrUpdateAd);
+        verify(mapping).getAdFromEntity(adResultEntity);
+        verifyNoMoreInteractions(mapping);
     }
 }

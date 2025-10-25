@@ -3,12 +3,14 @@ package ru.skypro.homework.dto;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  * Краткая информация об объявлении
  * Применяется в API для управления объявлениями
  */
 @Data
+@NoArgsConstructor
 @AllArgsConstructor
 @Schema(description = "Краткая информация об объявлении. Применяется в API для управления объявлениями")
 public class Ad {
