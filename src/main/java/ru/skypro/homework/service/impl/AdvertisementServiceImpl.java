@@ -1,7 +1,6 @@
 package ru.skypro.homework.service.impl;
 
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -23,20 +22,13 @@ import java.util.Optional;
 /**
  * Реализация сервиса для работы с объявлениями.
  */
-@Slf4j
 @Service
 @Transactional
+@RequiredArgsConstructor
 public class AdvertisementServiceImpl implements AdvertisementService {
-    @Autowired
     private AdvertisementRepository repository;
-
-    @Autowired
     private AdvertisementMapping mapping;
-
-    @Autowired
     private ImageComponent imageComponent;
-
-    @Autowired
     private UserRepository userRepository;
 
     /**

@@ -11,7 +11,7 @@ import ru.skypro.homework.dto.CreateOrUpdateAd;
 import ru.skypro.homework.dto.ExtendedAd;
 import ru.skypro.homework.entity.AdvertisementEntity;
 import ru.skypro.homework.entity.UserEntity;
-import ru.skypro.homework.mapping.AdvertisementMapping;
+import ru.skypro.homework.component.mapping.AdvertisementMapping;
 import ru.skypro.homework.repository.AdvertisementRepository;
 import ru.skypro.homework.service.impl.AdvertisementServiceImpl;
 
