@@ -50,35 +50,4 @@ public class AuthorizationServiceImpl implements AuthorizationService {
         return ad.getUser().getId().equals(currentUser.getId());
     }
 
-    /**
-     * Проверяет, является ли текущий пользователь автором указанного комментария
-     * или администратором.
-     *
-     * @param commentId идентификатор комментария
-     * @return true, если текущий пользователь является автором комментария или администратором,
-     *         иначе false
-     */
-    public boolean isCommentAuthorOrAdmin(int commentId) {
-        if (currentUserService.isCurrentUserAdmin()) {
-            return true;
-        }
-
-        return isCommentAuthor(commentId);
-    }
-
-    /**
-     * Проверяет, является ли текущий пользователь автором указанного объявления
-     * или администратором.
-     *
-     * @param adId идентификатор объявления
-     * @return true, если текущий пользователь является автором объявления или администратором,
-     *         иначе false
-     */
-    public boolean isAdAuthorOrAdmin(Long adId) {
-        if (currentUserService.isCurrentUserAdmin()) {
-            return true;
-        }
-
-        return isAdAuthor(adId);
-    }
 }

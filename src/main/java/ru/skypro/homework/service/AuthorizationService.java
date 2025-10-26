@@ -4,8 +4,4 @@ public interface AuthorizationService {
     boolean isCommentAuthor(int commentId);
 
     boolean isAdAuthor(Long adId);
-
-    boolean isCommentAuthorOrAdmin(int commentId);
-
-    boolean isAdAuthorOrAdmin(Long adId);
 }
