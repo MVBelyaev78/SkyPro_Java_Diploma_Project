@@ -1,4 +1,4 @@
-package ru.skypro.homework.config;
+package ru.skypro.homework.configuration;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;

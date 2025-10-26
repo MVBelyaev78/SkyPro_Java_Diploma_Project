@@ -1,4 +1,4 @@
-package ru.skypro.homework.config;
+package ru.skypro.homework.configuration;
 
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.tags.Tag;
