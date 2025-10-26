@@ -20,7 +20,6 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
 
 @ExtendWith(MockitoExtension.class)
 public class AdvertisementServiceUnitTest {
@@ -53,14 +52,14 @@ public class AdvertisementServiceUnitTest {
         entity.setUser(userEntity);
         final ExtendedAd extendedAd = new ExtendedAd(
                 1L,
-            "Сергей",
-            "Петров",
-            "Школьный глобус с политической картой",
-            "wertin@bk.ru",
-            "",
-            "+79356661300",
-            30,
-            "Глобус"
+                "Сергей",
+                "Петров",
+                "Школьный глобус с политической картой",
+                "wertin@bk.ru",
+                "",
+                "+79356661300",
+                30,
+                "Глобус"
         );
         // When
         when(repository.findById(entityId)).thenReturn(Optional.of(entity));
@@ -234,7 +233,7 @@ public class AdvertisementServiceUnitTest {
     }
 
     @Test
-    public void testUpdateAdvertisementInfo_withIrrelevantEntityId_returnsRelevantDto() {
+    public void testUpdateAdvertisementInfo_withIrrelevantEntityId_returnsEmptyDto() {
         // Given
         final Long entityId = 1L;
         // When
