@@ -1,4 +1,4 @@
-package ru.skypro.homework.config;
+package ru.skypro.homework.configuration;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;

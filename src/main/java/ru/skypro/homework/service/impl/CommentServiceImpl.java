@@ -12,7 +12,7 @@ import ru.skypro.homework.entity.AdvertisementEntity;
 import ru.skypro.homework.entity.CommentEntity;
 import ru.skypro.homework.entity.UserEntity;
 import ru.skypro.homework.exception.ResourceNotFoundException;
-import ru.skypro.homework.mapping.CommentMapping;
+import ru.skypro.homework.component.mapping.CommentMapping;
 import ru.skypro.homework.repository.AdvertisementRepository;
 import ru.skypro.homework.repository.CommentRepository;
 import ru.skypro.homework.repository.UserRepository;

@@ -7,15 +7,15 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+import ru.skypro.homework.component.ImageComponent;
 import ru.skypro.homework.dto.*;
 import ru.skypro.homework.entity.AdvertisementEntity;
 import ru.skypro.homework.entity.ImageEntity;
 import ru.skypro.homework.entity.UserEntity;
-import ru.skypro.homework.mapping.AdvertisementMapping;
+import ru.skypro.homework.component.mapping.AdvertisementMapping;
 import ru.skypro.homework.repository.AdvertisementRepository;
 import ru.skypro.homework.repository.UserRepository;
 import ru.skypro.homework.service.AdvertisementService;
-import ru.skypro.homework.service.ImageService;
 
 import java.io.IOException;
 import java.util.Optional;
@@ -34,7 +34,7 @@ public class AdvertisementServiceImpl implements AdvertisementService {
     private AdvertisementMapping mapping;
 
     @Autowired
-    private ImageService imageService;
+    private ImageComponent imageService;
 
     @Autowired
     private UserRepository userRepository;
