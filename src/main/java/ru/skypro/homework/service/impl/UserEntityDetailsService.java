@@ -19,7 +19,7 @@ import ru.skypro.homework.repository.UserRepository;
 @Service
 @Transactional
 @RequiredArgsConstructor
-public class UserEntityDetailsServiceImpl implements UserDetailsService {
+public class UserEntityDetailsService implements UserDetailsService {
     private final UserRepository repository;
 
     /**

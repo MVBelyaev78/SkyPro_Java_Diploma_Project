@@ -12,7 +12,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.web.cors.CorsConfigurationSource;
-import ru.skypro.homework.service.impl.UserEntityDetailsServiceImpl;
+import ru.skypro.homework.service.impl.UserEntityDetailsService;
 
 import static org.springframework.security.config.Customizer.withDefaults;
 
@@ -33,7 +33,7 @@ public class WebSecurityConfig {
 
     };
 
-    private final UserEntityDetailsServiceImpl userEntityDetailsService;
+    private final UserEntityDetailsService userEntityDetailsService;
     private final CorsConfigurationSource corsConfigurationSource;
 
     @Bean
