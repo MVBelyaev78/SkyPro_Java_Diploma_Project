@@ -1,7 +1,6 @@
 package ru.skypro.homework.service.impl;
 
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -23,20 +22,13 @@ import java.util.Optional;
 /**
  * Реализация сервиса для работы с объявлениями.
  */
-@Slf4j
 @Service
 @Transactional
+@RequiredArgsConstructor
 public class AdvertisementServiceImpl implements AdvertisementService {
-    @Autowired
     private AdvertisementRepository repository;
-
-    @Autowired
     private AdvertisementMapping mapping;
-
-    @Autowired
-    private ImageComponent imageService;
-
-    @Autowired
+    private ImageComponent imageComponent;
     private UserRepository userRepository;
 
     /**
@@ -118,7 +110,7 @@ public class AdvertisementServiceImpl implements AdvertisementService {
     public String updateAdvertisementImage(Long id, MultipartFile image) throws Exception {
         AdvertisementEntity adEntity = repository.findById(id)
                 .orElseThrow(IllegalArgumentException::new);
-        ImageEntity imageEntity = imageService.saveImage(image);
+        ImageEntity imageEntity = imageComponent.saveImage(image);
         adEntity.setImage(imageEntity);
         repository.save(adEntity);
 
@@ -137,7 +129,7 @@ public class AdvertisementServiceImpl implements AdvertisementService {
     public Ad createAdvertisement(CreateOrUpdateAd createOrUpdateAd, MultipartFile image) throws IOException {
         final UserEntity authorEntity = userRepository.findByEmail(getAuthentication().getName());
         final AdvertisementEntity entity = mapping
-                .getEntityFromAd(createOrUpdateAd, authorEntity, imageService.saveImage(image));
+                .getEntityFromAd(createOrUpdateAd, authorEntity, imageComponent.saveImage(image));
 
         return mapping.getAdFromEntity(repository.save(entity));
     }
