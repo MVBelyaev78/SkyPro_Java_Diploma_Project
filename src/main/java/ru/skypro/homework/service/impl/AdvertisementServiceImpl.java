@@ -15,7 +15,6 @@ import ru.skypro.homework.mapping.AdvertisementMapping;
 import ru.skypro.homework.repository.AdvertisementRepository;
 import ru.skypro.homework.repository.UserRepository;
 import ru.skypro.homework.service.AdvertisementService;
-import ru.skypro.homework.service.ImageService;
 
 import java.io.IOException;
 import java.util.Optional;

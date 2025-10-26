@@ -7,7 +7,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import ru.skypro.homework.entity.ImageEntity;
 import ru.skypro.homework.repository.ImageRepository;
-import ru.skypro.homework.service.ImageService;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -24,7 +23,7 @@ import java.util.UUID;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class ImageServiceImpl implements ImageService {
+public class ImageService {
     private final ImageRepository repository;
     @Value("${app.upload.dir}")
     private String uploadDir;

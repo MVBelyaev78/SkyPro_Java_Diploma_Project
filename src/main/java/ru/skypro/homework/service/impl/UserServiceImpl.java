@@ -12,7 +12,6 @@ import ru.skypro.homework.entity.UserEntity;
 import ru.skypro.homework.exception.ResourceNotFoundException;
 import ru.skypro.homework.mapping.UserMapping;
 import ru.skypro.homework.repository.UserRepository;
-import ru.skypro.homework.service.ImageService;
 import ru.skypro.homework.service.UserService;
 
 import java.io.IOException;
