@@ -34,7 +34,7 @@ public class AdvertisementServiceImpl implements AdvertisementService {
     private AdvertisementMapping mapping;
 
     @Autowired
-    private ImageComponent imageService;
+    private ImageComponent imageComponent;
 
     @Autowired
     private UserRepository userRepository;
@@ -118,7 +118,7 @@ public class AdvertisementServiceImpl implements AdvertisementService {
     public String updateAdvertisementImage(Long id, MultipartFile image) throws Exception {
         AdvertisementEntity adEntity = repository.findById(id)
                 .orElseThrow(IllegalArgumentException::new);
-        ImageEntity imageEntity = imageService.saveImage(image);
+        ImageEntity imageEntity = imageComponent.saveImage(image);
         adEntity.setImage(imageEntity);
         repository.save(adEntity);
 
@@ -137,7 +137,7 @@ public class AdvertisementServiceImpl implements AdvertisementService {
     public Ad createAdvertisement(CreateOrUpdateAd createOrUpdateAd, MultipartFile image) throws IOException {
         final UserEntity authorEntity = userRepository.findByEmail(getAuthentication().getName());
         final AdvertisementEntity entity = mapping
-                .getEntityFromAd(createOrUpdateAd, authorEntity, imageService.saveImage(image));
+                .getEntityFromAd(createOrUpdateAd, authorEntity, imageComponent.saveImage(image));
 
         return mapping.getAdFromEntity(repository.save(entity));
     }
