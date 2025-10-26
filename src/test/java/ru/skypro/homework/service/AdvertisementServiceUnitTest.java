@@ -230,4 +230,20 @@ public class AdvertisementServiceUnitTest {
         verify(mapping).getAdFromEntity(adResultEntity);
         verifyNoMoreInteractions(mapping);
     }
+
+    @Test
+    public void testUpdateAdvertisementInfo_withIrrelevantId_returnsRelevantDto() {
+        // Given
+        final Long adEntityId = 1L;
+        // When
+        when(repository.findById(adEntityId)).thenReturn(Optional.empty());
+        // Then
+        assertEquals(Optional.empty(),
+                service.updateAdvertisementInfo(adEntityId, any(CreateOrUpdateAd.class)));
+        verify(repository, times(1)).findById(adEntityId);
+        verifyNoMoreInteractions(repository);
+        verify(mapping, never()).getReadyForUpdateEntity(any(AdvertisementEntity.class), any(CreateOrUpdateAd.class));
+        verify(mapping, never()).getAdFromEntity(any(AdvertisementEntity.class));
+        verifyNoMoreInteractions(mapping);
+    }
 }

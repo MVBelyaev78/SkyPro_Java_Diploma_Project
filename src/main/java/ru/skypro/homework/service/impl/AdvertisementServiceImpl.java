@@ -100,10 +100,10 @@ public class AdvertisementServiceImpl implements AdvertisementService {
      */
     @Override
     public Optional<Ad> updateAdvertisementInfo(Long id, CreateOrUpdateAd createOrUpdateAd) {
-        final Optional<AdvertisementEntity> initialEntity = repository.findById(id);
-        final Optional<AdvertisementEntity> resultEntity = initialEntity.
-                flatMap(e -> mapping.getReadyForUpdateEntity(e, createOrUpdateAd));
-        return resultEntity.map(e -> mapping.getAdFromEntity(repository.save(e)));
+        final Optional<AdvertisementEntity> entity = repository
+                .findById(id)
+                .flatMap(e -> mapping.getReadyForUpdateEntity(e, createOrUpdateAd));
+        return entity.map(e -> mapping.getAdFromEntity(repository.save(e)));
     }
 
     /**
