@@ -20,6 +20,7 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
 public class AdvertisementServiceUnitTest {
@@ -245,6 +246,48 @@ public class AdvertisementServiceUnitTest {
         verifyNoMoreInteractions(repository);
         verify(mapping, never()).getReadyForUpdateEntity(any(AdvertisementEntity.class), any(CreateOrUpdateAd.class));
         verify(mapping, never()).getAdFromEntity(any(AdvertisementEntity.class));
+        verifyNoMoreInteractions(mapping);
+    }
+
+    @Test
+    public void testUpdateAdvertisementInfo_withRelevantEntityId_withEmptyCreateOrUpdateAd_returnsRelevantDto() {
+        // Given
+        final UserEntity userEntity = new UserEntity();
+        userEntity.setId(1L);
+        userEntity.setEmail("wertin@bk.ru");
+        userEntity.setFirstName("Сергей");
+        userEntity.setLastName("Петров");
+        userEntity.setPhone("+79356661300");
+        userEntity.setRole("USER");
+        userEntity.setPassword("qw123456");
+
+        final Long entityId = 1L;
+        final AdvertisementEntity entity = new AdvertisementEntity();
+        entity.setId(entityId);
+        entity.setTitle("Глобус");
+        entity.setDescription("Школьный глобус с политической картой");
+        entity.setPrice(30);
+        entity.setUser(userEntity);
+
+        final Ad resultAd = new Ad(
+                1L,
+                "Петров",
+                "",
+                30,
+                "Глобус"
+        );
+        // When
+        when(repository.findById(entityId)).thenReturn(Optional.of(entity));
+        when(mapping.getReadyForUpdateEntity(entity, null)).thenReturn(Optional.of(entity));
+        when(repository.save(entity)).thenReturn(entity);
+        when(mapping.getAdFromEntity(entity)).thenReturn(resultAd);
+        // Then
+        assertEquals(Optional.of(resultAd), service.updateAdvertisementInfo(entityId, null));
+        verify(repository, times(1)).findById(entityId);
+        verify(repository, times(1)).save(entity);
+        verifyNoMoreInteractions(repository);
+        verify(mapping, times(1)).getReadyForUpdateEntity(entity, null);
+        verify(mapping, times(1)).getAdFromEntity(entity);
         verifyNoMoreInteractions(mapping);
     }
 }
