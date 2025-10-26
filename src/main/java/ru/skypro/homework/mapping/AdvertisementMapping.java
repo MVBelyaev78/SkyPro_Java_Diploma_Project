@@ -37,7 +37,7 @@ public class AdvertisementMapping {
 
     public Optional<ExtendedAd> getExtendedAdFromEntity(AdvertisementEntity entity) {
         if (entity == null) {
-            return null;
+            return Optional.empty();
         }
         final ExtendedAd extendedAd = new ExtendedAd();
         extendedAd.setPk(entity.getId());
@@ -65,5 +65,22 @@ public class AdvertisementMapping {
         entity.setImage(imageEntity);
 
         return entity;
+    }
+
+    public Optional<AdvertisementEntity> getReadyForUpdateEntity(AdvertisementEntity entity,
+                                                                 CreateOrUpdateAd createOrUpdateAd) {
+        if (entity == null) {
+            return Optional.empty();
+        }
+        if (createOrUpdateAd == null) {
+            return Optional.of(entity);
+        }
+        AdvertisementEntity entityResult = new AdvertisementEntity();
+        entityResult.setId(entity.getId());
+        entityResult.setTitle(createOrUpdateAd.getTitle());
+        entityResult.setDescription(createOrUpdateAd.getDescription());
+        entityResult.setPrice(createOrUpdateAd.getPrice());
+        entityResult.setUser(entity.getUser());
+        return Optional.of(entityResult);
     }
 }

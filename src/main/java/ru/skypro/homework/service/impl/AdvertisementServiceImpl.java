@@ -18,9 +18,7 @@ import ru.skypro.homework.service.AdvertisementService;
 import ru.skypro.homework.service.ImageService;
 
 import java.io.IOException;
-import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 /**
  * Реализация сервиса для работы с объявлениями.
@@ -63,10 +61,7 @@ public class AdvertisementServiceImpl implements AdvertisementService {
      */
     @Override
     public Ads getAllAdvertisements() {
-        final List<Ad> ads = repository.findAll().stream()
-                .map(mapping::getAdFromEntity)
-                .collect(Collectors.toList());
-        return new Ads(ads.size(), ads);
+        return mapping.getAdsFromEntities(repository.findAll());
     }
 
     /**
@@ -105,13 +100,10 @@ public class AdvertisementServiceImpl implements AdvertisementService {
      */
     @Override
     public Optional<Ad> updateAdvertisementInfo(Long id, CreateOrUpdateAd createOrUpdateAd) {
-        final Optional<AdvertisementEntity> entity = repository.findById(id);
-        entity.ifPresent(e -> {
-            e.setTitle(createOrUpdateAd.getTitle());
-            e.setPrice(createOrUpdateAd.getPrice());
-            e.setDescription(createOrUpdateAd.getDescription());
-        });
-        return entity.map(e -> mapping.getAdFromEntity(repository.save(e)));
+        return repository
+                .findById(id)
+                .flatMap(e -> mapping.getReadyForUpdateEntity(e, createOrUpdateAd))
+                .map(e -> mapping.getAdFromEntity(repository.save(e)));
     }
 
     /**

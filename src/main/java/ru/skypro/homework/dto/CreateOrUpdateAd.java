@@ -3,12 +3,14 @@ package ru.skypro.homework.dto;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  * Поля объявления, которые меняются пользователем при создании/обновдении объявления
  * Применяется в API для управления объявлениями
  */
 @Data
+@NoArgsConstructor
 @AllArgsConstructor
 @Schema(description = "Поля объявления, которые меняются пользователем при создании/обновдении объявления. Применяется в API для управления объявлениями")
 public class CreateOrUpdateAd {
