@@ -23,7 +23,7 @@ import static org.mockito.Mockito.*;
 import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
-public class AdvertisementServiceUnitTest {
+public class AdvertisementServiceTest {
     @Mock
     private AdvertisementRepository repository;
 
