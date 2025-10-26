@@ -25,7 +25,7 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final UserMapping mapping;
-    private final ImageComponent imageService;
+    private final ImageComponent imageComponent;
 
     @Override
     public boolean changePassword(String userName, String currentPassword, String newPassword) {
@@ -68,7 +68,7 @@ public class UserServiceImpl implements UserService {
             throw new ResourceNotFoundException("Пользователь не найден");
         }
         if (image != null) {
-            ImageEntity imageEntity = imageService.saveImage(image);
+            ImageEntity imageEntity = imageComponent.saveImage(image);
             author.setImage(imageEntity);
             result = imageEntity.getFilePath();
         }
