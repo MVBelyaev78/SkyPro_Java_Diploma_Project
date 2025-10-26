@@ -33,7 +33,7 @@ public class AdvertisementServiceImpl implements AdvertisementService {
     private AdvertisementMapping mapping;
 
     @Autowired
-    private ImageService imageService;
+    private ImageComponent imageService;
 
     @Autowired
     private UserRepository userRepository;

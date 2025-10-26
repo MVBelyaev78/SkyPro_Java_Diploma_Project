@@ -24,7 +24,7 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final UserMapping mapping;
-    private final ImageService imageService;
+    private final ImageComponent imageService;
 
     @Override
     public boolean changePassword(String userName, String currentPassword, String newPassword) {

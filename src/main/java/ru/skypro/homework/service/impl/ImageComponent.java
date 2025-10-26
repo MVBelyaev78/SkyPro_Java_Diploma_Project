@@ -3,7 +3,7 @@ package ru.skypro.homework.service.impl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 import ru.skypro.homework.entity.ImageEntity;
 import ru.skypro.homework.repository.ImageRepository;
@@ -21,9 +21,9 @@ import java.util.UUID;
  * Обеспечивает сохранение и чтение файлов изображений.
  */
 @Slf4j
-@Service
+@Component
 @RequiredArgsConstructor
-public class ImageService {
+public class ImageComponent {
     private final ImageRepository repository;
     @Value("${app.upload.dir}")
     private String uploadDir;
