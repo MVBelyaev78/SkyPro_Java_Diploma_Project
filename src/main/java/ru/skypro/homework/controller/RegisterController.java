@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import ru.skypro.homework.dto.Register;
-import ru.skypro.homework.service.AuthService;
+import ru.skypro.homework.service.RegisterService;
 
 /**
  * Контроллер регистрации пользователей
@@ -26,7 +26,7 @@ import ru.skypro.homework.service.AuthService;
 @Tag(name = "Регистрация")
 public class RegisterController {
 
-    private final AuthService authService;
+    private final RegisterService registerService;
 
     /**
      * Метод для регистрации нового пользователя
@@ -41,7 +41,7 @@ public class RegisterController {
     })
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody Register register) {
-        if (authService.register(register)) {
+        if (registerService.register(register)) {
             return ResponseEntity.status(HttpStatus.CREATED).build();
         } else {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();

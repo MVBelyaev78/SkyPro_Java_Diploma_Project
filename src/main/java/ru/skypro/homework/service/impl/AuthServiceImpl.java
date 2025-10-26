@@ -22,8 +22,6 @@ import ru.skypro.homework.service.AuthService;
 @RequiredArgsConstructor
 public class AuthServiceImpl implements AuthService {
 
-    private final UserRepository repository;
-    private final PasswordEncoder encoder;
     private final AuthenticationManager authenticationManager;
 
     /**
@@ -44,29 +42,5 @@ public class AuthServiceImpl implements AuthService {
         } catch (AuthenticationException e) {
             return false;
         }
-    }
-
-    /**
-     * Регистрирует нового пользователя с указанной информацией.
-     *
-     * @param register объект, содержащий данные для регистрации пользователя
-     * @return true, если регистрация прошла успешно, иначе false (например, если пользователь с таким email уже существует)
-     */
-    @Override
-    public boolean register(Register register) {
-        if (repository.existsByEmail(register.getUsername())) {
-            return false;
-        }
-
-        UserEntity user = new UserEntity();
-        user.setEmail(register.getUsername());
-        user.setPassword(encoder.encode(register.getPassword()));
-        user.setFirstName(register.getFirstName());
-        user.setLastName(register.getLastName());
-        user.setPhone(register.getPhone());
-        user.setRole(register.getRole().toString());
-
-        repository.save(user);
-        return true;
     }
 }
