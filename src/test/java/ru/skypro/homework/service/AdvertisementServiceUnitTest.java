@@ -44,13 +44,13 @@ public class AdvertisementServiceUnitTest {
         userEntity.setPhone("+79356661300");
         userEntity.setRole("USER");
         userEntity.setPassword("qw123456");
-        final Long adEntityId = 1L;
-        final AdvertisementEntity adEntity = new AdvertisementEntity();
-        adEntity.setId(adEntityId);
-        adEntity.setTitle("Глобус");
-        adEntity.setDescription("Школьный глобус с политической картой");
-        adEntity.setPrice(30);
-        adEntity.setUser(userEntity);
+        final Long entityId = 1L;
+        final AdvertisementEntity entity = new AdvertisementEntity();
+        entity.setId(entityId);
+        entity.setTitle("Глобус");
+        entity.setDescription("Школьный глобус с политической картой");
+        entity.setPrice(30);
+        entity.setUser(userEntity);
         final ExtendedAd extendedAd = new ExtendedAd(
                 1L,
             "Сергей",
@@ -63,25 +63,25 @@ public class AdvertisementServiceUnitTest {
             "Глобус"
         );
         // When
-        when(repository.findById(adEntityId)).thenReturn(Optional.of(adEntity));
-        when(mapping.getExtendedAdFromEntity(adEntity)).thenReturn(Optional.of(extendedAd));
+        when(repository.findById(entityId)).thenReturn(Optional.of(entity));
+        when(mapping.getExtendedAdFromEntity(entity)).thenReturn(Optional.of(extendedAd));
         // Then
-        assertEquals(Optional.of(extendedAd), service.getAdvertisementInfo(adEntityId));
-        verify(repository, times(1)).findById(adEntityId);
+        assertEquals(Optional.of(extendedAd), service.getAdvertisementInfo(entityId));
+        verify(repository, times(1)).findById(entityId);
         verifyNoMoreInteractions(repository);
-        verify(mapping, times(1)).getExtendedAdFromEntity(adEntity);
+        verify(mapping, times(1)).getExtendedAdFromEntity(entity);
         verifyNoMoreInteractions(mapping);
     }
 
     @Test
     public void testGetAdvertisementInfo_withIrrelevantId_returnsEmpty() {
         // Given
-        final Long adEntityId = 1L;
+        final Long entityId = 1L;
         // When
-        when(repository.findById(adEntityId)).thenReturn(Optional.empty());
+        when(repository.findById(entityId)).thenReturn(Optional.empty());
         // Then
-        assertEquals(Optional.empty(), service.getAdvertisementInfo(adEntityId));
-        verify(repository, times(1)).findById(adEntityId);
+        assertEquals(Optional.empty(), service.getAdvertisementInfo(entityId));
+        verify(repository, times(1)).findById(entityId);
         verifyNoMoreInteractions(repository);
         verify(mapping, never()).getExtendedAdFromEntity(any(AdvertisementEntity.class));
         verifyNoMoreInteractions(mapping);
@@ -111,13 +111,13 @@ public class AdvertisementServiceUnitTest {
         userEntity.setRole("USER");
         userEntity.setPassword("qw123456");
 
-        final AdvertisementEntity adEntity = new AdvertisementEntity();
-        adEntity.setId(1L);
-        adEntity.setTitle("Глобус");
-        adEntity.setDescription("Школьный глобус с политической картой");
-        adEntity.setPrice(30);
-        adEntity.setUser(userEntity);
-        final List<AdvertisementEntity> adEntityList = List.of(adEntity);
+        final AdvertisementEntity entity = new AdvertisementEntity();
+        entity.setId(1L);
+        entity.setTitle("Глобус");
+        entity.setDescription("Школьный глобус с политической картой");
+        entity.setPrice(30);
+        entity.setUser(userEntity);
+        final List<AdvertisementEntity> adEntityList = List.of(entity);
 
         final Ad ad = new Ad(
                 1L,
@@ -157,30 +157,30 @@ public class AdvertisementServiceUnitTest {
     @Test
     public void testDeleteAdvertisement_existentAdvertisement_returnsTrue() {
         // Given
-        final Long adEntityId = 1L;
+        final Long entityId = 1L;
         // When
-        when(repository.existsById(adEntityId)).thenReturn(true);
+        when(repository.existsById(entityId)).thenReturn(true);
         // Then
-        assertEquals(true, service.deleteAdvertisement(adEntityId));
-        verify(repository, times(1)).existsById(adEntityId);
-        verify(repository, times(1)).deleteById(adEntityId);
+        assertEquals(true, service.deleteAdvertisement(entityId));
+        verify(repository, times(1)).existsById(entityId);
+        verify(repository, times(1)).deleteById(entityId);
         verifyNoMoreInteractions(repository);
     }
 
     @Test
     public void testDeleteAdvertisement_nonExistentAdvertisement_returnsTrue() {
         // Given
-        final Long adEntityId = 1L;
+        final Long entityId = 1L;
         // When
-        when(repository.existsById(adEntityId)).thenReturn(false);
+        when(repository.existsById(entityId)).thenReturn(false);
         // Then
-        assertEquals(false, service.deleteAdvertisement(adEntityId));
-        verify(repository, times(1)).existsById(adEntityId);
+        assertEquals(false, service.deleteAdvertisement(entityId));
+        verify(repository, times(1)).existsById(entityId);
         verifyNoMoreInteractions(repository);
     }
 
     @Test
-    public void testUpdateAdvertisementInfo_withRelevantId_returnsRelevantDto() {
+    public void testUpdateAdvertisementInfo_withRelevantEntityId_withRelevantCreateOrUpdateAd_returnsRelevantDto() {
         // Given
         final UserEntity userEntity = new UserEntity();
         userEntity.setId(1L);
@@ -191,25 +191,25 @@ public class AdvertisementServiceUnitTest {
         userEntity.setRole("USER");
         userEntity.setPassword("qw123456");
 
-        final Long adEntityId = 1L;
-        final AdvertisementEntity adInitEntity = new AdvertisementEntity();
-        adInitEntity.setId(adEntityId);
-        adInitEntity.setTitle("Глобус");
-        adInitEntity.setDescription("Школьный глобус с политической картой");
-        adInitEntity.setPrice(30);
-        adInitEntity.setUser(userEntity);
+        final Long entityId = 1L;
+        final AdvertisementEntity initEntity = new AdvertisementEntity();
+        initEntity.setId(entityId);
+        initEntity.setTitle("Глобус");
+        initEntity.setDescription("Школьный глобус с политической картой");
+        initEntity.setPrice(30);
+        initEntity.setUser(userEntity);
 
         final CreateOrUpdateAd createOrUpdateAd = new CreateOrUpdateAd();
         createOrUpdateAd.setTitle("Глобус");
         createOrUpdateAd.setPrice(35);
         createOrUpdateAd.setDescription("Большой школьный глобус с политической картой");
 
-        final AdvertisementEntity adResultEntity = new AdvertisementEntity();
-        adResultEntity.setId(adEntityId);
-        adResultEntity.setTitle("Глобус");
-        adResultEntity.setDescription("Большой школьный глобус с политической картой");
-        adResultEntity.setPrice(35);
-        adResultEntity.setUser(userEntity);
+        final AdvertisementEntity resultEntity = new AdvertisementEntity();
+        resultEntity.setId(entityId);
+        resultEntity.setTitle("Глобус");
+        resultEntity.setDescription("Большой школьный глобус с политической картой");
+        resultEntity.setPrice(35);
+        resultEntity.setUser(userEntity);
 
         final Ad resultAd = new Ad(
                 1L,
@@ -219,30 +219,30 @@ public class AdvertisementServiceUnitTest {
                 "Глобус"
         );
         // When
-        when(repository.findById(adEntityId)).thenReturn(Optional.of(adInitEntity));
-        when(mapping.getReadyForUpdateEntity(adInitEntity, createOrUpdateAd)).thenReturn(Optional.of(adResultEntity));
-        when(repository.save(adResultEntity)).thenReturn(adResultEntity);
-        when(mapping.getAdFromEntity(adResultEntity)).thenReturn(resultAd);
+        when(repository.findById(entityId)).thenReturn(Optional.of(initEntity));
+        when(mapping.getReadyForUpdateEntity(initEntity, createOrUpdateAd)).thenReturn(Optional.of(resultEntity));
+        when(repository.save(resultEntity)).thenReturn(resultEntity);
+        when(mapping.getAdFromEntity(resultEntity)).thenReturn(resultAd);
         // Then
-        assertEquals(Optional.of(resultAd), service.updateAdvertisementInfo(adEntityId, createOrUpdateAd));
-        verify(repository, times(1)).findById(adEntityId);
-        verify(repository, times(1)).save(adResultEntity);
+        assertEquals(Optional.of(resultAd), service.updateAdvertisementInfo(entityId, createOrUpdateAd));
+        verify(repository, times(1)).findById(entityId);
+        verify(repository, times(1)).save(resultEntity);
         verifyNoMoreInteractions(repository);
-        verify(mapping, times(1)).getReadyForUpdateEntity(adInitEntity, createOrUpdateAd);
-        verify(mapping).getAdFromEntity(adResultEntity);
+        verify(mapping, times(1)).getReadyForUpdateEntity(initEntity, createOrUpdateAd);
+        verify(mapping).getAdFromEntity(resultEntity);
         verifyNoMoreInteractions(mapping);
     }
 
     @Test
-    public void testUpdateAdvertisementInfo_withIrrelevantId_returnsRelevantDto() {
+    public void testUpdateAdvertisementInfo_withIrrelevantEntityId_returnsRelevantDto() {
         // Given
-        final Long adEntityId = 1L;
+        final Long entityId = 1L;
         // When
-        when(repository.findById(adEntityId)).thenReturn(Optional.empty());
+        when(repository.findById(entityId)).thenReturn(Optional.empty());
         // Then
         assertEquals(Optional.empty(),
-                service.updateAdvertisementInfo(adEntityId, any(CreateOrUpdateAd.class)));
-        verify(repository, times(1)).findById(adEntityId);
+                service.updateAdvertisementInfo(entityId, any(CreateOrUpdateAd.class)));
+        verify(repository, times(1)).findById(entityId);
         verifyNoMoreInteractions(repository);
         verify(mapping, never()).getReadyForUpdateEntity(any(AdvertisementEntity.class), any(CreateOrUpdateAd.class));
         verify(mapping, never()).getAdFromEntity(any(AdvertisementEntity.class));
