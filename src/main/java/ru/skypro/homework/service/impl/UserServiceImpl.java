@@ -11,7 +11,7 @@ import ru.skypro.homework.dto.User;
 import ru.skypro.homework.entity.ImageEntity;
 import ru.skypro.homework.entity.UserEntity;
 import ru.skypro.homework.exception.ResourceNotFoundException;
-import ru.skypro.homework.mapping.UserMapping;
+import ru.skypro.homework.component.mapping.UserMapping;
 import ru.skypro.homework.repository.UserRepository;
 import ru.skypro.homework.service.UserService;
 

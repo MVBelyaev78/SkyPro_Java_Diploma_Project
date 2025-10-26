@@ -1,4 +1,4 @@
-package ru.skypro.homework.mapping;
+package ru.skypro.homework.component.mapping;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;

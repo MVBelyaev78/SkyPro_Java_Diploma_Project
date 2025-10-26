@@ -12,7 +12,7 @@ import ru.skypro.homework.dto.*;
 import ru.skypro.homework.entity.AdvertisementEntity;
 import ru.skypro.homework.entity.ImageEntity;
 import ru.skypro.homework.entity.UserEntity;
-import ru.skypro.homework.mapping.AdvertisementMapping;
+import ru.skypro.homework.component.mapping.AdvertisementMapping;
 import ru.skypro.homework.repository.AdvertisementRepository;
 import ru.skypro.homework.repository.UserRepository;
 import ru.skypro.homework.service.AdvertisementService;
