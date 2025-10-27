@@ -2,14 +2,16 @@ package ru.skypro.homework.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
+import ru.skypro.homework.entity.AdvertisementEntity;
 import ru.skypro.homework.entity.CommentEntity;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface CommentRepository extends JpaRepository<CommentEntity, Integer> {
     /**
-     * Находит все комментарии по ID объявления
+     * Поиск комментариев по ID объявления
      *
      * @param idAdvertisement ID объявления
      * @return список комментариев
@@ -17,7 +19,7 @@ public interface CommentRepository extends JpaRepository<CommentEntity, Integer>
     List<CommentEntity> findAllByIdAdvertisement_Id(Long idAdvertisement);
 
     /**
-     * Удаляет комментарий по ID комментария и ID объявления
+     * Удаление комментария по ID комментария и ID объявления
      *
      * @param commentId       ID комментария
      * @param idAdvertisement ID объявления
