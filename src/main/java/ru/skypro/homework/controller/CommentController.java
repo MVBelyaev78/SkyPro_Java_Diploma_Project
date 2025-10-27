@@ -101,7 +101,7 @@ public class CommentController {
             @ApiResponse(responseCode = "404", content = @Content())
     })
     @DeleteMapping("/{adId}/comments/{commentId}")
-    public ResponseEntity<?> rmComment(@PathVariable("adId") int id, @PathVariable("commentId") int commentId) {
+    public ResponseEntity<?> rmComment(@PathVariable("adId") Long id, @PathVariable("commentId") Long commentId) {
         service.rmComment(id, commentId);
         return ResponseEntity.ok().build();
     }

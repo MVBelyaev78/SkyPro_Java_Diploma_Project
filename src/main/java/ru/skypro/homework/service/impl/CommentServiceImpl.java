@@ -90,7 +90,7 @@ public class CommentServiceImpl implements CommentService {
      * @param commentId идентификатор комментария для удаления
      */
     @Override
-    public void rmComment(int adId, int commentId) {
+    public void rmComment(Long adId, Long commentId) {
         //comments.removeIf(comment -> comment.getId() == commentId);
     }
 
