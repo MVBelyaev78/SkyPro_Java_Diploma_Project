@@ -9,6 +9,7 @@ import ru.skypro.homework.entity.AdvertisementEntity;
 import ru.skypro.homework.entity.ImageEntity;
 import ru.skypro.homework.entity.UserEntity;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -25,7 +26,7 @@ public class AdvertisementMapping {
 
     public Ads getAdsFromEntities(List<AdvertisementEntity> advertisementEntityList) {
         if (advertisementEntityList == null || advertisementEntityList.isEmpty()) {
-            return null;
+            return new Ads(0, new ArrayList<>());
         }
         List<Ad> adList = advertisementEntityList
                 .stream()
