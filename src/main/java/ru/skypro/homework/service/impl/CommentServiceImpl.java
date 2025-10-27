@@ -35,14 +35,14 @@ public class CommentServiceImpl implements CommentService {
     /**
      * Получение комментариев для объявления по его идентификатору.
      *
-     * @param id идентификатор объявления
+     * @param adId идентификатор объявления
      * @return объект Comments, содержащий количество и список комментариев
      */
     @Override
-    public Comments getComments(int id) {
-        log.info("Получение комментариев для объявления с ID: {}", id);
+    public Comments getComments(int adId) {
+        log.info("Получение комментариев для объявления с ID: {}", adId);
 
-        List<CommentEntity> commentEntities = commentRepository.findAllByIdAdvertisement_Id((long) id);
+        List<CommentEntity> commentEntities = commentRepository.findAllByIdAdvertisement_Id((long) adId);
         List<Comment> comments = commentEntities.stream()
                 .map(commentMapping::fromEntity)
                 .collect(Collectors.toList());
@@ -53,13 +53,13 @@ public class CommentServiceImpl implements CommentService {
     /**
      * Добавление нового комментария к объявлению.
      *
-     * @param id идентификатор объявления
+     * @param adId идентификатор объявления
      * @param comment объект CreateOrUpdateComment с данными нового комментария
      * @return созданный комментарий
      */
     @Override
-    public Comment addComment(int id, CreateOrUpdateComment comment) {
-        log.info("Добавление комментария к объявлению с ID: {}", id);
+    public Comment addComment(int adId, CreateOrUpdateComment comment) {
+        log.info("Добавление комментария к объявлению с ID: {}", adId);
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
@@ -68,8 +68,8 @@ public class CommentServiceImpl implements CommentService {
         if (author == null) {
             throw new ResourceNotFoundException("Пользователь не найден");
         }
-        AdvertisementEntity advertisement = advertisementRepository.findById((long) id)
-                .orElseThrow(() -> new RuntimeException("Объявление с ID " + id + " не найдено"));
+        AdvertisementEntity advertisement = advertisementRepository.findById((long) adId)
+                .orElseThrow(() -> new RuntimeException("Объявление с ID " + adId + " не найдено"));
 
         CommentEntity commentEntity = new CommentEntity();
         commentEntity.setNmText(comment.getText());

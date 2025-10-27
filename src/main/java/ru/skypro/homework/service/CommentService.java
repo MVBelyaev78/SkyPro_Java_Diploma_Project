@@ -14,19 +14,19 @@ public interface CommentService {
     /**
      * Получить все комментарии для указанного объявления
      *
-     * @param id идентификатор объявления
+     * @param adId идентификатор объявления
      * @return {@link Comments} содержащий кол-во комментариев и коллекцию {@link Comment}
      */
-    Comments getComments(int id);
+    Comments getComments(int adId);
 
     /**
      * Добавляет комментарий к объявлению
      *
-     * @param id      идентификатор объявления
+     * @param adId      идентификатор объявления
      * @param comment текст комментария
      * @return {@link Comment} созданный комментарий
      */
-    Comment addComment(int id, CreateOrUpdateComment comment);
+    Comment addComment(int adId, CreateOrUpdateComment comment);
 
     /**
      * Удаляет комментарий
