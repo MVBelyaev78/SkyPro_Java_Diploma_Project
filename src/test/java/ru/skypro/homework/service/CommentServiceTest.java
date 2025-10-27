@@ -66,7 +66,7 @@ public class CommentServiceTest {
         final CommentEntity entity = new CommentEntity();
         entity.setIdComment(1L);
         entity.setNmText("Старый какой-то у вас глобус");
-        entity.setDtCreate(ZonedDateTime.of(2024, 1, 10, 15, 45, 56, 0,
+        entity.setDtCreate(ZonedDateTime.of(2024, 1, 10, 15, 45, 56, 666000,
                 ZoneId.of("Europe/Moscow")));
         entity.setIdAdvertisement(advertisementEntity);
         entity.setIdAuthor(authorEntity);
@@ -75,7 +75,7 @@ public class CommentServiceTest {
                 2L,
                 "",
                 "Алексей",
-                1_704_894_416_000L,
+                1_704_894_416_666L,
                 1L,
                 "Старый какой-то у вас глобус");
         final Comments comments = new Comments(1, List.of(comment));
@@ -92,3 +92,4 @@ public class CommentServiceTest {
         verifyNoMoreInteractions(mapping);
     }
 }
+
