@@ -26,7 +26,7 @@ public interface CommentService {
      * @param comment текст комментария
      * @return {@link Comment} созданный комментарий
      */
-    Comment addComment(int adId, CreateOrUpdateComment comment);
+    Comment addComment(Long adId, CreateOrUpdateComment comment);
 
     /**
      * Удаляет комментарий

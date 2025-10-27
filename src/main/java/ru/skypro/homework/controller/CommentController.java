@@ -41,7 +41,7 @@ public class CommentController {
             @ApiResponse(responseCode = "404", content = @Content())
     })
     @PostMapping("/{id}/comment")
-    public ResponseEntity<Comment> addComment(@PathVariable("id") int id, @RequestBody @Valid CreateOrUpdateComment comment) {
+    public ResponseEntity<Comment> addComment(@PathVariable("id") Long id, @RequestBody @Valid CreateOrUpdateComment comment) {
         return ResponseEntity.ok(service.addComment(id, comment));
     }
 

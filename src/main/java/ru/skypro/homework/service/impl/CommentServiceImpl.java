@@ -58,7 +58,7 @@ public class CommentServiceImpl implements CommentService {
      * @return созданный комментарий
      */
     @Override
-    public Comment addComment(int adId, CreateOrUpdateComment comment) {
+    public Comment addComment(Long adId, CreateOrUpdateComment comment) {
         log.info("Добавление комментария к объявлению с ID: {}", adId);
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -68,7 +68,7 @@ public class CommentServiceImpl implements CommentService {
         if (author == null) {
             throw new ResourceNotFoundException("Пользователь не найден");
         }
-        AdvertisementEntity advertisement = advertisementRepository.findById((long) adId)
+        AdvertisementEntity advertisement = advertisementRepository.findById(adId)
                 .orElseThrow(() -> new RuntimeException("Объявление с ID " + adId + " не найдено"));
 
         CommentEntity commentEntity = new CommentEntity();
