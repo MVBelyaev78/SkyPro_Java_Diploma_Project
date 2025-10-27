@@ -19,6 +19,8 @@ import ru.skypro.homework.repository.UserRepository;
 import ru.skypro.homework.service.CommentService;
 
 import java.time.Instant;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -73,7 +75,7 @@ public class CommentServiceImpl implements CommentService {
 
         CommentEntity commentEntity = new CommentEntity();
         commentEntity.setNmText(comment.getText());
-        commentEntity.setDtCreate(Instant.now());
+        commentEntity.setDtCreate(ZonedDateTime.now(ZoneId.of("Europe/Moscow")));
         commentEntity.setIdAdvertisement(advertisement);
         commentEntity.setIdAuthor(author);
 

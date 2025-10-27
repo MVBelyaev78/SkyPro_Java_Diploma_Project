@@ -5,6 +5,7 @@ import lombok.*;
 
 import javax.persistence.*;
 import java.time.Instant;
+import java.time.ZonedDateTime;
 
 
 /**
@@ -43,7 +44,7 @@ public class CommentEntity {
     @ToString.Include
     @EqualsAndHashCode.Exclude
     @Column(name = "dt_create")
-    private Instant dtCreate;
+    private ZonedDateTime dtCreate;
 
     /**
      * Идентификатор объявления
@@ -66,6 +67,6 @@ public class CommentEntity {
     private UserEntity idAuthor;
 
     public Long getDtCreateAsMillis() {
-        return dtCreate != null ? dtCreate.toEpochMilli() : 0;
+        return dtCreate != null ? dtCreate.toInstant().toEpochMilli() : 0;
     }
 }

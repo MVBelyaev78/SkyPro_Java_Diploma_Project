@@ -11,6 +11,8 @@ import ru.skypro.homework.repository.AdvertisementRepository;
 import ru.skypro.homework.repository.UserRepository;
 
 import java.time.Instant;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -58,7 +60,7 @@ public class CommentMapping {
         entity.setNmText(comment.getText());
         entity.setIdAuthor(author.get());
         entity.setIdAdvertisement(advertisement.get());
-        entity.setDtCreate(Instant.now());
+        entity.setDtCreate(ZonedDateTime.now(ZoneId.of("Europe/Moscow")));
 
         return Optional.of(entity);
     }
