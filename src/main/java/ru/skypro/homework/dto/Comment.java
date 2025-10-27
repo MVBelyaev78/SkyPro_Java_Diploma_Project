@@ -46,7 +46,7 @@ public class Comment {
      * Идентификатор комментария
      */
     @Schema(description = "id комментария")
-    private int pk;
+    private Long pk;
 
     /**
      * Текст комментария

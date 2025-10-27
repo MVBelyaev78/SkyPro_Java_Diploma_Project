@@ -27,7 +27,7 @@ public class CommentEntity {
     @EqualsAndHashCode.Include
     @GeneratedValue
     @Column(name = "id_comment")
-    private Integer idComment;
+    private Long idComment;
 
     /**
      * Текст комментария
