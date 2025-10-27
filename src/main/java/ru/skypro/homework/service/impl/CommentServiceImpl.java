@@ -103,10 +103,10 @@ public class CommentServiceImpl implements CommentService {
      * @return обновленный комментарий или null, если комментарий не найден
      */
     @Override
-    public Comment updateComment(int adId, int commentId, CreateOrUpdateComment comment) {
+    public Comment updateComment(Long adId, Long commentId, CreateOrUpdateComment comment) {
         log.info("Обновление комментария с ID: {} для объявления с ID: {}", commentId, adId);
 
-        CommentEntity commentEntity = commentRepository.findById(commentId)
+        CommentEntity commentEntity = commentRepository.findById(Math.toIntExact(commentId))
                 .orElseThrow(() -> new RuntimeException("Комментарий с ID " + commentId + " не найден"));
 
         if (!commentEntity.getIdAdvertisement().getId().equals((long) adId)) {

@@ -44,5 +44,5 @@ public interface CommentService {
      * @param comment   новый текст комментария
      * @return {@link Comment} обновленный комментарий
      */
-    Comment updateComment(int adId, int commentId, CreateOrUpdateComment comment);
+    Comment updateComment(Long adId, Long commentId, CreateOrUpdateComment comment);
 }
