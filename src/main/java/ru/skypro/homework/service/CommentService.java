@@ -17,7 +17,7 @@ public interface CommentService {
      * @param adId идентификатор объявления
      * @return {@link Comments} содержащий кол-во комментариев и коллекцию {@link Comment}
      */
-    Comments getComments(int adId);
+    Comments getComments(Long adId);
 
     /**
      * Добавляет комментарий к объявлению

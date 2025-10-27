@@ -39,10 +39,10 @@ public class CommentServiceImpl implements CommentService {
      * @return объект Comments, содержащий количество и список комментариев
      */
     @Override
-    public Comments getComments(int adId) {
+    public Comments getComments(Long adId) {
         log.info("Получение комментариев для объявления с ID: {}", adId);
 
-        List<CommentEntity> commentEntities = commentRepository.findAllByIdAdvertisement_Id((long) adId);
+        List<CommentEntity> commentEntities = commentRepository.findAllByIdAdvertisement_Id(adId);
         List<Comment> comments = commentEntities.stream()
                 .map(commentMapping::fromEntity)
                 .collect(Collectors.toList());

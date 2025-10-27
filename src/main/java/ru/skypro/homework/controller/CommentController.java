@@ -58,7 +58,7 @@ public class CommentController {
             @ApiResponse(responseCode = "404", content = @Content())
     })
     @GetMapping("/{id}/comments")
-    public ResponseEntity<Comments> getComments(@PathVariable("id") int id) {
+    public ResponseEntity<Comments> getComments(@PathVariable("id") Long id) {
         return ResponseEntity.ok(service.getComments(id));
     }
 
