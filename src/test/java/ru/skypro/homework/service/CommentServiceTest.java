@@ -107,4 +107,19 @@ public class CommentServiceTest {
         verify(mapping, times(1)).fromEntities(List.of());
         verifyNoMoreInteractions(mapping);
     }
+
+    @Test
+    public void testGetComments_withNullId_returnsEmptyDto() {
+        // Given
+        final Comments comments = new Comments(0, List.of());
+        // When
+        when(repository.findAllByIdAdvertisement_Id(null)).thenReturn(List.of());
+        when(mapping.fromEntities(List.of())).thenReturn(comments);
+        // Then
+        assertEquals(comments, service.getComments(null));
+        verify(repository, times(1)).findAllByIdAdvertisement_Id(null);
+        verifyNoMoreInteractions(repository);
+        verify(mapping, times(1)).fromEntities(List.of());
+        verifyNoMoreInteractions(mapping);
+    }
 }

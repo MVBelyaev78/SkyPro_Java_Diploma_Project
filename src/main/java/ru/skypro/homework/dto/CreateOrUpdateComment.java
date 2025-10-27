@@ -8,8 +8,6 @@ import ru.skypro.homework.controller.CommentController;
 /**
  * DTO для создания и обновления комментария
  *
- * @see CommentController#addComment(int, CreateOrUpdateComment)
- * @see CommentController#updateComment(int, int, CreateOrUpdateComment)
  */
 @Data
 @AllArgsConstructor
