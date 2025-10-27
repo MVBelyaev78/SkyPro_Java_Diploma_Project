@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import ru.skypro.homework.dto.Comment;
 import ru.skypro.homework.dto.Comments;
+import ru.skypro.homework.dto.CreateOrUpdateComment;
 import ru.skypro.homework.entity.AdvertisementEntity;
 import ru.skypro.homework.entity.CommentEntity;
 import ru.skypro.homework.entity.UserEntity;
@@ -47,19 +48,18 @@ public class CommentMapping {
         return new Comments(result.size(), result);
     }
 
-    public Optional<CommentEntity> toEntity(Comment comment, Long adId) {
-        final Optional<UserEntity> author = userRepository.findById(comment.getAuthor());
-        final Optional<AdvertisementEntity> advertisement = advertisementRepository.findById(adId);
-
-        if (author.isEmpty() || advertisement.isEmpty()) {
+    public Optional<CommentEntity> toEntity(CreateOrUpdateComment comment,
+                                            AdvertisementEntity advertisementEntity,
+                                            UserEntity userEntity,
+                                            ZonedDateTime dateTime) {
+        if (comment == null || advertisementEntity == null || userEntity == null || dateTime == null) {
             return Optional.empty();
         }
-
         CommentEntity entity = new CommentEntity();
         entity.setNmText(comment.getText());
-        entity.setIdAuthor(author.get());
-        entity.setIdAdvertisement(advertisement.get());
-        entity.setDtCreate(ZonedDateTime.now(ZoneId.of("Europe/Moscow")));
+        entity.setIdAuthor(userEntity);
+        entity.setIdAdvertisement(advertisementEntity);
+        entity.setDtCreate(dateTime);
 
         return Optional.of(entity);
     }

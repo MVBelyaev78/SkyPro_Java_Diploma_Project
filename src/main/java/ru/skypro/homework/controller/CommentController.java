@@ -42,7 +42,8 @@ public class CommentController {
     })
     @PostMapping("/{id}/comment")
     public ResponseEntity<Comment> addComment(@PathVariable("id") Long id, @RequestBody @Valid CreateOrUpdateComment comment) {
-        return ResponseEntity.ok(service.addComment(id, comment));
+        return ResponseEntity.ok(service.addComment(id, comment)
+                .orElseThrow(IllegalArgumentException::new));
     }
 
     /**

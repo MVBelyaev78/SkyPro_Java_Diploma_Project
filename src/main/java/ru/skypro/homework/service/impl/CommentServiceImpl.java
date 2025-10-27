@@ -18,11 +18,9 @@ import ru.skypro.homework.repository.CommentRepository;
 import ru.skypro.homework.repository.UserRepository;
 import ru.skypro.homework.service.CommentService;
 
-import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
-import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Optional;
 
 @Slf4j
 @Service
@@ -50,40 +48,44 @@ public class CommentServiceImpl implements CommentService {
     /**
      * Добавление нового комментария к объявлению.
      *
-     * @param adId идентификатор объявления
+     * @param adId    идентификатор объявления
      * @param comment объект CreateOrUpdateComment с данными нового комментария
      * @return созданный комментарий
      */
     @Override
-    public Comment addComment(Long adId, CreateOrUpdateComment comment) {
+    public Optional<Comment> addCommentUser(Long adId, CreateOrUpdateComment comment, UserEntity userEntity) {
         log.info("Добавление комментария к объявлению с ID: {}", adId);
 
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String username = authentication.getName();
-
-        UserEntity author = userRepository.findByEmail(username);
-        if (author == null) {
-            throw new ResourceNotFoundException("Пользователь не найден");
+        final Optional<AdvertisementEntity> advertisementEntity = advertisementRepository.findById(adId);
+        if (advertisementEntity.isEmpty()) {
+            return Optional.empty();
         }
-        AdvertisementEntity advertisement = advertisementRepository.findById(adId)
-                .orElseThrow(() -> new RuntimeException("Объявление с ID " + adId + " не найдено"));
+        final Optional<CommentEntity> commentEntity = commentMapping.toEntity(
+                comment, advertisementEntity.get(), userEntity, ZonedDateTime.now(ZoneId.of("Europe/Moscow")));
+        if (commentEntity.isEmpty()) {
+            return Optional.empty();
+        }
 
-        CommentEntity commentEntity = new CommentEntity();
-        commentEntity.setNmText(comment.getText());
-        commentEntity.setDtCreate(ZonedDateTime.now(ZoneId.of("Europe/Moscow")));
-        commentEntity.setIdAdvertisement(advertisement);
-        commentEntity.setIdAuthor(author);
+        return Optional.of(commentMapping.fromEntity(commentRepository.save(commentEntity.get())));
+        /*return advertisementRepository
+                .findById(adId)
+                .flatMap(adEntity -> commentMapping
+                        .toEntity(comment, adEntity, userEntity, ZonedDateTime.now(ZoneId.of("Europe/Moscow")))
+                        .map(e -> commentMapping.fromEntity(commentRepository.save(e))));*/
 
-        CommentEntity savedComment = commentRepository.save(commentEntity);
-        log.info("Комментарий успешно добавлен");
+    }
 
-        return commentMapping.fromEntity(savedComment);
+    @Override
+    public Optional<Comment> addComment(Long adId, CreateOrUpdateComment comment) {
+        return addCommentUser(adId,
+                comment,
+                userRepository.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName()));
     }
 
     /**
      * Удаление комментария по его идентификатору.
      *
-     * @param adId идентификатор объявления (не используется в данной реализации)
+     * @param adId      идентификатор объявления (не используется в данной реализации)
      * @param commentId идентификатор комментария для удаления
      */
     @Override
@@ -94,9 +96,9 @@ public class CommentServiceImpl implements CommentService {
     /**
      * Обновление существующего комментария.
      *
-     * @param adId идентификатор объявления (не используется в данной реализации)
+     * @param adId      идентификатор объявления (не используется в данной реализации)
      * @param commentId идентификатор комментария для обновления
-     * @param comment объект CreateOrUpdateComment с новыми данными комментария
+     * @param comment   объект CreateOrUpdateComment с новыми данными комментария
      * @return обновленный комментарий или null, если комментарий не найден
      */
     @Override

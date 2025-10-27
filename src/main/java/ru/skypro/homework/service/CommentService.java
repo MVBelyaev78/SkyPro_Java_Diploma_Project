@@ -3,6 +3,9 @@ package ru.skypro.homework.service;
 import ru.skypro.homework.dto.Comment;
 import ru.skypro.homework.dto.Comments;
 import ru.skypro.homework.dto.CreateOrUpdateComment;
+import ru.skypro.homework.entity.UserEntity;
+
+import java.util.Optional;
 
 /**
  * Реализация сервиса для работы с комментариями к объявлениям
@@ -22,11 +25,14 @@ public interface CommentService {
     /**
      * Добавляет комментарий к объявлению
      *
-     * @param adId      идентификатор объявления
-     * @param comment текст комментария
+     * @param adId       идентификатор объявления
+     * @param comment    текст комментария
+     * @param userEntity автор комментария
      * @return {@link Comment} созданный комментарий
      */
-    Comment addComment(Long adId, CreateOrUpdateComment comment);
+    Optional<Comment> addCommentUser(Long adId, CreateOrUpdateComment comment, UserEntity userEntity);
+
+    Optional<Comment> addComment(Long adId, CreateOrUpdateComment comment);
 
     /**
      * Удаляет комментарий
