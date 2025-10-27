@@ -17,7 +17,7 @@ public interface CommentService {
      * @param adId идентификатор объявления
      * @return {@link Comments} содержащий кол-во комментариев и коллекцию {@link Comment}
      */
-    Comments getComments(int adId);
+    Comments getComments(Long adId);
 
     /**
      * Добавляет комментарий к объявлению
@@ -26,7 +26,7 @@ public interface CommentService {
      * @param comment текст комментария
      * @return {@link Comment} созданный комментарий
      */
-    Comment addComment(int adId, CreateOrUpdateComment comment);
+    Comment addComment(Long adId, CreateOrUpdateComment comment);
 
     /**
      * Удаляет комментарий
@@ -34,7 +34,7 @@ public interface CommentService {
      * @param adId      идентификатор объявления
      * @param commentId идентификатор комментария
      */
-    void rmComment(int adId, int commentId);
+    void rmComment(Long adId, Long commentId);
 
     /**
      * Обновляет комментарий
@@ -44,5 +44,5 @@ public interface CommentService {
      * @param comment   новый текст комментария
      * @return {@link Comment} обновленный комментарий
      */
-    Comment updateComment(int adId, int commentId, CreateOrUpdateComment comment);
+    Comment updateComment(Long adId, Long commentId, CreateOrUpdateComment comment);
 }

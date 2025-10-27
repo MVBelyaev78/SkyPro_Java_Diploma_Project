@@ -39,10 +39,10 @@ public class CommentServiceImpl implements CommentService {
      * @return объект Comments, содержащий количество и список комментариев
      */
     @Override
-    public Comments getComments(int adId) {
+    public Comments getComments(Long adId) {
         log.info("Получение комментариев для объявления с ID: {}", adId);
 
-        List<CommentEntity> commentEntities = commentRepository.findAllByIdAdvertisement_Id((long) adId);
+        List<CommentEntity> commentEntities = commentRepository.findAllByIdAdvertisement_Id(adId);
         List<Comment> comments = commentEntities.stream()
                 .map(commentMapping::fromEntity)
                 .collect(Collectors.toList());
@@ -58,7 +58,7 @@ public class CommentServiceImpl implements CommentService {
      * @return созданный комментарий
      */
     @Override
-    public Comment addComment(int adId, CreateOrUpdateComment comment) {
+    public Comment addComment(Long adId, CreateOrUpdateComment comment) {
         log.info("Добавление комментария к объявлению с ID: {}", adId);
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -68,7 +68,7 @@ public class CommentServiceImpl implements CommentService {
         if (author == null) {
             throw new ResourceNotFoundException("Пользователь не найден");
         }
-        AdvertisementEntity advertisement = advertisementRepository.findById((long) adId)
+        AdvertisementEntity advertisement = advertisementRepository.findById(adId)
                 .orElseThrow(() -> new RuntimeException("Объявление с ID " + adId + " не найдено"));
 
         CommentEntity commentEntity = new CommentEntity();
@@ -90,7 +90,7 @@ public class CommentServiceImpl implements CommentService {
      * @param commentId идентификатор комментария для удаления
      */
     @Override
-    public void rmComment(int adId, int commentId) {
+    public void rmComment(Long adId, Long commentId) {
         //comments.removeIf(comment -> comment.getId() == commentId);
     }
 
@@ -103,10 +103,10 @@ public class CommentServiceImpl implements CommentService {
      * @return обновленный комментарий или null, если комментарий не найден
      */
     @Override
-    public Comment updateComment(int adId, int commentId, CreateOrUpdateComment comment) {
+    public Comment updateComment(Long adId, Long commentId, CreateOrUpdateComment comment) {
         log.info("Обновление комментария с ID: {} для объявления с ID: {}", commentId, adId);
 
-        CommentEntity commentEntity = commentRepository.findById(commentId)
+        CommentEntity commentEntity = commentRepository.findById(Math.toIntExact(commentId))
                 .orElseThrow(() -> new RuntimeException("Комментарий с ID " + commentId + " не найден"));
 
         if (!commentEntity.getIdAdvertisement().getId().equals((long) adId)) {

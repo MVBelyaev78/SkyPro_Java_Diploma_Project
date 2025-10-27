@@ -41,7 +41,7 @@ public class CommentController {
             @ApiResponse(responseCode = "404", content = @Content())
     })
     @PostMapping("/{id}/comment")
-    public ResponseEntity<Comment> addComment(@PathVariable("id") int id, @RequestBody @Valid CreateOrUpdateComment comment) {
+    public ResponseEntity<Comment> addComment(@PathVariable("id") Long id, @RequestBody @Valid CreateOrUpdateComment comment) {
         return ResponseEntity.ok(service.addComment(id, comment));
     }
 
@@ -58,7 +58,7 @@ public class CommentController {
             @ApiResponse(responseCode = "404", content = @Content())
     })
     @GetMapping("/{id}/comments")
-    public ResponseEntity<Comments> getComments(@PathVariable("id") int id) {
+    public ResponseEntity<Comments> getComments(@PathVariable("id") Long id) {
         return ResponseEntity.ok(service.getComments(id));
     }
 
@@ -79,8 +79,8 @@ public class CommentController {
     })
     @PatchMapping("/{adId}/comments/{commentId}")
     public ResponseEntity<Comment> updateComment(
-            @PathVariable("adId") int adId,
-            @PathVariable("commentId") int commentId,
+            @PathVariable("adId") Long adId,
+            @PathVariable("commentId") Long commentId,
             @RequestBody CreateOrUpdateComment comment
     ) {
         return ResponseEntity.ok(service.updateComment(adId, commentId, comment));
@@ -101,7 +101,7 @@ public class CommentController {
             @ApiResponse(responseCode = "404", content = @Content())
     })
     @DeleteMapping("/{adId}/comments/{commentId}")
-    public ResponseEntity<?> rmComment(@PathVariable("adId") int id, @PathVariable("commentId") int commentId) {
+    public ResponseEntity<?> rmComment(@PathVariable("adId") Long id, @PathVariable("commentId") Long commentId) {
         service.rmComment(id, commentId);
         return ResponseEntity.ok().build();
     }
