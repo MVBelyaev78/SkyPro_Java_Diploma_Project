@@ -45,12 +45,6 @@ public class CommentServiceImpl implements CommentService {
         log.info("Получение комментариев для объявления с ID: {}", adId);
 
         return commentMapping.fromEntities(commentRepository.findAllByIdAdvertisement_Id(adId));
-        /*List<CommentEntity> commentEntities = commentRepository.findAllByIdAdvertisement_Id(adId);
-        List<Comment> comments = commentEntities.stream()
-                .map(commentMapping::fromEntity)
-                .collect(Collectors.toList());
-
-        return new Comments(comments.size(), comments);*/
     }
 
     /**

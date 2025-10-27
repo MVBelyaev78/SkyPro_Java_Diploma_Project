@@ -37,7 +37,7 @@ public class CommentMapping {
 
     public Comments fromEntities(List<CommentEntity> entities) {
         if (entities == null || entities.isEmpty()) {
-            return new Comments(0, new ArrayList<>());
+            return new Comments(0, List.of());
         }
         final List<Comment> result = entities
                 .stream()

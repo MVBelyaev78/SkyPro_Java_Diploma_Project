@@ -91,5 +91,20 @@ public class CommentServiceTest {
         verify(mapping, times(1)).fromEntities(List.of(entity));
         verifyNoMoreInteractions(mapping);
     }
-}
 
+    @Test
+    public void testGetComments_withIrrelevantId_returnsEmptyDto() {
+        // Given
+        final Long advertisementId = 1L;
+        final Comments comments = new Comments(0, List.of());
+        // When
+        when(repository.findAllByIdAdvertisement_Id(advertisementId)).thenReturn(List.of());
+        when(mapping.fromEntities(List.of())).thenReturn(comments);
+        // Then
+        assertEquals(comments, service.getComments(advertisementId));
+        verify(repository, times(1)).findAllByIdAdvertisement_Id(advertisementId);
+        verifyNoMoreInteractions(repository);
+        verify(mapping, times(1)).fromEntities(List.of());
+        verifyNoMoreInteractions(mapping);
+    }
+}
