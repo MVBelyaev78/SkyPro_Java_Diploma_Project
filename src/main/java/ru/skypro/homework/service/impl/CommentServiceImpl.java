@@ -82,6 +82,30 @@ public class CommentServiceImpl implements CommentService {
                 userRepository.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName()));
     }
 
+    @Override
+    public Optional<Comment> testMethod(Long adId,
+                                        CreateOrUpdateComment createComment,
+                                        UserEntity userEntity,
+                                        ZonedDateTime dateTime) {
+        final Optional<AdvertisementEntity> advertisementEntity = advertisementRepository.findById(adId);
+        if (advertisementEntity.isEmpty()) {
+            return Optional.empty();
+        }
+        final Optional<CommentEntity> commentEntity = commentMapping.toEntity(
+                createComment,
+                advertisementEntity.get(),
+                userEntity,
+                dateTime);
+        if (commentEntity.isEmpty()) {
+            return Optional.empty();
+        }
+        final Optional<CommentEntity> savedCommentEntity = Optional.of(commentRepository.save(commentEntity.get()));
+        if (savedCommentEntity.isEmpty()) {
+            return Optional.empty();
+        }
+        return Optional.of(commentMapping.fromEntity(savedCommentEntity.get()));
+    }
+
     /**
      * Удаление комментария по его идентификатору.
      *

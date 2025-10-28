@@ -3,8 +3,11 @@ package ru.skypro.homework.service;
 import ru.skypro.homework.dto.Comment;
 import ru.skypro.homework.dto.Comments;
 import ru.skypro.homework.dto.CreateOrUpdateComment;
+import ru.skypro.homework.entity.AdvertisementEntity;
+import ru.skypro.homework.entity.CommentEntity;
 import ru.skypro.homework.entity.UserEntity;
 
+import java.time.ZonedDateTime;
 import java.util.Optional;
 
 /**
@@ -33,6 +36,11 @@ public interface CommentService {
     Optional<Comment> addCommentUser(Long adId, CreateOrUpdateComment comment, UserEntity userEntity);
 
     Optional<Comment> addComment(Long adId, CreateOrUpdateComment comment);
+
+    Optional<Comment> testMethod(Long adId,
+                                 CreateOrUpdateComment createComment,
+                                 UserEntity userEntity,
+                                 ZonedDateTime dateTime);
 
     /**
      * Удаляет комментарий
