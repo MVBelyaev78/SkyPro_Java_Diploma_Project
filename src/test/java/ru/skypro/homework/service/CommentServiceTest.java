@@ -231,4 +231,71 @@ public class CommentServiceTest {
         verify(repository, never()).save(any(CommentEntity.class));
         verifyNoMoreInteractions(repository);
     }
+
+    @Test
+    public void testAddCommentUserDateTime_withNullableAdvertisementId_returnsEmptyDto() {
+        // Given
+        final String userEmail = "ustryalov@mail.ru";
+        // When
+        when(advertisementRepository.findById(eq(null))).thenReturn(Optional.empty());
+        // Then
+        assertEquals(Optional.empty(),
+                service.addCommentUserDateTime(
+                        null,
+                        new CreateOrUpdateComment("text"),
+                        userEmail,
+                        ZonedDateTime.now()));
+        verify(advertisementRepository, times(1)).findById(null);
+        verifyNoMoreInteractions(advertisementRepository);
+        verify(userRepository, atMost(1)).findByEmail(userEmail);
+        verifyNoMoreInteractions(userRepository);
+        verify(mapping, never()).toEntity(
+                any(CreateOrUpdateComment.class),
+                any(AdvertisementEntity.class),
+                any(UserEntity.class),
+                any(ZonedDateTime.class));
+        verify(mapping, never()).fromEntity(any(CommentEntity.class));
+        verifyNoMoreInteractions(mapping);
+        verify(repository, never()).save(any(CommentEntity.class));
+        verifyNoMoreInteractions(repository);
+    }
+
+    @Test
+    public void testAddCommentUserDateTime_withNullableUserEmail_returnsEmptyDto() {
+        // Given
+        // When
+        // Then
+        assertEquals(Optional.empty(),
+                service.addCommentUserDateTime(
+                        1L,
+                        new CreateOrUpdateComment("text"),
+                        null,
+                        ZonedDateTime.now()));
+    }
+
+    @Test
+    public void testAddCommentUserDateTime_withNullableCreatedComment_returnsEmptyDto() {
+        // Given
+        // When
+        // Then
+        assertEquals(Optional.empty(),
+                service.addCommentUserDateTime(
+                        1L,
+                        null,
+                        "ustryalov@mail.ru",
+                        ZonedDateTime.now()));
+    }
+
+    @Test
+    public void testAddCommentUserDateTime_withNullableDateTime_returnsEmptyDto() {
+        // Given
+        // When
+        // Then
+        assertEquals(Optional.empty(),
+                service.addCommentUserDateTime(
+                        1L,
+                        new CreateOrUpdateComment("text"),
+                        "ustryalov@mail.ru",
+                        null));
+    }
 }
