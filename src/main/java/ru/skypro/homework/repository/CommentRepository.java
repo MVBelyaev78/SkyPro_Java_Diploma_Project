@@ -24,5 +24,5 @@ public interface CommentRepository extends JpaRepository<CommentEntity, Integer>
      * @param commentId       ID комментария
      * @param idAdvertisement ID объявления
      */
-    void deleteByIdCommentAndIdAdvertisement_Id(int commentId, Long idAdvertisement);
+    void deleteByIdCommentAndIdAdvertisement_Id(Long commentId, Long idAdvertisement);
 }

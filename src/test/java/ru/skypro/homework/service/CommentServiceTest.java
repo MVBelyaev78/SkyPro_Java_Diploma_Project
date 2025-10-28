@@ -200,5 +200,35 @@ public class CommentServiceTest {
         verify(mapping, times(1)).fromEntity(commentEntity);
         verifyNoMoreInteractions(mapping);
         verify(repository, times(1)).save(commentEntity);
+        verifyNoMoreInteractions(repository);
+    }
+
+    @Test
+    public void testAddCommentUserDateTime_withIrrelevantAdvertisementId_returnsEmptyDto() {
+        // Given
+        final Long advertisementId = 1L;
+        final String userEmail = "ustryalov@mail.ru";
+        // When
+        when(advertisementRepository.findById(eq(advertisementId))).thenReturn(Optional.empty());
+        // Then
+        assertEquals(Optional.empty(),
+                service.addCommentUserDateTime(
+                        advertisementId,
+                        new CreateOrUpdateComment("text"),
+                        userEmail,
+                        ZonedDateTime.now()));
+        verify(advertisementRepository, times(1)).findById(advertisementId);
+        verifyNoMoreInteractions(advertisementRepository);
+        verify(userRepository, atMost(1)).findByEmail(userEmail);
+        verifyNoMoreInteractions(userRepository);
+        verify(mapping, never()).toEntity(
+                any(CreateOrUpdateComment.class),
+                any(AdvertisementEntity.class),
+                any(UserEntity.class),
+                any(ZonedDateTime.class));
+        verify(mapping, never()).fromEntity(any(CommentEntity.class));
+        verifyNoMoreInteractions(mapping);
+        verify(repository, never()).save(any(CommentEntity.class));
+        verifyNoMoreInteractions(repository);
     }
 }
