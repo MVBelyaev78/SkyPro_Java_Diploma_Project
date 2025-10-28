@@ -58,28 +58,18 @@ public class CommentServiceImpl implements CommentService {
                                                     ZonedDateTime dateTime) {
         log.info("Добавление комментария к объявлению с ID: {}", adId);
 
-        final Optional<AdvertisementEntity> advertisementEntity = advertisementRepository.findById(adId);
-        if (advertisementEntity.isEmpty()) {
-            return Optional.empty();
-        }
-        final Optional<CommentEntity> commentEntity = commentMapping.toEntity(
-                comment, advertisementEntity.get(), userEntity, dateTime);
-        if (commentEntity.isEmpty()) {
-            return Optional.empty();
-        }
-
-        return Optional.of(commentMapping.fromEntity(commentRepository.save(commentEntity.get())));
-        /*return advertisementRepository
+        return advertisementRepository
                 .findById(adId)
-                .flatMap(adEntity -> commentMapping
-                        .toEntity(comment, adEntity, userEntity, ZonedDateTime.now(ZoneId.of("Europe/Moscow")))
-                        .map(e -> commentMapping.fromEntity(commentRepository.save(e))));*/
+                .flatMap(advertisement -> commentMapping
+                    .toEntity(comment, advertisement, userEntity, dateTime)
+                    .map(entity -> commentMapping.fromEntity(commentRepository.save(entity))));
 
     }
 
     @Override
     public Optional<Comment> addComment(Long adId, CreateOrUpdateComment comment) {
-        return addCommentUserDateTime(adId,
+        return addCommentUserDateTime(
+                adId,
                 comment,
                 userRepository.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName()),
                 ZonedDateTime.now());
