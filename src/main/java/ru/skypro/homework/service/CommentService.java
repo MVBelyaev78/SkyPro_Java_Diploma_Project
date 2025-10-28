@@ -30,13 +30,13 @@ public interface CommentService {
      *
      * @param adId       идентификатор объявления
      * @param comment    текст комментария
-     * @param userEntity автор комментария
+     * @param userEmail  E-Mail автора комментария
      * @param dateTime дата/время размещения комментария
      * @return {@link Comment} созданный комментарий
      */
     Optional<Comment> addCommentUserDateTime(Long adId,
                                              CreateOrUpdateComment comment,
-                                             UserEntity userEntity,
+                                             String userEmail,
                                              ZonedDateTime dateTime);
 
     Optional<Comment> addComment(Long adId, CreateOrUpdateComment comment);

@@ -54,24 +54,33 @@ public class CommentServiceImpl implements CommentService {
     @Override
     public Optional<Comment> addCommentUserDateTime(Long adId,
                                                     CreateOrUpdateComment comment,
-                                                    UserEntity userEntity,
+                                                    String userEmail,
                                                     ZonedDateTime dateTime) {
         log.info("Добавление комментария к объявлению с ID: {}", adId);
 
-        return advertisementRepository
-                .findById(adId)
-                .flatMap(advertisement -> commentMapping
-                    .toEntity(comment, advertisement, userEntity, dateTime)
-                    .map(entity -> commentMapping.fromEntity(commentRepository.save(entity))));
+        final Optional<AdvertisementEntity> advertisementEntity = advertisementRepository.findById(adId);
+        if (advertisementEntity.isEmpty()) {
+            return Optional.empty();
+        }
+        final UserEntity userEntity = userRepository.findByEmail(userEmail);
+        if (userEntity == null) {
+            return Optional.empty();
+        }
+        final Optional<CommentEntity> commentEntity = commentMapping.toEntity(
+                comment, advertisementEntity.get(), userEntity, dateTime);
+        if (commentEntity.isEmpty()) {
+            return Optional.empty();
+        }
+        final CommentEntity savedCommentEntity = commentRepository.save(commentEntity.get());
 
+        return Optional.of(commentMapping.fromEntity(savedCommentEntity));
     }
 
     @Override
     public Optional<Comment> addComment(Long adId, CreateOrUpdateComment comment) {
-        return addCommentUserDateTime(
-                adId,
+        return addCommentUserDateTime(adId,
                 comment,
-                userRepository.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName()),
+                SecurityContextHolder.getContext().getAuthentication().getName(),
                 ZonedDateTime.now());
     }
 

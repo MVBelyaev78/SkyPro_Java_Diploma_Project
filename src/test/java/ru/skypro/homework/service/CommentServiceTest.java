@@ -152,9 +152,10 @@ public class CommentServiceTest {
         advertisementEntity.setPrice(30);
         advertisementEntity.setUser(advertisementUserEntity);
 
+        final String userEmail = "ustryalov@mail.ru";
         final UserEntity userEntity = new UserEntity();
         userEntity.setId(2L);
-        userEntity.setEmail("ustryalov@mail.ru");
+        userEntity.setEmail(userEmail);
         userEntity.setFirstName("Алексей");
         userEntity.setLastName("Устрялов");
         userEntity.setPhone("+79357760102");
@@ -180,6 +181,7 @@ public class CommentServiceTest {
 
         // When
         when(advertisementRepository.findById(advertisementId)).thenReturn(Optional.of(advertisementEntity));
+        when(userRepository.findByEmail(userEmail)).thenReturn(userEntity);
         when(mapping.toEntity(createComment, advertisementEntity, userEntity, currentDatetime))
                 .thenReturn(Optional.of(commentEntity));
         when(repository.save(commentEntity)).thenReturn(commentEntity);
@@ -187,6 +189,6 @@ public class CommentServiceTest {
 
         // Then
         assertEquals(Optional.of(comment),
-                service.addCommentUserDateTime(advertisementId, createComment, userEntity, currentDatetime));
+                service.addCommentUserDateTime(advertisementId, createComment, userEmail, currentDatetime));
     }
 }
