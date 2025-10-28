@@ -133,64 +133,8 @@ public class CommentServiceTest {
         verifyNoMoreInteractions(mapping);
     }
 
-    /*@Test
-    public void testAddCommentUser_withRelevantArguments_returnsAddedDto() {
-        final UserEntity advertisementUserEntity = new UserEntity();
-        advertisementUserEntity.setId(1L);
-        advertisementUserEntity.setEmail("wertin@bk.ru");
-        advertisementUserEntity.setFirstName("Сергей");
-        advertisementUserEntity.setLastName("Петров");
-        advertisementUserEntity.setPhone("+79356661300");
-        advertisementUserEntity.setRole("USER");
-        advertisementUserEntity.setPassword("qw123456");
-
-        final Long advertisementId = 1L;
-        final AdvertisementEntity advertisementEntity = new AdvertisementEntity();
-        advertisementEntity.setId(advertisementId);
-        advertisementEntity.setTitle("Глобус");
-        advertisementEntity.setDescription("Школьный глобус с политической картой");
-        advertisementEntity.setPrice(30);
-        advertisementEntity.setUser(advertisementUserEntity);
-
-        final UserEntity userEntity = new UserEntity();
-        userEntity.setId(2L);
-        userEntity.setEmail("ustryalov@mail.ru");
-        userEntity.setFirstName("Алексей");
-        userEntity.setLastName("Устрялов");
-        userEntity.setPhone("+79357760102");
-        userEntity.setRole("USER");
-        userEntity.setPassword("qw123457");
-
-        final CreateOrUpdateComment createComment = new CreateOrUpdateComment("Старый какой-то у вас глобус");
-
-        final ZonedDateTime currentDatetime = ZonedDateTime.now();
-        final CommentEntity commentEntity = new CommentEntity();
-        commentEntity.setNmText("Старый какой-то у вас глобус");
-        commentEntity.setDtCreate(currentDatetime);
-        commentEntity.setIdAdvertisement(advertisementEntity);
-        commentEntity.setIdAuthor(userEntity);
-
-        final Comment comment = new Comment(
-                1L,
-                "",
-                "Алексей",
-                commentEntity.getDtCreateAsMillis(),
-                commentEntity.getIdComment(),
-                "Старый какой-то у вас глобус");
-
-        // When
-        when(advertisementRepository.findById(advertisementId)).thenReturn(Optional.of(advertisementEntity));
-        when(mapping.toEntity(createComment, advertisementEntity, userEntity, currentDatetime))
-                .thenReturn(Optional.of(commentEntity));
-        when(repository.save(commentEntity)).thenReturn(commentEntity);
-        when(mapping.fromEntity(commentEntity)).thenReturn(comment);
-
-        // Then
-        assertEquals(comment, service.addCommentUser(advertisementId, createComment, userEntity));
-    }*/
-
     @Test
-    public void testTestMethod_withRelevantArguments_returnsRelevantDto() {
+    public void testAddCommentUserDateTime_withRelevantArguments_returnsAddedDto() {
         final UserEntity advertisementUserEntity = new UserEntity();
         advertisementUserEntity.setId(1L);
         advertisementUserEntity.setEmail("wertin@bk.ru");
@@ -242,6 +186,7 @@ public class CommentServiceTest {
         when(mapping.fromEntity(commentEntity)).thenReturn(comment);
 
         // Then
-        assertEquals(Optional.of(comment), service.testMethod(advertisementId, createComment, userEntity, currentDatetime));
+        assertEquals(Optional.of(comment),
+                service.addCommentUserDateTime(advertisementId, createComment, userEntity, currentDatetime));
     }
 }

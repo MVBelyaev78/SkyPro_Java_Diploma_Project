@@ -18,7 +18,6 @@ import ru.skypro.homework.repository.CommentRepository;
 import ru.skypro.homework.repository.UserRepository;
 import ru.skypro.homework.service.CommentService;
 
-import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.Optional;
 
@@ -53,7 +52,10 @@ public class CommentServiceImpl implements CommentService {
      * @return созданный комментарий
      */
     @Override
-    public Optional<Comment> addCommentUser(Long adId, CreateOrUpdateComment comment, UserEntity userEntity) {
+    public Optional<Comment> addCommentUserDateTime(Long adId,
+                                                    CreateOrUpdateComment comment,
+                                                    UserEntity userEntity,
+                                                    ZonedDateTime dateTime) {
         log.info("Добавление комментария к объявлению с ID: {}", adId);
 
         final Optional<AdvertisementEntity> advertisementEntity = advertisementRepository.findById(adId);
@@ -61,7 +63,7 @@ public class CommentServiceImpl implements CommentService {
             return Optional.empty();
         }
         final Optional<CommentEntity> commentEntity = commentMapping.toEntity(
-                comment, advertisementEntity.get(), userEntity, ZonedDateTime.now(ZoneId.of("Europe/Moscow")));
+                comment, advertisementEntity.get(), userEntity, dateTime);
         if (commentEntity.isEmpty()) {
             return Optional.empty();
         }
@@ -77,33 +79,10 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     public Optional<Comment> addComment(Long adId, CreateOrUpdateComment comment) {
-        return addCommentUser(adId,
+        return addCommentUserDateTime(adId,
                 comment,
-                userRepository.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName()));
-    }
-
-    @Override
-    public Optional<Comment> testMethod(Long adId,
-                                        CreateOrUpdateComment createComment,
-                                        UserEntity userEntity,
-                                        ZonedDateTime dateTime) {
-        final Optional<AdvertisementEntity> advertisementEntity = advertisementRepository.findById(adId);
-        if (advertisementEntity.isEmpty()) {
-            return Optional.empty();
-        }
-        final Optional<CommentEntity> commentEntity = commentMapping.toEntity(
-                createComment,
-                advertisementEntity.get(),
-                userEntity,
-                dateTime);
-        if (commentEntity.isEmpty()) {
-            return Optional.empty();
-        }
-        final Optional<CommentEntity> savedCommentEntity = Optional.of(commentRepository.save(commentEntity.get()));
-        if (savedCommentEntity.isEmpty()) {
-            return Optional.empty();
-        }
-        return Optional.of(commentMapping.fromEntity(savedCommentEntity.get()));
+                userRepository.findByEmail(SecurityContextHolder.getContext().getAuthentication().getName()),
+                ZonedDateTime.now());
     }
 
     /**
