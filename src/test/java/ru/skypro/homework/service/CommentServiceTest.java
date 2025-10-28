@@ -135,6 +135,7 @@ public class CommentServiceTest {
 
     @Test
     public void testAddCommentUserDateTime_withRelevantArguments_returnsAddedDto() {
+        // Given
         final UserEntity advertisementUserEntity = new UserEntity();
         advertisementUserEntity.setId(1L);
         advertisementUserEntity.setEmail("wertin@bk.ru");
@@ -190,5 +191,14 @@ public class CommentServiceTest {
         // Then
         assertEquals(Optional.of(comment),
                 service.addCommentUserDateTime(advertisementId, createComment, userEmail, currentDatetime));
+        verify(advertisementRepository, times(1)).findById(advertisementId);
+        verifyNoMoreInteractions(advertisementRepository);
+        verify(userRepository, times(1)).findByEmail(userEmail);
+        verifyNoMoreInteractions(userRepository);
+        verify(mapping, times(1))
+                .toEntity(createComment, advertisementEntity, userEntity, currentDatetime);
+        verify(mapping, times(1)).fromEntity(commentEntity);
+        verifyNoMoreInteractions(mapping);
+        verify(repository, times(1)).save(commentEntity);
     }
 }
