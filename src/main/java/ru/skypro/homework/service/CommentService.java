@@ -3,6 +3,9 @@ package ru.skypro.homework.service;
 import ru.skypro.homework.dto.Comment;
 import ru.skypro.homework.dto.Comments;
 import ru.skypro.homework.dto.CreateOrUpdateComment;
+import ru.skypro.homework.entity.AdvertisementEntity;
+import ru.skypro.homework.entity.CommentEntity;
+import ru.skypro.homework.entity.UserEntity;
 
 import java.time.ZonedDateTime;
 import java.util.Optional;
@@ -57,10 +60,10 @@ public interface CommentService {
      * @return {@link Comment} обновленный комментарий
      */
     Optional<Comment> updateCommentUserDateTime(Long adId,
-                                                Long commentId,
-                                                CreateOrUpdateComment createOrUpdateComment,
-                                                String userEmail,
-                                                ZonedDateTime dateTime);
+                                                      Long commentId,
+                                                      CreateOrUpdateComment createOrUpdateComment,
+                                                      String userEmail,
+                                                      ZonedDateTime dateTime);
 
     Comment updateComment(Long adId, Long commentId, CreateOrUpdateComment comment);
 }

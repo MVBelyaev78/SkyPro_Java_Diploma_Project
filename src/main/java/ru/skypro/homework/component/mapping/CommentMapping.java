@@ -23,14 +23,10 @@ public class CommentMapping {
     private final AdvertisementRepository advertisementRepository;
 
     public Comment fromEntity(CommentEntity entity) {
-        UserEntity author = entity.getIdAuthor();
-        if (1 == 1) {
-            throw new RuntimeException("ATTENTION mapping fromEntity:" + entity.getNmText());
-        }
         return new Comment(
-                author.getId(),
-                author.getPhone(),
-                author.getFirstName(),
+                entity.getIdAuthor().getId(),
+                entity.getIdAuthor().getImage().get().getName(),
+                entity.getIdAuthor().getFirstName(),
                 entity.getDtCreateAsMillis(),
                 entity.getIdComment(),
                 entity.getNmText()

@@ -342,7 +342,7 @@ public class CommentServiceTest {
         final CommentEntity oldEntity = new CommentEntity();
         oldEntity.setIdComment(entityId);
         oldEntity.setNmText("Старый какой-то у вас глобус");
-        oldEntity.setDtCreate(ZonedDateTime.of(2024, 1, 10, 15, 45, 56, 666000,
+        oldEntity.setDtCreate(ZonedDateTime.of(2024, 1, 10, 15, 45, 56, 666_000_000,
                 ZoneId.of("Europe/Moscow")));
         oldEntity.setIdAdvertisement(advertisementEntity);
         oldEntity.setIdAuthor(oldUserEntity);
@@ -350,10 +350,18 @@ public class CommentServiceTest {
         final CommentEntity newEntity = new CommentEntity();
         newEntity.setIdComment(entityId);
         newEntity.setNmText("Нет, глобус вполне себе");
-        newEntity.setDtCreate(ZonedDateTime.of(2025, 10, 23, 8, 3, 23, 13000,
+        newEntity.setDtCreate(ZonedDateTime.of(2025, 10, 23, 8, 3, 23, 13_000_000,
                 ZoneId.of("Europe/Moscow")));
         newEntity.setIdAdvertisement(advertisementEntity);
         newEntity.setIdAuthor(oldUserEntity);
+
+        final CommentEntity savedEntity = new CommentEntity();
+        savedEntity.setIdComment(entityId);
+        savedEntity.setNmText("Нет, глобус вполне себе");
+        savedEntity.setDtCreate(ZonedDateTime.of(2025, 10, 23, 8, 3, 23, 13_000_000,
+                ZoneId.of("Europe/Moscow")));
+        savedEntity.setIdAdvertisement(advertisementEntity);
+        savedEntity.setIdAuthor(oldUserEntity);
 
         final Comment oldComment = new Comment(
                 1L,
@@ -383,11 +391,11 @@ public class CommentServiceTest {
         when(advertisementRepository.findById(advertisementId)).thenReturn(Optional.of(advertisementEntity));
         when(mapping.toEntity(newCreateComment, advertisementEntity, newUserEntity, newEntity.getDtCreate()))
                 .thenReturn(Optional.of(newEntity));
-        when(repository.save(newEntity)).thenReturn(newEntity);
-        when(mapping.fromEntity(newEntity)).thenReturn(newComment);
+        when(repository.save(newEntity)).thenReturn(savedEntity);
+        //when(mapping.fromEntity(savedEntity)).thenReturn(newComment);
 
         // Then
-        assertEquals(Optional.of(newEntity), service.updateCommentUserDateTime(
+        assertEquals(Optional.of(newComment), service.updateCommentUserDateTime(
                 advertisementId,
                 entityId,
                 newCreateComment,

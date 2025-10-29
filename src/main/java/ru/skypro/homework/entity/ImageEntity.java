@@ -18,7 +18,7 @@ public class ImageEntity {
     @Column(name = "id_image")
     private Long id;
 
-    @ToString.Exclude
+    @ToString.Include
     @EqualsAndHashCode.Include
     @Column(name ="nm_image")
     private String name;
