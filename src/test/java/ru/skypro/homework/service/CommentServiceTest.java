@@ -353,7 +353,7 @@ public class CommentServiceTest {
         newEntity.setDtCreate(ZonedDateTime.of(2025, 10, 23, 8, 3, 23, 13_000_000,
                 ZoneId.of("Europe/Moscow")));
         newEntity.setIdAdvertisement(advertisementEntity);
-        newEntity.setIdAuthor(oldUserEntity);
+        newEntity.setIdAuthor(newUserEntity);
 
         final CommentEntity savedEntity = new CommentEntity();
         savedEntity.setIdComment(entityId);
@@ -361,7 +361,7 @@ public class CommentServiceTest {
         savedEntity.setDtCreate(ZonedDateTime.of(2025, 10, 23, 8, 3, 23, 13_000_000,
                 ZoneId.of("Europe/Moscow")));
         savedEntity.setIdAdvertisement(advertisementEntity);
-        savedEntity.setIdAuthor(oldUserEntity);
+        savedEntity.setIdAuthor(newUserEntity);
 
         final Comment oldComment = new Comment(
                 1L,

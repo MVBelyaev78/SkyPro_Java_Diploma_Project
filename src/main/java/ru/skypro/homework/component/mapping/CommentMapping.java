@@ -23,9 +23,12 @@ public class CommentMapping {
     private final AdvertisementRepository advertisementRepository;
 
     public Comment fromEntity(CommentEntity entity) {
+        if (entity == null) {
+            return null;
+        }
         return new Comment(
                 entity.getIdAuthor().getId(),
-                entity.getIdAuthor().getImage().get().getName(),
+                entity.getIdAuthor().getImage().isPresent() ? entity.getIdAuthor().getImage().get().getName() : "",
                 entity.getIdAuthor().getFirstName(),
                 entity.getDtCreateAsMillis(),
                 entity.getIdComment(),
