@@ -11,9 +11,7 @@ import ru.skypro.homework.entity.UserEntity;
 import ru.skypro.homework.repository.AdvertisementRepository;
 import ru.skypro.homework.repository.UserRepository;
 
-import java.time.ZoneId;
 import java.time.ZonedDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -62,5 +60,12 @@ public class CommentMapping {
         entity.setDtCreate(dateTime);
 
         return Optional.of(entity);
+    }
+
+    public Optional<CreateOrUpdateComment> fromComment(Comment comment) {
+        if (comment == null) {
+            return Optional.empty();
+        }
+        return Optional.of(new CreateOrUpdateComment(comment.getText()));
     }
 }

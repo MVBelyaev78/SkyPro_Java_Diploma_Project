@@ -298,4 +298,90 @@ public class CommentServiceTest {
                         "ustryalov@mail.ru",
                         null));
     }
+
+    @Test
+    public void testUpdateCommentUserDateTime_withRelevantArguments_returnsUpdatedDto() {
+        // Given
+        final UserEntity advertisementUserEntity = new UserEntity();
+        advertisementUserEntity.setId(1L);
+        advertisementUserEntity.setEmail("wertin@bk.ru");
+        advertisementUserEntity.setFirstName("Сергей");
+        advertisementUserEntity.setLastName("Петров");
+        advertisementUserEntity.setPhone("+79356661300");
+        advertisementUserEntity.setRole("USER");
+        advertisementUserEntity.setPassword("qw123456");
+
+        final Long advertisementId = 1L;
+        final AdvertisementEntity advertisementEntity = new AdvertisementEntity();
+        advertisementEntity.setId(advertisementId);
+        advertisementEntity.setTitle("Глобус");
+        advertisementEntity.setDescription("Школьный глобус с политической картой");
+        advertisementEntity.setPrice(30);
+        advertisementEntity.setUser(advertisementUserEntity);
+
+        final UserEntity userEntity = new UserEntity();
+        userEntity.setId(2L);
+        userEntity.setEmail("ustryalov@mail.ru");
+        userEntity.setFirstName("Алексей");
+        userEntity.setLastName("Устрялов");
+        userEntity.setPhone("+79357760102");
+        userEntity.setRole("USER");
+        userEntity.setPassword("qw123457");
+
+        final Long entityId = 1L;
+
+        final CommentEntity oldEntity = new CommentEntity();
+        oldEntity.setIdComment(entityId);
+        oldEntity.setNmText("Старый какой-то у вас глобус");
+        oldEntity.setDtCreate(ZonedDateTime.of(2024, 1, 10, 15, 45, 56, 666000,
+                ZoneId.of("Europe/Moscow")));
+        oldEntity.setIdAdvertisement(advertisementEntity);
+        oldEntity.setIdAuthor(userEntity);
+
+        final CommentEntity newEntity = new CommentEntity();
+        newEntity.setIdComment(entityId);
+        newEntity.setNmText("Нет, глобус вполне себе");
+        newEntity.setDtCreate(ZonedDateTime.of(2025, 10, 23, 8, 3, 23, 13000,
+                ZoneId.of("Europe/Moscow")));
+        newEntity.setIdAdvertisement(advertisementEntity);
+        newEntity.setIdAuthor(userEntity);
+
+        final Comment oldComment = new Comment(
+                2L,
+                "",
+                "Алексей",
+                1_704_894_416_666L,
+                1L,
+                "Старый какой-то у вас глобус");
+
+        final Comment newComment = new Comment(
+                1L,
+                "",
+                "Алексей",
+                1_761_195_803_013L,
+                1L,
+                "Нет, глобус вполне себе");
+
+        final CreateOrUpdateComment oldCreateComment = new CreateOrUpdateComment("Старый какой-то у вас глобус");
+
+        final CreateOrUpdateComment newCreateComment = new CreateOrUpdateComment("Нет, глобус вполне себе");
+
+        // When
+        when(repository.findById(entityId)).thenReturn(Optional.of(oldEntity));
+        when(advertisementRepository.findById(advertisementId)).thenReturn(Optional.of(advertisementEntity));
+        when(mapping.fromEntity(oldEntity)).thenReturn(oldComment);
+        when(mapping.fromComment(oldComment)).thenReturn(Optional.of(oldCreateComment));
+        when(mapping.toEntity(newCreateComment, advertisementEntity, userEntity, newEntity.getDtCreate()))
+                .thenReturn(Optional.of(newEntity));
+        when(repository.save(newEntity)).thenReturn(newEntity);
+        when(mapping.fromEntity(newEntity)).thenReturn(newComment);
+
+        // Then
+        assertEquals(Optional.of(newComment), service.updateCommentUserDateTime(
+                advertisementId,
+                entityId,
+                oldCreateComment,
+                userEntity.getEmail(),
+                oldEntity.getDtCreate()));
+    }
 }

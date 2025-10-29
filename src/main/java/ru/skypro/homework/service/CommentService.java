@@ -51,8 +51,16 @@ public interface CommentService {
      *
      * @param adId      идентификатор объявления
      * @param commentId идентификатор комментария
-     * @param comment   новый текст комментария
+     * @param createOrUpdateComment   новый текст комментария
+     * @param userEmail  E-Mail автора комментария
+     * @param dateTime дата/время размещения комментария
      * @return {@link Comment} обновленный комментарий
      */
+    Optional<Comment> updateCommentUserDateTime(Long adId,
+                                      Long commentId,
+                                      CreateOrUpdateComment createOrUpdateComment,
+                                      String userEmail,
+                                      ZonedDateTime dateTime);
+
     Comment updateComment(Long adId, Long commentId, CreateOrUpdateComment comment);
 }

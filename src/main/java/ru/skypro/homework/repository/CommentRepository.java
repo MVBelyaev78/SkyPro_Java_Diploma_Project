@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface CommentRepository extends JpaRepository<CommentEntity, Integer> {
+public interface CommentRepository extends JpaRepository<CommentEntity, Long> {
     /**
      * Поиск комментариев по ID объявления
      *
