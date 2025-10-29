@@ -107,17 +107,17 @@ public class CommentServiceImpl implements CommentService {
         if (oldEntity.isEmpty()) {
             return Optional.empty();
         }
-        log.info("[1] " + oldEntity.get().getDtCreate() + " " + oldEntity.get().getDtCreateAsMillis() + " " + oldEntity.get().getNmText());
+        //log.info("[1] " + oldEntity.get().getDtCreate() + " " + oldEntity.get().getDtCreateAsMillis() + " " + oldEntity.get().getNmText());
         final Comment oldComment = commentMapping.fromEntity(oldEntity.get());
         if (oldComment == null) {
             return Optional.empty();
         }
-        log.info("[2] " + oldComment.getCreateAt() + " " + oldComment.getText());
+        //log.info("[2] " + oldComment.getCreateAt() + " " + oldComment.getText());
         final Optional<CreateOrUpdateComment> oldCreateOrUpdateComment = commentMapping.fromComment(oldComment);
         if (oldCreateOrUpdateComment.isEmpty()) {
             return Optional.empty();
         }
-        log.info("[3] " + oldCreateOrUpdateComment.get().getText());
+        //log.info("[3] " + oldCreateOrUpdateComment.get().getText());
         final UserEntity newUserEntity = userRepository.findByEmail(userEmail);
         if (newUserEntity == null) {
             return Optional.empty();
@@ -130,12 +130,12 @@ public class CommentServiceImpl implements CommentService {
         if (advertisementEntity.isEmpty()) {
             return Optional.empty();
         }
-        log.info("[4] " + createOrUpdateComment.getText());
+        //log.info("[4] " + createOrUpdateComment.getText());
         final Optional<CommentEntity> newEntity = commentMapping.toEntity(
                 createOrUpdateComment, advertisementEntity.get(), newUserEntity, dateTime);
-        log.info("[5] " + newEntity.get().getDtCreate() + " " + newEntity.get().getDtCreateAsMillis() + " "  + newEntity.get().getNmText());
+        //log.info("[5] " + newEntity.get().getDtCreate() + " " + newEntity.get().getDtCreateAsMillis() + " "  + newEntity.get().getNmText());
         final CommentEntity savedEntity = commentRepository.save(newEntity.get());
-        log.info("[6] " + savedEntity.getDtCreate() + " " + savedEntity.getDtCreateAsMillis() + " " + savedEntity.getNmText());
+        //log.info("[6] " + savedEntity.getDtCreate() + " " + savedEntity.getDtCreateAsMillis() + " " + savedEntity.getNmText());
         //final Comment newComment = commentMapping.fromEntity(savedEntity);
         final Comment newComment = new Comment(
                 savedEntity.getIdAuthor().getId(),
@@ -145,7 +145,7 @@ public class CommentServiceImpl implements CommentService {
                 savedEntity.getIdComment(),
                 savedEntity.getNmText()
         );
-        log.info("[7] " + newComment.getCreateAt() + " " + newComment.getText());
+        //log.info("[7] " + newComment.getCreateAt() + " " + newComment.getText());
         return Optional.of(newComment);
     }
 
