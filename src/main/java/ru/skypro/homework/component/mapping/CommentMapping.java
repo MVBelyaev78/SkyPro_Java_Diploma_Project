@@ -24,6 +24,9 @@ public class CommentMapping {
 
     public Comment fromEntity(CommentEntity entity) {
         UserEntity author = entity.getIdAuthor();
+        if (1 == 1) {
+            throw new RuntimeException("ATTENTION mapping fromEntity:" + entity.getNmText());
+        }
         return new Comment(
                 author.getId(),
                 author.getPhone(),

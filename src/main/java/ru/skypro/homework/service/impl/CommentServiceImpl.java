@@ -101,18 +101,18 @@ public class CommentServiceImpl implements CommentService {
                                                        CreateOrUpdateComment createOrUpdateComment,
                                                        String userEmail,
                                                        ZonedDateTime dateTime) {
+        log.info("Обновление комментария с ID: {} для объявления с ID: {}", commentId, adId);
+
         final Optional<CommentEntity> oldEntity = commentRepository.findById(commentId);
         if (oldEntity.isEmpty()) {
             return Optional.empty();
         }
-        final Optional<AdvertisementEntity> advertisementEntity = advertisementRepository.findById(adId);
-        if (advertisementEntity.isEmpty()) {
-            return Optional.empty();
-        }
+        log.info(oldEntity.get().getNmText());
         final Comment oldComment = commentMapping.fromEntity(oldEntity.get());
         if (oldComment == null) {
             return Optional.empty();
         }
+        log.info(oldComment.getText());
         final Optional<CreateOrUpdateComment> oldCreateOrUpdateComment = commentMapping.fromComment(oldComment);
         if (oldCreateOrUpdateComment.isEmpty()) {
             return Optional.empty();
@@ -121,8 +121,12 @@ public class CommentServiceImpl implements CommentService {
         if (newUserEntity == null) {
             return Optional.empty();
         }
-        if (!oldCreateOrUpdateComment.equals(createOrUpdateComment) ||
-                oldEntity.get().getIdAuthor().equals(newUserEntity)) {
+        if (oldCreateOrUpdateComment.get().getText().equals(createOrUpdateComment.getText()) ||
+                !oldEntity.get().getIdAuthor().getEmail().equals(userEmail)) {
+            return Optional.empty();
+        }
+        final Optional<AdvertisementEntity> advertisementEntity = advertisementRepository.findById(adId);
+        if (advertisementEntity.isEmpty()) {
             return Optional.empty();
         }
         final Optional<CommentEntity> newEntity = commentMapping.toEntity(
@@ -141,8 +145,6 @@ public class CommentServiceImpl implements CommentService {
      */
     @Override
     public Comment updateComment(Long adId, Long commentId, CreateOrUpdateComment comment) {
-        log.info("Обновление комментария с ID: {} для объявления с ID: {}", commentId, adId);
-
         CommentEntity commentEntity = commentRepository.findById(commentId)
                 .orElseThrow(() -> new RuntimeException("Комментарий с ID " + commentId + " не найден"));
 

@@ -49,18 +49,18 @@ public interface CommentService {
     /**
      * Обновляет комментарий
      *
-     * @param adId      идентификатор объявления
-     * @param commentId идентификатор комментария
-     * @param createOrUpdateComment   новый текст комментария
-     * @param userEmail  E-Mail автора комментария
-     * @param dateTime дата/время размещения комментария
+     * @param adId                  идентификатор объявления
+     * @param commentId             идентификатор комментария
+     * @param createOrUpdateComment новый текст комментария
+     * @param userEmail             E-Mail автора комментария
+     * @param dateTime              дата/время размещения комментария
      * @return {@link Comment} обновленный комментарий
      */
     Optional<Comment> updateCommentUserDateTime(Long adId,
-                                      Long commentId,
-                                      CreateOrUpdateComment createOrUpdateComment,
-                                      String userEmail,
-                                      ZonedDateTime dateTime);
+                                                Long commentId,
+                                                CreateOrUpdateComment createOrUpdateComment,
+                                                String userEmail,
+                                                ZonedDateTime dateTime);
 
     Comment updateComment(Long adId, Long commentId, CreateOrUpdateComment comment);
 }

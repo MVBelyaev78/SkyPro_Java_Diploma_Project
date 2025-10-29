@@ -319,14 +319,23 @@ public class CommentServiceTest {
         advertisementEntity.setPrice(30);
         advertisementEntity.setUser(advertisementUserEntity);
 
-        final UserEntity userEntity = new UserEntity();
-        userEntity.setId(2L);
-        userEntity.setEmail("ustryalov@mail.ru");
-        userEntity.setFirstName("Алексей");
-        userEntity.setLastName("Устрялов");
-        userEntity.setPhone("+79357760102");
-        userEntity.setRole("USER");
-        userEntity.setPassword("qw123457");
+        final UserEntity oldUserEntity = new UserEntity();
+        oldUserEntity.setId(2L);
+        oldUserEntity.setEmail("ustryalov@mail.ru");
+        oldUserEntity.setFirstName("Алексей");
+        oldUserEntity.setLastName("Устрялов");
+        oldUserEntity.setPhone("+79357760102");
+        oldUserEntity.setRole("USER");
+        oldUserEntity.setPassword("qw123457");
+
+        final UserEntity newUserEntity = new UserEntity();
+        newUserEntity.setId(2L);
+        newUserEntity.setEmail("ustryalov@mail.ru");
+        newUserEntity.setFirstName("Алексей");
+        newUserEntity.setLastName("Устрялов");
+        newUserEntity.setPhone("+79357760102");
+        newUserEntity.setRole("USER");
+        newUserEntity.setPassword("qw123457");
 
         final Long entityId = 1L;
 
@@ -336,7 +345,7 @@ public class CommentServiceTest {
         oldEntity.setDtCreate(ZonedDateTime.of(2024, 1, 10, 15, 45, 56, 666000,
                 ZoneId.of("Europe/Moscow")));
         oldEntity.setIdAdvertisement(advertisementEntity);
-        oldEntity.setIdAuthor(userEntity);
+        oldEntity.setIdAuthor(oldUserEntity);
 
         final CommentEntity newEntity = new CommentEntity();
         newEntity.setIdComment(entityId);
@@ -344,10 +353,10 @@ public class CommentServiceTest {
         newEntity.setDtCreate(ZonedDateTime.of(2025, 10, 23, 8, 3, 23, 13000,
                 ZoneId.of("Europe/Moscow")));
         newEntity.setIdAdvertisement(advertisementEntity);
-        newEntity.setIdAuthor(userEntity);
+        newEntity.setIdAuthor(oldUserEntity);
 
         final Comment oldComment = new Comment(
-                2L,
+                1L,
                 "",
                 "Алексей",
                 1_704_894_416_666L,
@@ -355,7 +364,7 @@ public class CommentServiceTest {
                 "Старый какой-то у вас глобус");
 
         final Comment newComment = new Comment(
-                1L,
+                2L,
                 "",
                 "Алексей",
                 1_761_195_803_013L,
@@ -368,20 +377,21 @@ public class CommentServiceTest {
 
         // When
         when(repository.findById(entityId)).thenReturn(Optional.of(oldEntity));
-        when(advertisementRepository.findById(advertisementId)).thenReturn(Optional.of(advertisementEntity));
         when(mapping.fromEntity(oldEntity)).thenReturn(oldComment);
         when(mapping.fromComment(oldComment)).thenReturn(Optional.of(oldCreateComment));
-        when(mapping.toEntity(newCreateComment, advertisementEntity, userEntity, newEntity.getDtCreate()))
+        when(userRepository.findByEmail(newUserEntity.getEmail())).thenReturn(newUserEntity);
+        when(advertisementRepository.findById(advertisementId)).thenReturn(Optional.of(advertisementEntity));
+        when(mapping.toEntity(newCreateComment, advertisementEntity, newUserEntity, newEntity.getDtCreate()))
                 .thenReturn(Optional.of(newEntity));
         when(repository.save(newEntity)).thenReturn(newEntity);
         when(mapping.fromEntity(newEntity)).thenReturn(newComment);
 
         // Then
-        assertEquals(Optional.of(newComment), service.updateCommentUserDateTime(
+        assertEquals(Optional.of(newEntity), service.updateCommentUserDateTime(
                 advertisementId,
                 entityId,
-                oldCreateComment,
-                userEntity.getEmail(),
-                oldEntity.getDtCreate()));
+                newCreateComment,
+                newUserEntity.getEmail(),
+                newEntity.getDtCreate()));
     }
 }
