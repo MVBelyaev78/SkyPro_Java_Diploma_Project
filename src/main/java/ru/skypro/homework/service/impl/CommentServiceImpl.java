@@ -159,24 +159,11 @@ public class CommentServiceImpl implements CommentService {
      */
     @Override
     public Comment updateComment(Long adId, Long commentId, CreateOrUpdateComment comment) {
-        CommentEntity commentEntity = commentRepository.findById(commentId)
-                .orElseThrow(() -> new RuntimeException("Комментарий с ID " + commentId + " не найден"));
-
-        if (!commentEntity.getIdAdvertisement().getId().equals((long) adId)) {
-            throw new RuntimeException("Комментарий не принадлежит указанному пользователю");
-        }
-
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String username = authentication.getName();
-        UserEntity currentUser = userRepository.findByEmail(username);
-        if (currentUser == null) {
-            throw new ResourceNotFoundException("Пользователь не найден");
-        }
-        commentEntity.setNmText(comment.getText());
-
-        CommentEntity updatedComment = commentRepository.save(commentEntity);
-        log.info("Комментарий с ID: {} успешно сохранен", commentId);
-
-        return commentMapping.fromEntity(updatedComment);
+        return updateCommentUserDateTime(
+                adId,
+                commentId,
+                comment,
+                SecurityContextHolder.getContext().getAuthentication().getName(),
+                ZonedDateTime.now()).get();
     }
 }

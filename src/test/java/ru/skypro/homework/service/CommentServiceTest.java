@@ -401,5 +401,18 @@ public class CommentServiceTest {
                 newCreateComment,
                 newUserEntity.getEmail(),
                 newEntity.getDtCreate()));
+        verify(repository, times(1)).findById(entityId);
+        verify(repository, times(1)).save(newEntity);
+        verifyNoMoreInteractions(repository);
+        verify(mapping, times(1)).fromEntity(oldEntity);
+        verify(mapping, times(1)).fromComment(oldComment);
+        verify(mapping, times(1))
+                .toEntity(newCreateComment, advertisementEntity, newUserEntity, newEntity.getDtCreate());
+        //verify(mapping, times(1)).fromEntity(savedEntity);
+        verifyNoMoreInteractions(mapping);
+        verify(userRepository, times(1)).findByEmail(newUserEntity.getEmail());
+        verifyNoMoreInteractions(userRepository);
+        verify(advertisementRepository, times(1)).findById(advertisementId);
+        verifyNoMoreInteractions(advertisementRepository);
     }
 }
