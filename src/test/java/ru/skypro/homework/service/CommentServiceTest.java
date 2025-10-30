@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
@@ -389,5 +390,114 @@ public class CommentServiceTest {
         verify(mapping, times(1)).fromEntity(savedEntity);
         verifyNoMoreInteractions(mapping);
     }
-}
 
+    @Test
+    public void testUpdateCommentUserDateTime_withIrrelevantAdId_returnsEmptyDto() {
+        // Given
+        final UserEntity advertisementUserEntity = new UserEntity();
+        advertisementUserEntity.setId(1L);
+        advertisementUserEntity.setEmail("wertin@bk.ru");
+        advertisementUserEntity.setFirstName("Сергей");
+        advertisementUserEntity.setLastName("Петров");
+        advertisementUserEntity.setPhone("+79356661300");
+        advertisementUserEntity.setRole("USER");
+        advertisementUserEntity.setPassword("qw123456");
+
+        final AdvertisementEntity advertisementEntity = new AdvertisementEntity();
+        advertisementEntity.setId(1L);
+        advertisementEntity.setTitle("Глобус");
+        advertisementEntity.setDescription("Школьный глобус с политической картой");
+        advertisementEntity.setPrice(30);
+        advertisementEntity.setUser(advertisementUserEntity);
+
+        final UserEntity userEntity = new UserEntity();
+        userEntity.setId(2L);
+        userEntity.setEmail("ustryalov@mail.ru");
+        userEntity.setFirstName("Алексей");
+        userEntity.setLastName("Устрялов");
+        userEntity.setPhone("+79357760102");
+        userEntity.setRole("USER");
+        userEntity.setPassword("qw123457");
+
+        final CommentEntity oldEntity = new CommentEntity();
+        oldEntity.setIdComment(1L);
+        oldEntity.setNmText("Старый какой-то у вас глобус");
+        oldEntity.setDtCreate(ZonedDateTime.of(2024, 1, 10, 15, 45, 56, 666_000_000,
+                ZoneId.of("Europe/Moscow")));
+        oldEntity.setIdAdvertisement(advertisementEntity);
+        oldEntity.setIdAuthor(userEntity);
+
+        final Long advertisementIdWrong = 2L;
+
+        // When
+        when(repository.findById(oldEntity.getIdComment())).thenReturn(Optional.of(oldEntity));
+        when(advertisementRepository.findById(advertisementIdWrong)).thenReturn(Optional.empty());
+
+        // Then
+        assertEquals(Optional.empty(), service.updateCommentUserDateTime(
+                advertisementIdWrong,
+                oldEntity.getIdComment(),
+                new CreateOrUpdateComment("Нет, глобус вполне себе"),
+                "ustryalov@mail.ru",
+                ZonedDateTime.of(2025, 10, 23, 8, 3, 23, 13_000_000,
+                        ZoneId.of("Europe/Moscow"))));
+        verify(repository, atMost(1)).findById(oldEntity.getIdComment());
+        verifyNoMoreInteractions(repository);
+        verify(advertisementRepository, times(1)).findById(advertisementIdWrong);
+        verifyNoMoreInteractions(advertisementRepository);
+    }
+
+    @Test
+    public void testUpdateCommentUserDateTime_withNullableAdId_returnsEmptyDto() {
+        // Given
+        final UserEntity advertisementUserEntity = new UserEntity();
+        advertisementUserEntity.setId(1L);
+        advertisementUserEntity.setEmail("wertin@bk.ru");
+        advertisementUserEntity.setFirstName("Сергей");
+        advertisementUserEntity.setLastName("Петров");
+        advertisementUserEntity.setPhone("+79356661300");
+        advertisementUserEntity.setRole("USER");
+        advertisementUserEntity.setPassword("qw123456");
+
+        final AdvertisementEntity advertisementEntity = new AdvertisementEntity();
+        advertisementEntity.setId(1L);
+        advertisementEntity.setTitle("Глобус");
+        advertisementEntity.setDescription("Школьный глобус с политической картой");
+        advertisementEntity.setPrice(30);
+        advertisementEntity.setUser(advertisementUserEntity);
+
+        final UserEntity userEntity = new UserEntity();
+        userEntity.setId(2L);
+        userEntity.setEmail("ustryalov@mail.ru");
+        userEntity.setFirstName("Алексей");
+        userEntity.setLastName("Устрялов");
+        userEntity.setPhone("+79357760102");
+        userEntity.setRole("USER");
+        userEntity.setPassword("qw123457");
+
+        final CommentEntity oldEntity = new CommentEntity();
+        oldEntity.setIdComment(1L);
+        oldEntity.setNmText("Старый какой-то у вас глобус");
+        oldEntity.setDtCreate(ZonedDateTime.of(2024, 1, 10, 15, 45, 56, 666_000_000,
+                ZoneId.of("Europe/Moscow")));
+        oldEntity.setIdAdvertisement(advertisementEntity);
+        oldEntity.setIdAuthor(userEntity);
+
+        // When
+        when(repository.findById(oldEntity.getIdComment())).thenReturn(Optional.of(oldEntity));
+        when(advertisementRepository.findById(null)).thenReturn(Optional.empty());
+
+        // Then
+        assertEquals(Optional.empty(), service.updateCommentUserDateTime(
+                null,
+                oldEntity.getIdComment(),
+                new CreateOrUpdateComment("Нет, глобус вполне себе"),
+                "ustryalov@mail.ru",
+                ZonedDateTime.of(2025, 10, 23, 8, 3, 23, 13_000_000,
+                        ZoneId.of("Europe/Moscow"))));
+        verify(repository, atMost(1)).findById(oldEntity.getIdComment());
+        verifyNoMoreInteractions(repository);
+        verify(advertisementRepository, times(1)).findById(null);
+        verifyNoMoreInteractions(advertisementRepository);
+    }
+}
