@@ -500,4 +500,42 @@ public class CommentServiceTest {
         verify(advertisementRepository, times(1)).findById(null);
         verifyNoMoreInteractions(advertisementRepository);
     }
+
+    @Test
+    public void testUpdateCommentUserDateTime_withIrrelevantCommentId_returnsEmptyDto() {
+        // Given
+        final Long commentIdWrong = 1L;
+
+        // When
+        when(repository.findById(commentIdWrong)).thenReturn(Optional.empty());
+
+        // Then
+        assertEquals(Optional.empty(), service.updateCommentUserDateTime(
+                1L,
+                commentIdWrong,
+                new CreateOrUpdateComment("Нет, глобус вполне себе"),
+                "ustryalov@mail.ru",
+                ZonedDateTime.of(2025, 10, 23, 8, 3, 23, 13_000_000,
+                        ZoneId.of("Europe/Moscow"))));
+        verify(repository, times(1)).findById(commentIdWrong);
+        verifyNoMoreInteractions(repository);
+    }
+
+    @Test
+    public void testUpdateCommentUserDateTime_withNullableCommentId_returnsEmptyDto() {
+        // Given
+        // When
+        when(repository.findById(null)).thenReturn(Optional.empty());
+
+        // Then
+        assertEquals(Optional.empty(), service.updateCommentUserDateTime(
+                1L,
+                null,
+                new CreateOrUpdateComment("Нет, глобус вполне себе"),
+                "ustryalov@mail.ru",
+                ZonedDateTime.of(2025, 10, 23, 8, 3, 23, 13_000_000,
+                        ZoneId.of("Europe/Moscow"))));
+        verify(repository, times(1)).findById(null);
+        verifyNoMoreInteractions(repository);
+    }
 }
