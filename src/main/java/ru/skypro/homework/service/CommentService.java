@@ -60,10 +60,10 @@ public interface CommentService {
      * @return {@link Comment} обновленный комментарий
      */
     Optional<Comment> updateCommentUserDateTime(Long adId,
-                                                      Long commentId,
-                                                      CreateOrUpdateComment createOrUpdateComment,
-                                                      String userEmail,
-                                                      ZonedDateTime dateTime);
+                                                Long commentId,
+                                                CreateOrUpdateComment createOrUpdateComment,
+                                                String userEmail,
+                                                ZonedDateTime dateTime);
 
     Comment updateComment(Long adId, Long commentId, CreateOrUpdateComment comment);
 }
