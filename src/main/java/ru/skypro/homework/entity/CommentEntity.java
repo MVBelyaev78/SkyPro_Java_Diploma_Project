@@ -66,6 +66,6 @@ public class CommentEntity {
     private UserEntity idAuthor;
 
     public Long getDtCreateAsMillis() {
-        return dtCreate != null ? dtCreate.toInstant().toEpochMilli() : 0;
+        return dtCreate != null ? dtCreate.toInstant().toEpochMilli() : null;
     }
 }

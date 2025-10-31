@@ -3,6 +3,12 @@ package ru.skypro.homework.service;
 import ru.skypro.homework.dto.Comment;
 import ru.skypro.homework.dto.Comments;
 import ru.skypro.homework.dto.CreateOrUpdateComment;
+import ru.skypro.homework.entity.AdvertisementEntity;
+import ru.skypro.homework.entity.CommentEntity;
+import ru.skypro.homework.entity.UserEntity;
+
+import java.time.ZonedDateTime;
+import java.util.Optional;
 
 /**
  * Реализация сервиса для работы с комментариями к объявлениям
@@ -22,11 +28,18 @@ public interface CommentService {
     /**
      * Добавляет комментарий к объявлению
      *
-     * @param adId      идентификатор объявления
-     * @param comment текст комментария
+     * @param adId       идентификатор объявления
+     * @param comment    текст комментария
+     * @param userEmail  E-Mail автора комментария
+     * @param dateTime дата/время размещения комментария
      * @return {@link Comment} созданный комментарий
      */
-    Comment addComment(Long adId, CreateOrUpdateComment comment);
+    Optional<Comment> addCommentUserDateTime(Long adId,
+                                             CreateOrUpdateComment comment,
+                                             String userEmail,
+                                             ZonedDateTime dateTime);
+
+    Optional<Comment> addComment(Long adId, CreateOrUpdateComment comment);
 
     /**
      * Удаляет комментарий
@@ -34,15 +47,23 @@ public interface CommentService {
      * @param adId      идентификатор объявления
      * @param commentId идентификатор комментария
      */
-    void rmComment(Long adId, Long commentId);
+    Boolean rmComment(Long adId, Long commentId);
 
     /**
      * Обновляет комментарий
      *
-     * @param adId      идентификатор объявления
-     * @param commentId идентификатор комментария
-     * @param comment   новый текст комментария
+     * @param adId                  идентификатор объявления
+     * @param commentId             идентификатор комментария
+     * @param createOrUpdateComment новый текст комментария
+     * @param userEmail             E-Mail автора комментария
+     * @param dateTime              дата/время размещения комментария
      * @return {@link Comment} обновленный комментарий
      */
+    Optional<Comment> updateCommentUserDateTime(Long adId,
+                                                Long commentId,
+                                                CreateOrUpdateComment createOrUpdateComment,
+                                                String userEmail,
+                                                ZonedDateTime dateTime);
+
     Comment updateComment(Long adId, Long commentId, CreateOrUpdateComment comment);
 }

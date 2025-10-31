@@ -18,11 +18,8 @@ import ru.skypro.homework.repository.CommentRepository;
 import ru.skypro.homework.repository.UserRepository;
 import ru.skypro.homework.service.CommentService;
 
-import java.time.Instant;
-import java.time.ZoneId;
 import java.time.ZonedDateTime;
-import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Optional;
 
 @Slf4j
 @Service
@@ -44,88 +41,108 @@ public class CommentServiceImpl implements CommentService {
     public Comments getComments(Long adId) {
         log.info("Получение комментариев для объявления с ID: {}", adId);
 
-        List<CommentEntity> commentEntities = commentRepository.findAllByIdAdvertisement_Id(adId);
-        List<Comment> comments = commentEntities.stream()
-                .map(commentMapping::fromEntity)
-                .collect(Collectors.toList());
-
-        return new Comments(comments.size(), comments);
+        return commentMapping.fromEntities(commentRepository.findAllByIdAdvertisement_Id(adId));
     }
 
     /**
      * Добавление нового комментария к объявлению.
      *
-     * @param adId идентификатор объявления
+     * @param adId    идентификатор объявления
      * @param comment объект CreateOrUpdateComment с данными нового комментария
      * @return созданный комментарий
      */
     @Override
-    public Comment addComment(Long adId, CreateOrUpdateComment comment) {
+    public Optional<Comment> addCommentUserDateTime(Long adId,
+                                                    CreateOrUpdateComment comment,
+                                                    String userEmail,
+                                                    ZonedDateTime dateTime) {
         log.info("Добавление комментария к объявлению с ID: {}", adId);
 
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String username = authentication.getName();
-
-        UserEntity author = userRepository.findByEmail(username);
-        if (author == null) {
-            throw new ResourceNotFoundException("Пользователь не найден");
+        final Optional<AdvertisementEntity> advertisementEntity = advertisementRepository.findById(adId);
+        if (advertisementEntity.isEmpty()) {
+            return Optional.empty();
         }
-        AdvertisementEntity advertisement = advertisementRepository.findById(adId)
-                .orElseThrow(() -> new RuntimeException("Объявление с ID " + adId + " не найдено"));
+        final UserEntity userEntity = userRepository.findByEmail(userEmail);
+        if (userEntity == null) {
+            return Optional.empty();
+        }
+        final Optional<CommentEntity> commentEntity = commentMapping.toEntity(
+                comment, advertisementEntity.get(), userEntity, dateTime);
+        if (commentEntity.isEmpty()) {
+            return Optional.empty();
+        }
+        final CommentEntity savedCommentEntity = commentRepository.save(commentEntity.get());
 
-        CommentEntity commentEntity = new CommentEntity();
-        commentEntity.setNmText(comment.getText());
-        commentEntity.setDtCreate(ZonedDateTime.now(ZoneId.of("Europe/Moscow")));
-        commentEntity.setIdAdvertisement(advertisement);
-        commentEntity.setIdAuthor(author);
+        return Optional.of(commentMapping.fromEntity(savedCommentEntity));
+    }
 
-        CommentEntity savedComment = commentRepository.save(commentEntity);
-        log.info("Комментарий успешно добавлен");
-
-        return commentMapping.fromEntity(savedComment);
+    @Override
+    public Optional<Comment> addComment(Long adId, CreateOrUpdateComment comment) {
+        return addCommentUserDateTime(adId,
+                comment,
+                SecurityContextHolder.getContext().getAuthentication().getName(),
+                ZonedDateTime.now());
     }
 
     /**
      * Удаление комментария по его идентификатору.
      *
-     * @param adId идентификатор объявления (не используется в данной реализации)
+     * @param adId      идентификатор объявления (не используется в данной реализации)
      * @param commentId идентификатор комментария для удаления
      */
     @Override
-    public void rmComment(Long adId, Long commentId) {
-        //comments.removeIf(comment -> comment.getId() == commentId);
+    public Boolean rmComment(Long adId, Long commentId) {
+        return commentRepository.deleteByIdCommentAndIdAdvertisement_Id(commentId, adId);
+    }
+
+    @Override
+    public Optional<Comment> updateCommentUserDateTime(Long adId,
+                                                       Long commentId,
+                                                       CreateOrUpdateComment createOrUpdateComment,
+                                                       String userEmail,
+                                                       ZonedDateTime dateTime) {
+        log.info("Обновление комментария с ID: {} для объявления с ID: {}", commentId, adId);
+
+        final Optional<CommentEntity> oldEntity = commentRepository.findById(commentId);
+        if (oldEntity.isEmpty()) {
+            return Optional.empty();
+        }
+        final Optional<AdvertisementEntity> advertisementEntity = advertisementRepository.findById(adId);
+        if (advertisementEntity.isEmpty()) {
+            return Optional.empty();
+        }
+        final UserEntity userEntity = userRepository.findByEmail(userEmail);
+        if (userEntity == null) {
+            return Optional.empty();
+        }
+        final Optional<CommentEntity> newEntity = commentMapping.toEntity(
+                createOrUpdateComment, advertisementEntity.get(), userEntity, dateTime);
+        if (newEntity.isEmpty()) {
+            return Optional.empty();
+        }
+        if (!oldEntity.get().equals(newEntity.get())) {
+            return Optional.empty();
+        }
+        final CommentEntity savedEntity = commentRepository.save(newEntity.get());
+        final Comment newComment = commentMapping.fromEntity(savedEntity);
+        return Optional.of(newComment);
     }
 
     /**
      * Обновление существующего комментария.
      *
-     * @param adId идентификатор объявления (не используется в данной реализации)
+     * @param adId      идентификатор объявления (не используется в данной реализации)
      * @param commentId идентификатор комментария для обновления
-     * @param comment объект CreateOrUpdateComment с новыми данными комментария
+     * @param comment   объект CreateOrUpdateComment с новыми данными комментария
      * @return обновленный комментарий или null, если комментарий не найден
      */
     @Override
     public Comment updateComment(Long adId, Long commentId, CreateOrUpdateComment comment) {
-        log.info("Обновление комментария с ID: {} для объявления с ID: {}", commentId, adId);
-
-        CommentEntity commentEntity = commentRepository.findById(Math.toIntExact(commentId))
-                .orElseThrow(() -> new RuntimeException("Комментарий с ID " + commentId + " не найден"));
-
-        if (!commentEntity.getIdAdvertisement().getId().equals((long) adId)) {
-            throw new RuntimeException("Комментарий не принадлежит указанному пользователю");
-        }
-
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String username = authentication.getName();
-        UserEntity currentUser = userRepository.findByEmail(username);
-        if (currentUser == null) {
-            throw new ResourceNotFoundException("Пользователь не найден");
-        }
-        commentEntity.setNmText(comment.getText());
-
-        CommentEntity updatedComment = commentRepository.save(commentEntity);
-        log.info("Комментарий с ID: {} успешно сохранен", commentId);
-
-        return commentMapping.fromEntity(updatedComment);
+        return updateCommentUserDateTime(
+                adId,
+                commentId,
+                comment,
+                SecurityContextHolder.getContext().getAuthentication().getName(),
+                ZonedDateTime.now()).get();
     }
 }

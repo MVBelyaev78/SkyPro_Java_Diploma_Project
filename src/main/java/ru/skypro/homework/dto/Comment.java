@@ -22,7 +22,7 @@ public class Comment {
      * Идентификатор автора комментария
      */
     @Schema(description = "id автора комментария")
-    private Long author;
+    private Long authorId;
 
     /**
      * Ссылка на аватарку автора

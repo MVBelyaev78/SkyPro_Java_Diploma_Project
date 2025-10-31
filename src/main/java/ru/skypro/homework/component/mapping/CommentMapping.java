@@ -4,15 +4,14 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import ru.skypro.homework.dto.Comment;
 import ru.skypro.homework.dto.Comments;
+import ru.skypro.homework.dto.CreateOrUpdateComment;
 import ru.skypro.homework.entity.AdvertisementEntity;
 import ru.skypro.homework.entity.CommentEntity;
 import ru.skypro.homework.entity.UserEntity;
 import ru.skypro.homework.repository.AdvertisementRepository;
 import ru.skypro.homework.repository.UserRepository;
 
-import java.time.ZoneId;
 import java.time.ZonedDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -24,11 +23,13 @@ public class CommentMapping {
     private final AdvertisementRepository advertisementRepository;
 
     public Comment fromEntity(CommentEntity entity) {
-        UserEntity author = entity.getIdAuthor();
+        if (entity == null) {
+            return null;
+        }
         return new Comment(
-                author.getId(),
-                author.getPhone(),
-                author.getFirstName(),
+                entity.getIdAuthor().getId(),
+                entity.getIdAuthor().getImage().isPresent() ? entity.getIdAuthor().getImage().get().getName() : "",
+                entity.getIdAuthor().getFirstName(),
                 entity.getDtCreateAsMillis(),
                 entity.getIdComment(),
                 entity.getNmText()
@@ -37,7 +38,7 @@ public class CommentMapping {
 
     public Comments fromEntities(List<CommentEntity> entities) {
         if (entities == null || entities.isEmpty()) {
-            return new Comments(0, new ArrayList<>());
+            return new Comments(0, List.of());
         }
         final List<Comment> result = entities
                 .stream()
@@ -47,20 +48,26 @@ public class CommentMapping {
         return new Comments(result.size(), result);
     }
 
-    public Optional<CommentEntity> toEntity(Comment comment, Long adId) {
-        final Optional<UserEntity> author = userRepository.findById(comment.getAuthor());
-        final Optional<AdvertisementEntity> advertisement = advertisementRepository.findById(adId);
-
-        if (author.isEmpty() || advertisement.isEmpty()) {
+    public Optional<CommentEntity> toEntity(CreateOrUpdateComment comment,
+                                            AdvertisementEntity advertisementEntity,
+                                            UserEntity userEntity,
+                                            ZonedDateTime dateTime) {
+        if (comment == null || advertisementEntity == null || userEntity == null || dateTime == null) {
             return Optional.empty();
         }
-
         CommentEntity entity = new CommentEntity();
         entity.setNmText(comment.getText());
-        entity.setIdAuthor(author.get());
-        entity.setIdAdvertisement(advertisement.get());
-        entity.setDtCreate(ZonedDateTime.now(ZoneId.of("Europe/Moscow")));
+        entity.setIdAuthor(userEntity);
+        entity.setIdAdvertisement(advertisementEntity);
+        entity.setDtCreate(dateTime);
 
         return Optional.of(entity);
+    }
+
+    public Optional<CreateOrUpdateComment> fromComment(Comment comment) {
+        if (comment == null) {
+            return Optional.empty();
+        }
+        return Optional.of(new CreateOrUpdateComment(comment.getText()));
     }
 }
