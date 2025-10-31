@@ -538,4 +538,15 @@ public class CommentServiceTest {
         verify(repository, times(1)).findById(null);
         verifyNoMoreInteractions(repository);
     }
+
+    @Test
+    public void testRmComment_withRelevantArguments_returnsTrue() {
+        // Given
+        // When
+        when(repository.deleteByIdCommentAndIdAdvertisement_Id(1L, 1L)).thenReturn(true);
+        // Then
+        assertEquals(true, service.rmComment(1L, 1L));
+        verify(repository, times(1)).deleteByIdCommentAndIdAdvertisement_Id(1L, 1L);
+        verifyNoMoreInteractions(repository);
+    }
 }

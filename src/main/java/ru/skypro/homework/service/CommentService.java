@@ -47,7 +47,7 @@ public interface CommentService {
      * @param adId      идентификатор объявления
      * @param commentId идентификатор комментария
      */
-    void rmComment(Long adId, Long commentId);
+    Boolean rmComment(Long adId, Long commentId);
 
     /**
      * Обновляет комментарий
