@@ -179,8 +179,7 @@ public class AdvertisementController {
      * @param image Картинка
      * @return информация об объявлении
      */
-    @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE,
-            consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PostMapping(value = "", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @Operation(summary = "Добавление объявления",
             description = "Добавление объявления")
     @ApiResponses({
@@ -190,7 +189,7 @@ public class AdvertisementController {
             @ApiResponse(responseCode = "401", description = "Unauthorized",
                     content = @Content(mediaType = ""))
     })
-    public ResponseEntity<Ad> createAdvertisement(@RequestPart("properties") CreateOrUpdateAd createOrUpdateAd,
+    public ResponseEntity<Ad> createAdvertisement(@RequestParam("properties") String createOrUpdateAd,
                                                   @RequestPart("image") MultipartFile image) {
         try {
             return ResponseEntity.ok(advertisementService.createAdvertisement(createOrUpdateAd, image));
