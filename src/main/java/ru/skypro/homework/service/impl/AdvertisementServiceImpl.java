@@ -15,6 +15,7 @@ import ru.skypro.homework.component.mapping.AdvertisementMapping;
 import ru.skypro.homework.repository.AdvertisementRepository;
 import ru.skypro.homework.repository.UserRepository;
 import ru.skypro.homework.service.AdvertisementService;
+import ru.skypro.homework.staticClasses.CreateOrUpdateAdParser;
 
 import java.io.IOException;
 import java.util.Optional;
@@ -126,10 +127,11 @@ public class AdvertisementServiceImpl implements AdvertisementService {
      * @throws IOException если произошла ошибка при сохранении изображения
      */
     @Override
-    public Ad createAdvertisement(CreateOrUpdateAd createOrUpdateAd, MultipartFile image) throws IOException {
-        final UserEntity authorEntity = userRepository.findByEmail(getAuthentication().getName());
-        final AdvertisementEntity entity = mapping
-                .getEntityFromAd(createOrUpdateAd, authorEntity, imageComponent.saveImage(image));
+    public Ad createAdvertisement(String createOrUpdateAd, MultipartFile image) throws IOException {
+        final AdvertisementEntity entity = mapping.getEntityFromAd(
+                CreateOrUpdateAdParser.parse(createOrUpdateAd),
+                userRepository.findByEmail(getAuthentication().getName()),
+                imageComponent.saveImage(image));
 
         return mapping.getAdFromEntity(repository.save(entity));
     }

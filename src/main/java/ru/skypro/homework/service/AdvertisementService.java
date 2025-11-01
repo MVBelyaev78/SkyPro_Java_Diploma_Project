@@ -19,5 +19,5 @@ public interface AdvertisementService {
 
     String  updateAdvertisementImage(Long id, MultipartFile image) throws Exception;
 
-    Ad createAdvertisement(CreateOrUpdateAd createOrUpdateAd, MultipartFile image) throws IOException;
+    Ad createAdvertisement(String createOrUpdateAd, MultipartFile image) throws IOException;
 }
