@@ -22,7 +22,6 @@ import ru.skypro.homework.service.UserService;
 
 import java.io.IOException;
 import java.util.Objects;
-import java.util.Optional;
 
 /**
  * Контроллер для управления информацией о пользователях.

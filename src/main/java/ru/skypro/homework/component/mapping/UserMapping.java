@@ -4,7 +4,6 @@ import org.springframework.stereotype.Component;
 import ru.skypro.homework.dto.Role;
 import ru.skypro.homework.dto.UpdateUser;
 import ru.skypro.homework.dto.User;
-import ru.skypro.homework.entity.ImageEntity;
 import ru.skypro.homework.entity.UserEntity;
 
 import java.util.Optional;
