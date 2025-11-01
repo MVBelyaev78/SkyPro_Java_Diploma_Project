@@ -26,10 +26,10 @@ import java.util.Optional;
 @Transactional
 @RequiredArgsConstructor
 public class AdvertisementServiceImpl implements AdvertisementService {
-    private AdvertisementRepository repository;
-    private AdvertisementMapping mapping;
-    private ImageComponent imageComponent;
-    private UserRepository userRepository;
+    private final AdvertisementRepository repository;
+    private final AdvertisementMapping mapping;
+    private final ImageComponent imageComponent;
+    private final UserRepository userRepository;
 
     /**
      * Получает информацию о конкретном объявлении по его идентификатору.
