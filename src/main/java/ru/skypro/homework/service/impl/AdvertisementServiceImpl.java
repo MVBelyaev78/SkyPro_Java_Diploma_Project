@@ -1,5 +1,6 @@
 package ru.skypro.homework.service.impl;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -15,7 +16,6 @@ import ru.skypro.homework.component.mapping.AdvertisementMapping;
 import ru.skypro.homework.repository.AdvertisementRepository;
 import ru.skypro.homework.repository.UserRepository;
 import ru.skypro.homework.service.AdvertisementService;
-import ru.skypro.homework.staticClasses.CreateOrUpdateAdParser;
 
 import java.io.IOException;
 import java.util.Optional;
@@ -129,7 +129,7 @@ public class AdvertisementServiceImpl implements AdvertisementService {
     @Override
     public Ad createAdvertisement(String createOrUpdateAd, MultipartFile image) throws IOException {
         final AdvertisementEntity entity = mapping.getEntityFromAd(
-                CreateOrUpdateAdParser.parse(createOrUpdateAd),
+                (new ObjectMapper()).readValue(createOrUpdateAd, CreateOrUpdateAd.class),
                 userRepository.findByEmail(getAuthentication().getName()),
                 imageComponent.saveImage(image));
 
