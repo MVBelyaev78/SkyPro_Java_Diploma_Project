@@ -82,6 +82,9 @@ public class AdvertisementMapping {
         entityResult.setDescription(createOrUpdateAd.getDescription());
         entityResult.setPrice(createOrUpdateAd.getPrice());
         entityResult.setUser(entity.getUser());
+        if (entity.getImage().isPresent()) {
+            entityResult.setImage(entity.getImage().get());
+        }
         return Optional.of(entityResult);
     }
 }
