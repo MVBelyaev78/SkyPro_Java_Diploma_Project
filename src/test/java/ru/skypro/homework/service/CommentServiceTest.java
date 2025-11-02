@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.*;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
@@ -542,10 +543,10 @@ public class CommentServiceTest {
     public void testRmComment_withRelevantArguments_returnsTrue() {
         // Given
         // When
-        when(repository.deleteByIdCommentAndIdAdvertisement_Id(1L, 1L)).thenReturn(true);
+        doNothing().when(repository).deleteByCommentIdAndAdvertisementId(1L, 1L);
         // Then
-        assertEquals(true, service.rmComment(1L, 1L));
-        verify(repository, times(1)).deleteByIdCommentAndIdAdvertisement_Id(1L, 1L);
+        assertTrue(service.rmComment(1L, 1L));
+        verify(repository, times(1)).deleteByCommentIdAndAdvertisementId(1L, 1L);
         verifyNoMoreInteractions(repository);
     }
 }
