@@ -84,7 +84,8 @@ public class CommentController {
             @PathVariable("commentId") Long commentId,
             @RequestBody CreateOrUpdateComment comment
     ) {
-        return ResponseEntity.ok(service.updateComment(adId, commentId, comment));
+        return ResponseEntity.ok(service.updateComment(adId, commentId, comment)
+                .orElseThrow(IllegalArgumentException::new));
     }
 
     /**

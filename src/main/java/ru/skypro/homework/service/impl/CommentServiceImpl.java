@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.skypro.homework.component.mapping.CommentMapping;
 import ru.skypro.homework.dto.Comment;
 import ru.skypro.homework.dto.Comments;
@@ -21,6 +22,7 @@ import java.util.Optional;
 
 @Slf4j
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class CommentServiceImpl implements CommentService {
 
@@ -90,7 +92,8 @@ public class CommentServiceImpl implements CommentService {
      */
     @Override
     public Boolean rmComment(Long adId, Long commentId) {
-        return commentRepository.deleteByIdCommentAndIdAdvertisement_Id(commentId, adId);
+        commentRepository.deleteByCommentIdAndAdvertisementId(commentId, adId);
+        return true;
     }
 
     @Override
@@ -101,8 +104,8 @@ public class CommentServiceImpl implements CommentService {
                                                        ZonedDateTime dateTime) {
         log.info("Обновление комментария с ID: {} для объявления с ID: {}", commentId, adId);
 
-        final Optional<CommentEntity> oldEntity = commentRepository.findById(commentId);
-        if (oldEntity.isEmpty()) {
+        final Optional<CommentEntity> entity = commentRepository.findById(commentId);
+        if (entity.isEmpty()) {
             return Optional.empty();
         }
         final Optional<AdvertisementEntity> advertisementEntity = advertisementRepository.findById(adId);
@@ -118,11 +121,11 @@ public class CommentServiceImpl implements CommentService {
         if (newEntity.isEmpty()) {
             return Optional.empty();
         }
-        if (!oldEntity.get().equals(newEntity.get())) {
+        if (!commentMapping.updateCommentEntity(entity.get(), newEntity.get())) {
             return Optional.empty();
         }
-        final CommentEntity savedEntity = commentRepository.save(newEntity.get());
-        final Comment newComment = commentMapping.fromEntity(savedEntity);
+        commentRepository.save(entity.get());
+        final Comment newComment = commentMapping.fromEntity(entity.get());
         return Optional.of(newComment);
     }
 
@@ -135,12 +138,12 @@ public class CommentServiceImpl implements CommentService {
      * @return обновленный комментарий или null, если комментарий не найден
      */
     @Override
-    public Comment updateComment(Long adId, Long commentId, CreateOrUpdateComment comment) {
+    public Optional<Comment> updateComment(Long adId, Long commentId, CreateOrUpdateComment comment) {
         return updateCommentUserDateTime(
                 adId,
                 commentId,
                 comment,
                 SecurityContextHolder.getContext().getAuthentication().getName(),
-                ZonedDateTime.now()).get();
+                ZonedDateTime.now());
     }
 }

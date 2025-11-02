@@ -70,4 +70,16 @@ public class CommentMapping {
         }
         return Optional.of(new CreateOrUpdateComment(comment.getText()));
     }
+
+    public Boolean updateCommentEntity(CommentEntity updated, CommentEntity source) {
+        if (!updated.getIdAuthor().equals(source.getIdAuthor())) {
+            return false;
+        }
+        if (!updated.getIdAdvertisement().equals(source.getIdAdvertisement())) {
+            return false;
+        }
+        updated.setNmText(source.getNmText());
+        updated.setDtCreate(source.getDtCreate());
+        return true;
+    }
 }

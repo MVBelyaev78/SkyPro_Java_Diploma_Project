@@ -62,5 +62,5 @@ public interface CommentService {
                                                 String userEmail,
                                                 ZonedDateTime dateTime);
 
-    Comment updateComment(Long adId, Long commentId, CreateOrUpdateComment comment);
+    Optional<Comment> updateComment(Long adId, Long commentId, CreateOrUpdateComment comment);
 }
