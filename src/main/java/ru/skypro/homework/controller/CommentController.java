@@ -97,7 +97,7 @@ public class CommentController {
      */
     @Operation(summary = "Удаление комментария")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", content = @Content()),
+            @ApiResponse(responseCode = "204", content = @Content()),
             @ApiResponse(responseCode = "401", content = @Content()),
             @ApiResponse(responseCode = "403", content = @Content()),
             @ApiResponse(responseCode = "404", content = @Content())
@@ -105,6 +105,6 @@ public class CommentController {
     @DeleteMapping("/{adId}/comments/{commentId}")
     public ResponseEntity<?> rmComment(@PathVariable("adId") Long id, @PathVariable("commentId") Long commentId) {
         service.rmComment(id, commentId);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.noContent().build();
     }
 }
