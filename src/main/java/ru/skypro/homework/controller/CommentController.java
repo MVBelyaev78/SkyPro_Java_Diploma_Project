@@ -16,6 +16,9 @@ import ru.skypro.homework.service.CommentService;
 
 import javax.validation.Valid;
 
+/**
+ * Контроллер для работы с комментариями к объявлениям.
+ */
 @CrossOrigin(value = "http://localhost:3000")
 @RestController
 @RequestMapping("/ads")
@@ -24,6 +27,13 @@ import javax.validation.Valid;
 public class CommentController {
     private final CommentService service;
 
+    /**
+     * Добавление комментария к объявлению.
+     *
+     * @param id идентификатор объявления, к которому добавляется комментарий
+     * @param comment данные комментария для добавления
+     * @return созданный комментарий
+     */
     @Operation(summary = "Добавление комментария к объявлению")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = Comment.class))),
@@ -31,10 +41,17 @@ public class CommentController {
             @ApiResponse(responseCode = "404", content = @Content())
     })
     @PostMapping("/{id}/comment")
-    public ResponseEntity<Comment> addComment(@PathVariable("id") int id, @RequestBody @Valid CreateOrUpdateComment comment) {
-        return ResponseEntity.ok(service.addComment(id, comment));
+    public ResponseEntity<Comment> addComment(@PathVariable("id") Long id, @RequestBody @Valid CreateOrUpdateComment comment) {
+        return ResponseEntity.ok(service.addComment(id, comment)
+                .orElseThrow(IllegalArgumentException::new));
     }
 
+    /**
+     * Получение комментариев для указанного объявления.
+     *
+     * @param id идентификатор объявления, для которого нужно получить комментарии
+     * @return список комментариев
+     */
     @Operation(summary = "Получение комментариев объявления")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = Comments.class))),
@@ -42,10 +59,18 @@ public class CommentController {
             @ApiResponse(responseCode = "404", content = @Content())
     })
     @GetMapping("/{id}/comments")
-    public ResponseEntity<Comments> getComments(@PathVariable("id") int id) {
+    public ResponseEntity<Comments> getComments(@PathVariable("id") Long id) {
         return ResponseEntity.ok(service.getComments(id));
     }
 
+    /**
+     * Обновление существующего комментария.
+     *
+     * @param adId идентификатор объявления, к которому относится комментарий
+     * @param commentId идентификатор обновляемого комментария
+     * @param comment данные для обновления комментария
+     * @return обновленный комментарий
+     */
     @Operation(summary = "Обновление комментария")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = Comment.class))),
@@ -55,23 +80,31 @@ public class CommentController {
     })
     @PatchMapping("/{adId}/comments/{commentId}")
     public ResponseEntity<Comment> updateComment(
-            @PathVariable("adId") int adId,
-            @PathVariable("commentId") int commentId,
+            @PathVariable("adId") Long adId,
+            @PathVariable("commentId") Long commentId,
             @RequestBody CreateOrUpdateComment comment
     ) {
-        return ResponseEntity.ok(service.updateComment(adId, commentId, comment));
+        return ResponseEntity.ok(service.updateComment(adId, commentId, comment)
+                .orElseThrow(IllegalArgumentException::new));
     }
 
+    /**
+     * Удаление комментария.
+     *
+     * @param id идентификатор объявления, к которому относится комментарий
+     * @param commentId идентификатор удаляемого комментария
+     * @return статус операции удаления
+     */
     @Operation(summary = "Удаление комментария")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", content = @Content()),
+            @ApiResponse(responseCode = "204", content = @Content()),
             @ApiResponse(responseCode = "401", content = @Content()),
             @ApiResponse(responseCode = "403", content = @Content()),
             @ApiResponse(responseCode = "404", content = @Content())
     })
     @DeleteMapping("/{adId}/comments/{commentId}")
-    public ResponseEntity<?> rmComment(@PathVariable("adId") int id, @PathVariable("commentId") int commentId) {
+    public ResponseEntity<?> rmComment(@PathVariable("adId") Long id, @PathVariable("commentId") Long commentId) {
         service.rmComment(id, commentId);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.noContent().build();
     }
 }

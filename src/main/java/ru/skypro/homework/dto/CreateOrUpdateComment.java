@@ -3,16 +3,15 @@ package ru.skypro.homework.dto;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import ru.skypro.homework.controller.CommentController;
+import lombok.NoArgsConstructor;
 
 /**
  * DTO для создания и обновления комментария
  *
- * @see CommentController#addComment(int, CreateOrUpdateComment)
- * @see CommentController#updateComment(int, int, CreateOrUpdateComment)
  */
 @Data
 @AllArgsConstructor
+@NoArgsConstructor
 public class CreateOrUpdateComment {
 
     /**

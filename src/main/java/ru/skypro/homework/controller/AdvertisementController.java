@@ -13,7 +13,10 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import ru.skypro.homework.dto.*;
+import ru.skypro.homework.dto.Ad;
+import ru.skypro.homework.dto.Ads;
+import ru.skypro.homework.dto.CreateOrUpdateAd;
+import ru.skypro.homework.dto.ExtendedAd;
 import ru.skypro.homework.service.AdvertisementService;
 
 /**
@@ -24,7 +27,7 @@ import ru.skypro.homework.service.AdvertisementService;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/ads")
-@Tag(name = "Объявления", description = "API для управления объявлениями")
+@Tag(name = "Объявления")
 public class AdvertisementController {
     private final AdvertisementService advertisementService;
 
@@ -46,8 +49,13 @@ public class AdvertisementController {
                     content = @Content(mediaType = ""))
     })
     @GetMapping("/{id}")
-    public ResponseEntity<ExtendedAd> getAdvertisementInfo(@PathVariable("id") Long id) {
-        return ResponseEntity.ok(advertisementService.getAdvertisementInfo(id));
+    public ResponseEntity<?> getAdvertisementInfo(@PathVariable("id") Long id) {
+        try {
+            return ResponseEntity.ok(advertisementService.getAdvertisementInfo(id)
+                    .orElseThrow(IllegalArgumentException::new));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
     }
 
     /**
@@ -131,7 +139,12 @@ public class AdvertisementController {
     })
     public ResponseEntity<Ad> updateAdvertisementInfo(@PathVariable("id") Long id,
                                                       @RequestBody CreateOrUpdateAd createOrUpdateAd) {
-        return ResponseEntity.ok(advertisementService.updateAdvertisementInfo(id, createOrUpdateAd));
+        try {
+            return ResponseEntity.ok(advertisementService.updateAdvertisementInfo(id, createOrUpdateAd)
+                    .orElseThrow(IllegalArgumentException::new));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
     }
 
     /**
@@ -145,8 +158,7 @@ public class AdvertisementController {
             description = "Обновление картинки объявления")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "OK",
-                    content = @Content(schema = @Schema(implementation = CreateOrUpdateComment.class),
-                                mediaType = MediaType.APPLICATION_OCTET_STREAM_VALUE)),
+                    content = @Content(schema = @Schema(implementation = String.class))),
             @ApiResponse(responseCode = "401", description = "Unauthorized",
                     content = @Content(mediaType = "")),
             @ApiResponse(responseCode = "403", description = "Forbidden",
@@ -154,7 +166,7 @@ public class AdvertisementController {
             @ApiResponse(responseCode = "404", description = "Not found",
                     content = @Content(mediaType = ""))
     })
-    public ResponseEntity<CreateOrUpdateComment> updateAdvertisementImage(@PathVariable("id") Long id,
+    public ResponseEntity<?> updateAdvertisementImage(@PathVariable("id") Long id,
                                                                           @RequestBody MultipartFile image) {
         try {
             return ResponseEntity.ok(advertisementService.updateAdvertisementImage(id, image));
@@ -169,10 +181,8 @@ public class AdvertisementController {
      * @param createOrUpdateAd Поля объявления
      * @param image Картинка
      * @return информация об объявлении
-    */
-    @PostMapping(
-            value = "",
-            consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+     */
+    @PostMapping(value = "", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @Operation(summary = "Добавление объявления",
             description = "Добавление объявления")
     @ApiResponses({
@@ -182,10 +192,12 @@ public class AdvertisementController {
             @ApiResponse(responseCode = "401", description = "Unauthorized",
                     content = @Content(mediaType = ""))
     })
-    public ResponseEntity<Ad> createAdvertisement(@RequestBody CreateOrUpdateAd createOrUpdateAd,
-                                                  @RequestBody MultipartFile image) {
+    public ResponseEntity<Ad> createAdvertisement(@RequestParam("properties") String createOrUpdateAd,
+                                                  @RequestPart("image") MultipartFile image) {
         try {
-            return ResponseEntity.ok(advertisementService.createAdvertisement(createOrUpdateAd, image));
+            return ResponseEntity
+                    .status(HttpStatus.CREATED)
+                    .body(advertisementService.createAdvertisement(createOrUpdateAd, image));
         } catch (Exception e) {
             return ResponseEntity.notFound().build();
         }

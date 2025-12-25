@@ -1,53 +1,145 @@
 package ru.skypro.homework.service.impl;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
-import ru.skypro.homework.dto.*;
+import ru.skypro.homework.component.ImageComponent;
+import ru.skypro.homework.component.mapping.AdvertisementMapping;
+import ru.skypro.homework.dto.Ad;
+import ru.skypro.homework.dto.Ads;
+import ru.skypro.homework.dto.CreateOrUpdateAd;
+import ru.skypro.homework.dto.ExtendedAd;
+import ru.skypro.homework.entity.AdvertisementEntity;
+import ru.skypro.homework.entity.ImageEntity;
+import ru.skypro.homework.entity.UserEntity;
+import ru.skypro.homework.repository.AdvertisementRepository;
+import ru.skypro.homework.repository.UserRepository;
 import ru.skypro.homework.service.AdvertisementService;
-import ru.skypro.homework.service.ImageService;
 
-import java.util.List;
+import java.io.IOException;
+import java.util.Optional;
 
-@RequiredArgsConstructor
+/**
+ * Реализация сервиса для работы с объявлениями.
+ */
 @Service
+@Transactional
+@RequiredArgsConstructor
 public class AdvertisementServiceImpl implements AdvertisementService {
-    ImageService imageService;
+    private final AdvertisementRepository repository;
+    private final AdvertisementMapping mapping;
+    private final ImageComponent imageComponent;
+    private final UserRepository userRepository;
 
+    /**
+     * Получает информацию о конкретном объявлении по его идентификатору.
+     *
+     * @param id идентификатор объявления
+     * @return объект ExtendedAd, содержащий информацию о объявлении, если оно найдено
+     */
     @Override
-    public ExtendedAd getAdvertisementInfo(Long id) {
-        return new ExtendedAd(0L, "string", "string", "string", "string", "string", "string", 0, "string");
+    public Optional<ExtendedAd> getAdvertisementInfo(Long id) {
+        final Optional<AdvertisementEntity> entity = repository.findById(id);
+        if (entity.isEmpty()) {
+            return Optional.empty();
+        }
+        return mapping.getExtendedAdFromEntity(entity.get());
     }
 
+    /**
+     * Получает все объявления.
+     *
+     * @return объект Ads, содержащий список всех объявлений
+     */
     @Override
     public Ads getAllAdvertisements() {
-        return new Ads(1, List.of(new Ad(0L, "string", "string", 0, "string")));
+        return mapping.getAdsFromEntities(repository.findAll());
     }
 
+    /**
+     * Получает объявления авторизованного пользователя.
+     *
+     * @return объект Ads, содержащий список объявлений пользователя
+     */
     @Override
     public Ads getAdvertisementsOfAuthorizedUser() {
-        return new Ads(1, List.of(new Ad(0L, "string", "string", 0, "string")));
+        final UserEntity authorEntity = userRepository.findByEmail(getAuthentication().getName());
+        return mapping.getAdsFromEntities(repository.findByUserId(authorEntity.getId()));
     }
 
+    /**
+     * Удаляет объявление по его идентификатору.
+     *
+     * @param id идентификатор объявления
+     * @return true, если удаление прошло успешно, иначе false
+     */
     @Override
     public Boolean deleteAdvertisement(Long id) {
-        return true;
+        // Проверяем, существует ли объявление с данным идентификатором
+        if (repository.existsById(id)) {
+            repository.deleteById(id); // Удаляем объявление из базы данных
+            return true; // Возвращаем true, если удаление прошло успешно
+        }
+        return false; // Возвращаем false, если объявления с данным идентификатором не существует
     }
 
+    /**
+     * Обновляет информацию об объявлении.
+     *
+     * @param id               идентификатор объявления
+     * @param createOrUpdateAd объект с новыми данными объявления
+     * @return обновленный объект Ad, если обновление прошло успешно
+     */
     @Override
-    public Ad updateAdvertisementInfo(Long id, CreateOrUpdateAd createOrUpdateAd) {
-        return new Ad(0L, "string", "string", createOrUpdateAd.getPrice(), createOrUpdateAd.getTitle());
+    public Optional<Ad> updateAdvertisementInfo(Long id, CreateOrUpdateAd createOrUpdateAd) {
+        return repository
+                .findById(id)
+                .flatMap(e -> mapping.getReadyForUpdateEntity(e, createOrUpdateAd))
+                .map(e -> mapping.getAdFromEntity(repository.save(e)));
     }
 
+    /**
+     * Обновляет изображение объявления.
+     *
+     * @param id    идентификатор объявления
+     * @param image файл изображения
+     * @return объект CreateOrUpdateComment с результатом операции
+     * @throws Exception если произошла ошибка при сохранении изображения
+     */
     @Override
-    public CreateOrUpdateComment updateAdvertisementImage(Long id, MultipartFile image) throws Exception {
-        imageService.saveImage(image);
-        return new CreateOrUpdateComment("string");
+    public String updateAdvertisementImage(Long id, MultipartFile image) throws Exception {
+        AdvertisementEntity adEntity = repository.findById(id)
+                .orElseThrow(IllegalArgumentException::new);
+        ImageEntity imageEntity = imageComponent.saveImage(image);
+        adEntity.setImage(imageEntity);
+        repository.save(adEntity);
+
+        return imageEntity.getFilePath();
     }
 
+    /**
+     * Создает новое объявление.
+     *
+     * @param createOrUpdateAd объект с данными нового объявления
+     * @param image            файл изображения для объявления
+     * @return созданный объект Ad
+     * @throws IOException если произошла ошибка при сохранении изображения
+     */
     @Override
-    public Ad createAdvertisement(CreateOrUpdateAd createOrUpdateAd, MultipartFile image) throws Exception {
-        imageService.saveImage(image);
-        return new Ad(0L, "string", "string", createOrUpdateAd.getPrice(), createOrUpdateAd.getTitle());
+    public Ad createAdvertisement(String createOrUpdateAd, MultipartFile image) throws IOException {
+        final AdvertisementEntity entity = mapping.getEntityFromAd(
+                (new ObjectMapper()).readValue(createOrUpdateAd, CreateOrUpdateAd.class),
+                userRepository.findByEmail(getAuthentication().getName()),
+                imageComponent.saveImage(image));
+
+        return mapping.getAdFromEntity(repository.save(entity));
+    }
+
+    private Authentication getAuthentication() {
+        return SecurityContextHolder.getContext().getAuthentication();
     }
 }

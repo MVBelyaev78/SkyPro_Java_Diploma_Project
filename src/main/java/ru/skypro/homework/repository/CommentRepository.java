@@ -1,15 +1,17 @@
 package ru.skypro.homework.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 import ru.skypro.homework.entity.CommentEntity;
 
 import java.util.List;
 
 @Repository
-public interface CommentRepository extends JpaRepository<CommentEntity, Integer> {
+public interface CommentRepository extends JpaRepository<CommentEntity, Long> {
     /**
-     * Находит все комментарии по ID объявления
+     * Поиск комментариев по ID объявления
      *
      * @param idAdvertisement ID объявления
      * @return список комментариев
@@ -17,10 +19,13 @@ public interface CommentRepository extends JpaRepository<CommentEntity, Integer>
     List<CommentEntity> findAllByIdAdvertisement_Id(Long idAdvertisement);
 
     /**
-     * Удаляет комментарий по ID комментария и ID объявления
+     * Удаление комментария по ID комментария и ID объявления
      *
      * @param commentId       ID комментария
      * @param idAdvertisement ID объявления
      */
-    void deleteByIdCommentAndIdAdvertisement_Id(int commentId, Long idAdvertisement);
+    @Modifying
+    @Query(value = "DELETE FROM public.tbl_comment c WHERE c.id_advertisement = ?2 AND c.id_comment = ?1",
+            nativeQuery = true)
+    void deleteByCommentIdAndAdvertisementId(Long commentId, Long idAdvertisement);
 }

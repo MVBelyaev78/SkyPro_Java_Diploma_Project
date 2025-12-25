@@ -1,41 +1,149 @@
 package ru.skypro.homework.service.impl;
 
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import ru.skypro.homework.component.mapping.CommentMapping;
 import ru.skypro.homework.dto.Comment;
 import ru.skypro.homework.dto.Comments;
 import ru.skypro.homework.dto.CreateOrUpdateComment;
+import ru.skypro.homework.entity.AdvertisementEntity;
+import ru.skypro.homework.entity.CommentEntity;
+import ru.skypro.homework.entity.UserEntity;
+import ru.skypro.homework.repository.AdvertisementRepository;
+import ru.skypro.homework.repository.CommentRepository;
+import ru.skypro.homework.repository.UserRepository;
 import ru.skypro.homework.service.CommentService;
 
-import java.util.List;
+import java.time.ZonedDateTime;
+import java.util.Optional;
 
-
+@Slf4j
 @Service
+@Transactional
+@RequiredArgsConstructor
 public class CommentServiceImpl implements CommentService {
 
-    @Override
-    public Comments getComments(int id) {
-        List<Comment> response = List.of(
-                new Comment(1L, "img-url", "firstname", 999L, 1, "text")
-        );
+    private final UserRepository userRepository;
+    private final AdvertisementRepository advertisementRepository;
+    private final CommentRepository commentRepository;
+    private final CommentMapping commentMapping;
 
-        return new Comments(response.size(), response);
+    /**
+     * Получение комментариев для объявления по его идентификатору.
+     *
+     * @param adId идентификатор объявления
+     * @return объект Comments, содержащий количество и список комментариев
+     */
+    @Override
+    public Comments getComments(Long adId) {
+        log.info("Получение комментариев для объявления с ID: {}", adId);
+
+        return commentMapping.fromEntities(commentRepository.findAllByIdAdvertisement_Id(adId));
+    }
+
+    /**
+     * Добавление нового комментария к объявлению.
+     *
+     * @param adId    идентификатор объявления
+     * @param comment объект CreateOrUpdateComment с данными нового комментария
+     * @return созданный комментарий
+     */
+    @Override
+    public Optional<Comment> addCommentUserDateTime(Long adId,
+                                                    CreateOrUpdateComment comment,
+                                                    String userEmail,
+                                                    ZonedDateTime dateTime) {
+        log.info("Добавление комментария к объявлению с ID: {}", adId);
+
+        final Optional<AdvertisementEntity> advertisementEntity = advertisementRepository.findById(adId);
+        if (advertisementEntity.isEmpty()) {
+            return Optional.empty();
+        }
+        final UserEntity userEntity = userRepository.findByEmail(userEmail);
+        if (userEntity == null) {
+            return Optional.empty();
+        }
+        final Optional<CommentEntity> commentEntity = commentMapping.toEntity(
+                comment, advertisementEntity.get(), userEntity, dateTime);
+        if (commentEntity.isEmpty()) {
+            return Optional.empty();
+        }
+        final CommentEntity savedCommentEntity = commentRepository.save(commentEntity.get());
+
+        return Optional.of(commentMapping.fromEntity(savedCommentEntity));
     }
 
     @Override
-    public Comment addComment(int id, CreateOrUpdateComment comment) {
-        Comment response = new Comment(1L, "img-url", "firstname", 999L, 1, comment.getText());
+    public Optional<Comment> addComment(Long adId, CreateOrUpdateComment comment) {
+        return addCommentUserDateTime(adId,
+                comment,
+                SecurityContextHolder.getContext().getAuthentication().getName(),
+                ZonedDateTime.now());
+    }
 
-        return response;
+    /**
+     * Удаление комментария по его идентификатору.
+     *
+     * @param adId      идентификатор объявления (не используется в данной реализации)
+     * @param commentId идентификатор комментария для удаления
+     */
+    @Override
+    public Boolean rmComment(Long adId, Long commentId) {
+        commentRepository.deleteByCommentIdAndAdvertisementId(commentId, adId);
+        return true;
     }
 
     @Override
-    public void rmComment(int adId, int commentId) {
+    public Optional<Comment> updateCommentUserDateTime(Long adId,
+                                                       Long commentId,
+                                                       CreateOrUpdateComment createOrUpdateComment,
+                                                       String userEmail,
+                                                       ZonedDateTime dateTime) {
+        log.info("Обновление комментария с ID: {} для объявления с ID: {}", commentId, adId);
+
+        final Optional<CommentEntity> entity = commentRepository.findById(commentId);
+        if (entity.isEmpty()) {
+            return Optional.empty();
+        }
+        final Optional<AdvertisementEntity> advertisementEntity = advertisementRepository.findById(adId);
+        if (advertisementEntity.isEmpty()) {
+            return Optional.empty();
+        }
+        final UserEntity userEntity = userRepository.findByEmail(userEmail);
+        if (userEntity == null) {
+            return Optional.empty();
+        }
+        final Optional<CommentEntity> newEntity = commentMapping.toEntity(
+                createOrUpdateComment, advertisementEntity.get(), userEntity, dateTime);
+        if (newEntity.isEmpty()) {
+            return Optional.empty();
+        }
+        if (!commentMapping.updateCommentEntity(entity.get(), newEntity.get())) {
+            return Optional.empty();
+        }
+        commentRepository.save(entity.get());
+        final Comment newComment = commentMapping.fromEntity(entity.get());
+        return Optional.of(newComment);
     }
 
+    /**
+     * Обновление существующего комментария.
+     *
+     * @param adId      идентификатор объявления (не используется в данной реализации)
+     * @param commentId идентификатор комментария для обновления
+     * @param comment   объект CreateOrUpdateComment с новыми данными комментария
+     * @return обновленный комментарий или null, если комментарий не найден
+     */
     @Override
-    public Comment updateComment(int adId, int commentId, CreateOrUpdateComment comment) {
-        Comment response = new Comment(1L, "img-url", "firstname", 999L, commentId, comment.getText());
-
-        return response;
+    public Optional<Comment> updateComment(Long adId, Long commentId, CreateOrUpdateComment comment) {
+        return updateCommentUserDateTime(
+                adId,
+                commentId,
+                comment,
+                SecurityContextHolder.getContext().getAuthentication().getName(),
+                ZonedDateTime.now());
     }
 }
